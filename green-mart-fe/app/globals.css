@@ -1,0 +1,342 @@
+/* Import Tailwind CSS v4 */
+@import "tailwindcss";
+
+/* ========================
+   Theme Customization
+======================== */
+@theme {
+  /* Typography */
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-size-5xl: 3rem; /* Equivalent to text-5xl */
+  --font-size-4xl: 2.25rem; /* Equivalent to text-4xl */
+  --font-size-3xl: 1.875rem; /* Equivalent to text-3xl */
+  --font-size-2xl: 1.5rem; /* Equivalent to text-2xl */
+  --font-size-xl: 1.25rem; /* Equivalent to text-xl */
+  --font-size-lg: 1.125rem; /* Equivalent to text-lg */
+  --font-size-base: 1rem; /* Equivalent to text-base */
+  --font-size-sm: 0.875rem; /* Equivalent to text-sm */
+  --font-size-xs: 0.75rem; /* Equivalent to text-xs */
+  --line-height-tight: 1.2;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+
+  /* Colors */
+  --color-primary: #00b207 !important; 
+  --color-primary-soft: #84D187;
+  --color-primary-hard: #2c742f;
+  --color-warning: #ff8a00;
+  --color-danger: #ea4b48;
+  --color-white: #ffffff;
+  --color-gray-9: #111111;
+  --color-gray-8: #333333;
+  --color-gray-7: #4f4f4f;
+  --color-gray-6: #828282;
+  --color-gray-5: #bdbdbd;
+  --color-gray-4: #e0e0e0;
+  --color-gray-3: #f2f2f2;
+  --color-gray-2: #fafafa;
+  --color-gray-1: #fcfcfc;
+  --color-greenGray-9: #0d3b1f;
+  --color-greenGray-8: #14532d;
+  --color-greenGray-7: #1b5e20;
+  --color-greenGray-6: #2e7d32;
+  --color-greenGray-5: #388e3c;
+  --color-greenGray-4: #66bb6a;
+  --color-greenGray-3: #a5d6a7;
+  --color-greenGray-2: #c8e6c9;
+  --color-greenGray-1: #e8f5e9;
+}
+
+/* ========================
+   Base Styles
+======================== */
+body {
+  font-family: var(--font-family-sans);
+  color: var(--color-gray-9);
+  background-color: var(--color-white);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-family-sans);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ========================
+   Typography (Custom Classes)
+======================== */
+.display-01 {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-tight);
+}
+.display-01-600 {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.heading-01 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-normal);
+}
+.heading-01-600 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.heading-02 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-normal);
+}
+.heading-02-600 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.heading-03 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-normal);
+}
+.heading-03-600 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.heading-04 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-normal);
+}
+.heading-04-600 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.heading-05 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-normal);
+}
+.heading-05-600 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.body-xxl {
+  font-size: var(--font-size-2xl);
+}
+.body-xl {
+  font-size: var(--font-size-xl);
+}
+.body-lg {
+  font-size: var(--font-size-lg);
+}
+.body-md {
+  font-size: var(--font-size-base);
+}
+.body-sm {
+  font-size: var(--font-size-sm);
+}
+.body-xs {
+  font-size: var(--font-size-xs);
+}
+
+/* ========================
+   Colors (Utility Classes)
+======================== */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+.bg-primary-soft {
+  background-color: var(--color-primary-soft);
+}
+.bg-primary-hard {
+  background-color: var(--color-primary-hard);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+.text-primary-soft {
+  color: var(--color-primary-soft);
+}
+.text-primary-hard {
+  color: var(--color-primary-hard);
+}
+
+.bg-warning {
+  background-color: var(--color-warning);
+}
+.text-warning {
+  color: var(--color-warning);
+}
+
+.bg-danger {
+  background-color: var(--color-danger);
+}
+.text-danger {
+  color: var(--color-danger);
+}
+
+.bg-white {
+  background-color: var(--color-white);
+}
+.text-white {
+  color: var(--color-white);
+}
+
+.text-gray-9 {
+  color: var(--color-gray-9);
+}
+.text-gray-8 {
+  color: var(--color-gray-8);
+}
+.text-gray-7 {
+  color: var(--color-gray-7);
+}
+.text-gray-6 {
+  color: var(--color-gray-6);
+}
+.text-gray-5 {
+  color: var(--color-gray-5);
+}
+.text-gray-4 {
+  color: var(--color-gray-4);
+}
+.text-gray-3 {
+  color: var(--color-gray-3);
+}
+.text-gray-2 {
+  color: var(--color-gray-2);
+}
+.text-gray-1 {
+  color: var(--color-gray-1);
+}
+
+.bg-greenGray-9 {
+  background-color: var(--color-greenGray-9);
+}
+.bg-greenGray-8 {
+  background-color: var(--color-greenGray-8);
+}
+.bg-greenGray-7 {
+  background-color: var(--color-greenGray-7);
+}
+.bg-greenGray-6 {
+  background-color: var(--color-greenGray-6);
+}
+.bg-greenGray-5 {
+  background-color: var(--color-greenGray-5);
+}
+.bg-greenGray-4 {
+  background-color: var(--color-greenGray-4);
+}
+.bg-greenGray-3 {
+  background-color: var(--color-greenGray-3);
+}
+.bg-greenGray-2 {
+  background-color: var(--color-greenGray-2);
+}
+.bg-greenGray-1 {
+  background-color: var(--color-greenGray-1);
+}
+
+/* ========================
+   Buttons (Custom Classes)
+======================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; /* Equivalent to rounded-full */
+  font-weight: var(--font-weight-medium);
+  transition-property: color, background-color;
+  transition-duration: 0.2s;
+}
+
+.btn-sm {
+  padding-left: 1rem; /* Equivalent to px-3 */
+  padding-right:1rem;
+  padding-top: 0.25rem; /* Equivalent to py-1 */
+  padding-bottom: 0.25rem;
+  font-size: var(--font-size-sm);
+}
+
+.btn-md {
+  padding-left: 2rem; /* Equivalent to px-4 */
+  padding-right: 2rem;
+  padding-top: 0.5rem; /* Equivalent to py-2 */
+  padding-bottom: 0.5rem;
+  font-size: var(--font-size-base);
+}
+
+.btn-lg {
+  padding-left: 3rem; /* Equivalent to px-6 */
+  padding-right: 3rem;
+  padding-top: 0.75rem; /* Equivalent to py-3 */
+  padding-bottom: 0.75rem;
+  font-size: var(--font-size-lg);
+}
+
+.btn-fill {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+.btn-fill:hover {
+  background-color: var(--color-primary-hard);
+}
+
+.btn-border {
+  border: 2px solid var(--color-primary);
+  background-color: transparent;
+  color: var(--color-primary);
+}
+.btn-border:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-ghost {
+  background-color: color-mix(
+    in srgb,
+    var(--color-primary-soft) 20%,
+    transparent
+  );
+  color: var(--color-primary);
+}
+.btn-ghost:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--color-primary-soft) 40%,
+    transparent
+  );
+}
+
+.btn-icon {
+  gap: 0.5rem; /* Equivalent to gap-2 */
+}
+
+/* ========================
+   Custom Utilities
+======================== */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
