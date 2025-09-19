@@ -102,7 +102,10 @@ const Navbar = () => {
                 href="/cart"
                 className="relative flex items-center text-gray-7"
               >
-                <ShoppingCart className="hover:text-primary transition" size={18} />
+                <ShoppingCart
+                  className="hover:text-primary transition"
+                  size={18}
+                />
                 <button className="absolute -top-1 left-3 text-[8px] text-white bg-primary-hard size-3.5 rounded-full">
                   {cartCount}
                 </button>
@@ -114,9 +117,7 @@ const Navbar = () => {
 
           {/* Mobile User Button  */}
           <div className="sm:hidden">
-            <button className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full">
-              Login
-            </button>
+            <button className="btn btn-fill btn-md">Login</button>
           </div>
         </div>
       </div>
