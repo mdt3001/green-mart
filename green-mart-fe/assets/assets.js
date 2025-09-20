@@ -21,6 +21,18 @@ import { ClockFadingIcon, HeadsetIcon, SendIcon } from "lucide-react";
 import profile_pic1 from "./profile_pic1.jpg"
 import profile_pic2 from "./profile_pic2.jpg"
 import profile_pic3 from "./profile_pic3.jpg"
+import top_categories_1 from "./top_categories_1.png"
+import top_categories_2 from "./top_categories_2.png"
+import top_categories_3 from "./top_categories_3.png"
+import top_categories_4 from "./top_categories_4.png"
+import top_categories_5 from "./top_categories_5.png"
+import top_categories_6 from "./top_categories_6.png"
+import top_categories_7 from "./top_categories_7.png"
+import top_categories_8 from "./top_categories_8.png"
+import top_categories_9 from "./top_categories_9.png"
+import top_categories_10 from "./top_categories_10.png"
+import top_categories_11 from "./top_categories_11.png"
+import top_categories_12 from "./top_categories_12.png"
 
 export const assets = {
     upload_area, hero_model_img,
@@ -30,6 +42,22 @@ export const assets = {
 }
 
 export const categories = ["Headphones", "Speakers", "Watch", "Earbuds", "Mouse", "Decoration"];
+
+export const topCategoriesData = [
+    { id: "cat_1", name: "Fresh Fruit", image: top_categories_1 },
+    { id: "cat_2", name: "Fresh Vegetables", image: top_categories_2 },
+    { id: "cat_3", name: "Meat & Fish", image: top_categories_3 },
+    { id: "cat_4", name: "Snacks", image: top_categories_4 },
+    { id: "cat_5", name: "Beverages", image: top_categories_5 },
+    { id: "cat_6", name: "Beauty & Health", image: top_categories_6 },
+    { id: "cat_7", name: "Bread & Bakery", image: top_categories_7 },
+    { id: "cat_8", name: "Baking Needs", image: top_categories_8 },
+    { id: "cat_9", name: "Cooking", image: top_categories_9 },
+    { id: "cat_10", name: "Diabetic Food", image: top_categories_10 },
+    { id: "cat_11", name: "Dish Detergents", image: top_categories_11 },
+    { id: "cat_12", name: "Oil", image: top_categories_12 },
+]
+
 
 export const dummyRatingsData = [
     { id: "rat_1", rating: 4.2, review: "I was a bit skeptical at first, but this product turned out to be even better than I imagined. The quality feels premium, it's easy to use, and it delivers exactly what was promised. I've already recommended it to friends and will definitely purchase again in the future.", user: { name: 'Kristin Watson', image: profile_pic1 }, productId: "prod_1", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'Bluetooth Speakers', category:'Electronics', id:'prod_1'} },

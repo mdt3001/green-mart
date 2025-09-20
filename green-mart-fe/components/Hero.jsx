@@ -28,7 +28,7 @@ const Hero = () => {
             </h2>
             <div className="text-white text-sm font-medium mt-4 sm:mt-8 flex items-center gap-4">
               <p className="text-2xl">Sale up to</p>
-              <p className="text-3xl bg-warning py-2 px-4 rounded-md">
+              <p className="text-2xl bg-warning py-1 px-3 rounded-md">
                 30% OFF
               </p>
             </div>
@@ -95,7 +95,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      <CategoriesMarquee />
+      {/* <CategoriesMarquee /> */}
     </div>
   );
 };
