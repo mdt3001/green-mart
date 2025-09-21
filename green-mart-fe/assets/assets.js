@@ -33,6 +33,9 @@ import top_categories_9 from "./top_categories_9.png"
 import top_categories_10 from "./top_categories_10.png"
 import top_categories_11 from "./top_categories_11.png"
 import top_categories_12 from "./top_categories_12.png"
+import sale_banner_1 from "./sale_banner_1.png"
+import sale_banner_2 from "./sale_banner_2.png"
+import sale_banner_3 from "./sale_banner_3.png"
 
 export const assets = {
     upload_area, hero_model_img,
@@ -56,6 +59,12 @@ export const topCategoriesData = [
     { id: "cat_10", name: "Diabetic Food", image: top_categories_10 },
     { id: "cat_11", name: "Dish Detergents", image: top_categories_11 },
     { id: "cat_12", name: "Oil", image: top_categories_12 },
+]
+
+export const saleBanners = [
+    { id: "sale_1", image: sale_banner_1, href: "/shop" },
+    { id: "sale_2", image: sale_banner_2, href: "/shop" },
+    { id: "sale_3", image: sale_banner_3, href: "/shop" },
 ]
 
 

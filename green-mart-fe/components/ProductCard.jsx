@@ -25,7 +25,7 @@ const ProductCard = ({ product }) => {
           src={product.images[0]}
           alt=""
         />
-        <span className="absolute top-2 left-2 bg-danger text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+        <span className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
           Sale {sale}%
         </span>
         {/* Heart and Eye icons in top-right corner */}

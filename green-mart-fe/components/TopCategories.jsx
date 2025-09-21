@@ -5,7 +5,7 @@ import Title from "./Title.jsx";
 
 export default function TopCategories() {
   return (
-    <div className="my-20 max-w-7xl mx-auto">
+    <div className="my-20 max-w-7xl mx-5 sm:mx-auto">
       <Title
         visibleButton={false}
         title="CATEGORY"
