@@ -7,13 +7,13 @@ import React from "react";
 const ProductCard = ({ product }) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$";
 
-  // Calculate the average rating of the product
-  const rating = Math.round(
-    product.rating.reduce((acc, curr) => acc + curr.rating, 0) /
-      product.rating.length
-  );
-    
-    const sale = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+  // Calculate the average rating of the product safely
+  const ratingArray = Array.isArray(product?.rating) ? product.rating : [];
+  const averageRating = product.rating.reduce((acc, item) => acc + item.rating, 0) / product.rating.length;
+
+  const rating = Math.round(averageRating);
+
+  const sale = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 
   return (
     <Link href={`/product/${product.id}`} className="group max-xl:mx-auto">
@@ -42,18 +42,9 @@ const ProductCard = ({ product }) => {
         <div>
           <p>{product.name}</p>
           <div className="flex">
-            {Array(5)
-              .fill("")
-              .map((_, index) => (
-                <StarIcon
-                  key={index}
-                  size={14}
-                  className="text-transparent mt-0.5"
-                  fill={
-                    rating >= index + 1 ? "var(--color-warning)" : "#D1D5DB"
-                  }
-                />
-              ))}
+            {Array(5).fill('').map((_, index) => (
+              <StarIcon key={index} size={14} className='text-transparent mt-0.5' fill={averageRating >= index + 1 ? "#00C950" : "#D1D5DB"} />
+            ))}
           </div>
           <div className="flex items-center gap-2">
             <p className="font-semibold text-xl">

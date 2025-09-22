@@ -4,6 +4,8 @@ import ProductDetails from "@/components/ProductDetails";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { House } from 'lucide-react';
+
 
 export default function Product() {
 
@@ -28,8 +30,8 @@ export default function Product() {
             <div className="max-w-7xl mx-auto">
 
                 {/* Breadcrums */}
-                <div className="  text-gray-600 text-sm mt-8 mb-5">
-                    Home / Products / {product?.category}
+                <div className=" flex items-center gap-2 text-gray-600 text-sm mt-8 mb-5">
+                    <House size={16} />/ Category / {product?.category} / {product?.name}
                 </div>
 
                 {/* Product Details */}

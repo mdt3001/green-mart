@@ -9,7 +9,7 @@ const BestSelling = () => {
     const products = useSelector(state => state.product.list)
 
     return (
-        <div className='px-6 my-30 max-w-7xl mx-auto'>
+        <div className='mx-5 my-30 max-w-7xl sm:mx-auto'>
             <Title title='Best Selling' description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`} href='/shop' />
             <div className='mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-2 xl:gap-y-10 justify-between'>
                 {products.slice().sort((a, b) => b.rating.length - a.rating.length).slice(0, displayQuantity).map((product, index) => (

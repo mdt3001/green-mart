@@ -2,6 +2,7 @@ import { topCategoriesData } from "../assets/assets.js";
 import Image from "next/image";
 import React from "react";
 import Title from "./Title.jsx";
+import Link from "next/link.js";
 
 export default function TopCategories() {
   return (
@@ -13,7 +14,7 @@ export default function TopCategories() {
       />
       <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
         {topCategoriesData.map((category) => (
-          <div
+          <Link href={`/shop?category=${category.name}`}
             className="flex flex-col items-center text-center border py-3 lg:py-5 cursor-pointer border-gray-4 hover:border-primary transition-all"
             key={category.id}
           >
@@ -25,7 +26,7 @@ export default function TopCategories() {
               className="rounded-lg object-cover"
             />
             <h3 className="my-2 text-base font-medium">{category.name}</h3>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
