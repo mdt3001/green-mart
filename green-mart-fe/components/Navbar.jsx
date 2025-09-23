@@ -1,13 +1,22 @@
 "use client";
-import { Search, ShoppingCart, Heart } from "lucide-react";
+import {
+  Search,
+  ShoppingCart,
+  Heart,
+  Package,
+  PackageIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { assets } from "@/assets/assets";
 import { usePathname } from "next/navigation";
+import { useUser, useClerk, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
+  const { user } = useUser();
+  const { openSignIn } = useClerk();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
@@ -112,12 +121,47 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <button className="btn btn-fill btn-md">Login</button>
+            {!user ? (
+              <button onClick={openSignIn} className="btn btn-fill btn-md">
+                Login
+              </button>
+            ) : (
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Action
+                    labelIcon={<PackageIcon size={16} />}
+                    label="My Orders"
+                    onClick={() => router.push("/orders")}
+                  />
+                </UserButton.MenuItems>
+              </UserButton>
+            )}
           </div>
 
           {/* Mobile User Button  */}
           <div className="sm:hidden">
-            <button className="btn btn-fill btn-md">Login</button>
+            {!user ? (
+              <button onClick={openSignIn} className="btn btn-fill btn-md">
+                Login
+              </button>
+            ) : (
+              <div>
+                <UserButton>
+                  <UserButton.MenuItems>
+                    <UserButton.Action
+                      labelIcon={<ShoppingCart size={16} />}
+                      label="Cart"
+                      onClick={() => router.push("/cart")}
+                    />
+                    <UserButton.Action
+                      labelIcon={<PackageIcon size={16} />}
+                      label="My Orders"
+                      onClick={() => router.push("/orders")}
+                    />
+                  </UserButton.MenuItems>
+                </UserButton>
+              </div>
+            )}
           </div>
         </div>
       </div>
