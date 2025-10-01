@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Store\StoreController;
+
 
 // Authentication routes
 Route::prefix('v1/auth')->group(function () {
@@ -21,3 +23,9 @@ Route::prefix('v1/auth')->group(function () {
 //     Route::put('/users/{id}', [UserController::class, 'updateUser']);
 //     Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
 // });
+
+// ...
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    Route::post('/stores', [StoreController::class, 'store']);   // đăng ký cửa hàng
+    Route::get('/stores/me', [StoreController::class, 'myStore']); // xem cửa hàng của mình
+});
