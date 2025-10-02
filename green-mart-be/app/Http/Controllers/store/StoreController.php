@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class StoreController extends Controller
 {
@@ -62,26 +62,15 @@ class StoreController extends Controller
 
         $payload = $validator->validated();
 
-        // Upload logo lên Cloudinary
+        // Upload logo lên Cloudinary qua Storage (giống FileUploadController)
         $logoUrl = null;
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
 
             try {
-                $upload = Cloudinary::upload(
-                    $file->getRealPath(),
-                    [
-                        'folder' => 'stores/logos',
-                        'public_id' => (string) Str::uuid(),
-                        'overwrite' => true,
-                        'resource_type' => 'image',
-                        'transformation' => [
-                            'width' => 512,
-                            'crop' => 'limit',
-                        ],
-                    ]
-                );
-                $logoUrl = $upload->getSecurePath();
+                $folder = 'stores/logos';
+                $path = Storage::disk('cloudinary')->putFile($folder, $file);
+                $logoUrl = Storage::disk('cloudinary')->url($path);
             } catch (\Throwable $e) {
                 return response()->json([
                     'success' => false,

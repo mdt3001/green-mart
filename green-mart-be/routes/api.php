@@ -29,3 +29,4 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/stores', [StoreController::class, 'store']);   // đăng ký cửa hàng
     Route::get('/stores/me', [StoreController::class, 'myStore']); // xem cửa hàng của mình
 });
+
