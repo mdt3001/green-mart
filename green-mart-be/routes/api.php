@@ -25,4 +25,5 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
 	// Product (bắt buộc seller)
 	Route::post('/products', [ProductController::class, 'store'])->middleware('authSeller');
+	Route::get('/products', [ProductController::class, 'index'])->middleware('authSeller');
 });

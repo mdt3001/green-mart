@@ -8,9 +8,12 @@ use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    // Tạo sản phẩm
+
     public function store(Request $request)
     {
         try {
@@ -55,7 +58,7 @@ class ProductController extends Controller
                 'product' => $product->load('store'),
             ], 201);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch ( ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Dữ liệu không hợp lệ',
@@ -65,6 +68,25 @@ class ProductController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Lỗi khi tạo sản phẩm',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    // Lấy danh sách sản phẩm của seller
+    public function index (Request $request){
+        try {
+            $products = Product::where('store_id', $request->store_id)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy danh sách sản phẩm của cửa hàng thành công',
+                'products' => $products
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy danh sách sản phẩm',
                 'error' => $th->getMessage()
             ], 500);
         }
