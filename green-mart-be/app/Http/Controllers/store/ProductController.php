@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Http\Controllers\store;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Store;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
+class ProductController extends Controller
+{
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'mrp' => 'required|numeric|min:0',
+                'price' => 'required|numeric|min:0|lt:mrp',
+                'images.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'images' => 'required|array|min:1|max:4', // Tối đa 4 ảnh
+                'category' => 'required|string|max:100',
+                'in_stock' => 'required|boolean',
+            ]);
+
+            // Upload ảnh lên Cloudinary
+            $imagesUrl = [];
+            foreach ($validated['images'] as $image) {
+                $folder = 'products/images';
+                $path = Storage::disk('cloudinary')->putFile($folder, $image);
+                $imagesUrl[] = Storage::disk('cloudinary')->url($path);
+            }
+
+            // Lấy store_id từ middleware
+            $storeId = $request->store_id;
+
+            // Tạo sản phẩm
+            $product = Product::create([
+                'id' => Str::uuid(),
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'mrp' => $validated['mrp'],
+                'price' => $validated['price'],
+                'images' => $imagesUrl, // Lưu URLs đã upload
+                'category' => $validated['category'],
+                'in_stock' => $validated['in_stock'] ?? true,
+                'store_id' => $storeId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sản phẩm đã được tạo thành công',
+                'product' => $product->load('store'),
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi tạo sản phẩm',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+}
