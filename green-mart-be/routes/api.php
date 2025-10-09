@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Store\StoreController;
 use App\Http\Controllers\store\ProductController;
 
+
 // Authentication routes
 Route::prefix('v1/auth')->group(function () {
 	Route::post('/register', [AuthController::class, 'register']);
@@ -26,4 +27,5 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 	// Product (bắt buộc seller)
 	Route::post('/products', [ProductController::class, 'store'])->middleware('authSeller');
 	Route::get('/products', [ProductController::class, 'index'])->middleware('authSeller');
+	Route::patch('/products/{id}/toggle-stock', [ProductController::class, 'toggleStock'])->middleware('authSeller');
 });

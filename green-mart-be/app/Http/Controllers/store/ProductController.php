@@ -5,15 +5,13 @@ namespace App\Http\Controllers\store;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Store;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
     // Tạo sản phẩm
-
     public function store(Request $request)
     {
         try {
@@ -57,8 +55,7 @@ class ProductController extends Controller
                 'message' => 'Sản phẩm đã được tạo thành công',
                 'product' => $product->load('store'),
             ], 201);
-
-        } catch ( ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Dữ liệu không hợp lệ',
@@ -74,20 +71,62 @@ class ProductController extends Controller
     }
 
     // Lấy danh sách sản phẩm của seller
-    public function index (Request $request){
+    public function index(Request $request)
+    {
         try {
             $products = Product::where('store_id', $request->store_id)->get();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Lấy danh sách sản phẩm của cửa hàng thành công',
-                'products' => $products
+                'products' => $products,
             ], 200);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => 'Lỗi khi lấy danh sách sản phẩm',
-                'error' => $th->getMessage()
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Toggle stock of a product
+    public function toggleStock(Request $request, string $id)
+    {
+        try {
+            $storeId = $request->store_id;
+
+            if (!$id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID sản phẩm không được để trống',
+                ], 400);
+            }
+
+            $product = Product::where('id', $id)
+                ->where('store_id', $storeId)
+                ->first();
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sản phẩm không tồn tại hoặc không thuộc cửa hàng của bạn',
+                ], 404);
+            }
+
+            $product->in_stock = !$product->in_stock;
+            $product->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật trạng thái kho thành công',
+                'product' => $product->load('store'),
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi cập nhật trạng thái kho',
+                'error' => $th->getMessage(),
             ], 500);
         }
     }
