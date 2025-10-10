@@ -36,7 +36,7 @@
 | STT | MSSV | Họ và Tên | Github | Email |
 | ------ |:-------------:| ----------------------:|-----------------------------------------------------:|-------------------------:
 | 1 | 22521413 | Mai Đức Thịnh |[mdt3001](https://github.com/mdt3001) |22521413@gm.uit.edu.vn |
-
+| 2 | 22521162 | Huỳnh Lê Phương |[wseraskt2004](https://github.com/wseraskt2004) |22521162@gm.uit.edu.vn |
 
 ## SEMINAR
 
