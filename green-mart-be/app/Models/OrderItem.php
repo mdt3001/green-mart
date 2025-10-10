@@ -13,6 +13,7 @@ class OrderItem extends Model
     protected $primaryKey = ['order_id', 'product_id'];
     public $incrementing = false;
     protected $keyType = 'string';
+    public $timestamps = false; // thêm dòng này
 
     protected $fillable = [
         'order_id',

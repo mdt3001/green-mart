@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Models\Product;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class StoreController extends Controller
 {
@@ -135,5 +139,123 @@ class StoreController extends Controller
                 'logo' => $store->logo,
             ] : null,
         ], 200);
+    }
+
+    // Lấy thông tin cửa hàng theo username
+    public function getByUsername(Request $request, string $username)
+    {
+        try {
+            $store = Store::where('username', $username)
+                ->where('is_active', true)
+                ->with(['user:id,name,email'])
+                ->first();
+
+            if (!$store) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cửa hàng không tồn tại hoặc chưa được kích hoạt',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy thông tin cửa hàng thành công',
+                'data' => [
+                    'id' => $store->id,
+                    'name' => $store->name,
+                    'username' => $store->username,
+                    'description' => $store->description,
+                    'address' => $store->address,
+                    'logo' => $store->logo,
+                    'email' => $store->email,
+                    'contact' => $store->contact,
+                    'status' => $store->status,
+                    'is_active' => (bool) $store->is_active,
+                    'owner' => [
+                        'name' => $store->user->name,
+                        'email' => $store->user->email,
+                    ],
+                ],
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy thông tin cửa hàng',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    // lay dashboard data cho seller
+
+    // Thêm vào StoreController
+    public function dashboard(Request $request)
+    {
+        try {
+            $storeId = $request->store_id; // Từ middleware authSeller
+
+            // Tổng số sản phẩm
+            $totalProducts = Product::where('store_id', $storeId)->count();
+
+            // Tổng số đơn hàng
+            $totalOrders = Order::where('store_id', $storeId)->count();
+
+            // Tổng doanh thu (từ order_items)
+            $totalEarnings = OrderItem::whereHas('order', function ($query) use ($storeId) {
+                $query->where('store_id', $storeId)
+                    ->where('is_paid', true);
+            })->sum(DB::raw('quantity * price'));
+
+            // Đơn hàng theo trạng thái
+            $ordersByStatus = Order::where('store_id', $storeId)
+                ->selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
+
+            // Sản phẩm bán chạy (top 5)
+            $topProducts = Product::where('store_id', $storeId)
+                ->withCount(['orderItems as total_sold' => function ($query) {
+                    $query->whereHas('order', function ($q) {
+                        $q->where('is_paid', true);
+                    });
+                }])
+                ->orderBy('total_sold', 'desc')
+                ->limit(5)
+                ->get(['id', 'name', 'price', 'images']);
+
+            // Doanh thu theo tháng (6 tháng gần nhất)
+            // $monthlyEarnings = OrderItem::whereHas('order', function ($query) use ($storeId) {
+            //     $query->where('store_id', $storeId)
+            //         ->where('is_paid', true)
+            //         ->where('created_at', '>=', now()->subMonths(6));
+            // })
+            //     ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(quantity * price) as earnings')
+            //     ->groupBy('month')
+            //     ->orderBy('month')
+            //     ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lấy dữ liệu dashboard thành công',
+                'data' => [
+                    'summary' => [
+                        'total_products' => $totalProducts,
+                        'total_orders' => $totalOrders,
+                        'total_earnings' => (float) $totalEarnings,
+                    ],
+                    'orders_by_status' => $ordersByStatus,
+                    'top_products' => $topProducts,
+                    // 'monthly_earnings' => $monthlyEarnings,
+                ],
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy dữ liệu dashboard',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 }

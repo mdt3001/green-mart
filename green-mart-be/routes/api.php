@@ -28,4 +28,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 	Route::post('/products', [ProductController::class, 'store'])->middleware('authSeller');
 	Route::get('/products', [ProductController::class, 'index'])->middleware('authSeller');
 	Route::patch('/products/{id}/toggle-stock', [ProductController::class, 'toggleStock'])->middleware('authSeller');
+	// Trong nhóm v1 (public - không cần auth)
+
+	// Trong nhóm v1 với auth:sanctum (cần authSeller)
+	Route::get('/stores/dashboard', [StoreController::class, 'dashboard'])->middleware('authSeller');
+});
+
+// Public routes (không cần đăng nhập)
+
+Route::prefix('v1')->group(function () {
+	Route::get('/stores/username/{username}', [StoreController::class, 'getByUsername']);
 });

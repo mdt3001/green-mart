@@ -13,6 +13,19 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             UserSeeder::class,
+            AddressSeeder::class,
+            StoreSeeder::class,
+            ProductSeeder::class,
+            OrderSeeder::class,
+            OrderItemSeeder::class,
+
+            // Các seeder mới
+            CouponSeeder::class,
+            FlashSaleSeeder::class,
+            FlashSaleProductSeeder::class,
+            RatingSeeder::class,
+            WishlistSeeder::class,
+
         ]);
     }
 }

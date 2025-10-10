@@ -11,6 +11,7 @@ class Wishlist extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+    public $timestamps = false; // thêm dòng này
 
     protected $fillable = [
         'id',

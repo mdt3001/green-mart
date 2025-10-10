@@ -21,10 +21,11 @@ class StoreSeeder extends Seeder
             return;
         }
 
-        $stores = [
+        // Bộ template store để gán cho seller (sẽ xoay vòng nếu số seller > số template)
+        $templates = [
             [
                 'name' => 'TechStore Pro',
-                'description' => 'Cửa hàng điện tử chuyên nghiệp, cung cấp các sản phẩm công nghệ cao cấp từ Apple, Samsung, và các thương hiệu nổi tiếng khác.',
+                'description' => 'Cửa hàng điện tử chuyên nghiệp, cung cấp các sản phẩm công nghệ cao cấp.',
                 'username' => 'techstore_pro',
                 'address' => '123 Nguyễn Huệ, Quận 1, TP.HCM',
                 'status' => 'active',
@@ -35,7 +36,7 @@ class StoreSeeder extends Seeder
             ],
             [
                 'name' => 'Fashion Hub',
-                'description' => 'Cửa hàng thời trang đa dạng với các sản phẩm từ quần áo, giày dép đến phụ kiện. Phong cách trẻ trung và hiện đại.',
+                'description' => 'Cửa hàng thời trang đa dạng với phong cách trẻ trung và hiện đại.',
                 'username' => 'fashion_hub',
                 'address' => '456 Lê Lợi, Quận 3, TP.HCM',
                 'status' => 'active',
@@ -46,7 +47,7 @@ class StoreSeeder extends Seeder
             ],
             [
                 'name' => 'Fresh Market',
-                'description' => 'Cửa hàng thực phẩm tươi sống, chuyên cung cấp rau củ quả hữu cơ, thịt cá tươi ngon và các sản phẩm địa phương.',
+                'description' => 'Thực phẩm tươi sống, rau củ quả hữu cơ, thịt cá tươi ngon.',
                 'username' => 'fresh_market',
                 'address' => '789 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM',
                 'status' => 'active',
@@ -57,7 +58,7 @@ class StoreSeeder extends Seeder
             ],
             [
                 'name' => 'Home & Living',
-                'description' => 'Cửa hàng nội thất và đồ gia dụng cao cấp. Mang đến không gian sống đẹp và tiện nghi cho mọi gia đình.',
+                'description' => 'Nội thất và đồ gia dụng cao cấp cho không gian sống tiện nghi.',
                 'username' => 'home_living',
                 'address' => '321 Võ Văn Tần, Quận 3, TP.HCM',
                 'status' => 'active',
@@ -67,19 +68,8 @@ class StoreSeeder extends Seeder
                 'contact' => '0904567890'
             ],
             [
-                'name' => 'Sports World',
-                'description' => 'Cửa hàng thể thao chuyên nghiệp, cung cấp dụng cụ thể thao, quần áo thể thao và giày chạy bộ từ các thương hiệu nổi tiếng.',
-                'username' => 'sports_world',
-                'address' => '654 Cách Mạng Tháng 8, Quận 10, TP.HCM',
-                'status' => 'inactive',
-                'is_active' => false,
-                'logo' => 'https://res.cloudinary.com/example/image/upload/v1234567890/stores/sports_logo.jpg',
-                'email' => 'sportsworld@example.com',
-                'contact' => '0903216547'
-            ],
-            [
                 'name' => 'Beauty Corner',
-                'description' => 'Cửa hàng mỹ phẩm và chăm sóc sắc đẹp. Cung cấp các sản phẩm làm đẹp chính hãng từ các thương hiệu nổi tiếng thế giới.',
+                'description' => 'Mỹ phẩm và chăm sóc sắc đẹp chính hãng.',
                 'username' => 'beauty_corner',
                 'address' => '987 Nguyễn Thị Minh Khai, Quận 1, TP.HCM',
                 'status' => 'active',
@@ -90,7 +80,7 @@ class StoreSeeder extends Seeder
             ],
             [
                 'name' => 'Book Paradise',
-                'description' => 'Hiệu sách trực tuyến với hàng nghìn đầu sách đa dạng từ văn học, khoa học, kỹ thuật đến sách thiếu nhi và giáo trình.',
+                'description' => 'Hiệu sách trực tuyến với hàng nghìn đầu sách đa dạng.',
                 'username' => 'book_paradise',
                 'address' => '147 Đồng Khởi, Quận 1, TP.HCM',
                 'status' => 'active',
@@ -99,66 +89,45 @@ class StoreSeeder extends Seeder
                 'email' => 'bookparadise@example.com',
                 'contact' => '0907890123'
             ],
-            [
-                'name' => 'Pet Care Store',
-                'description' => 'Cửa hàng chuyên cung cấp thức ăn, đồ chơi và phụ kiện cho thú cưng. Chăm sóc toàn diện cho người bạn bốn chân của bạn.',
-                'username' => 'pet_care_store',
-                'address' => '258 Lê Văn Sỹ, Quận 3, TP.HCM',
-                'status' => 'suspended',
-                'is_active' => false,
-                'logo' => 'https://res.cloudinary.com/example/image/upload/v1234567890/stores/pet_logo.jpg',
-                'email' => 'petcare@example.com',
-                'contact' => '0900123456'
-            ],
-            [
-                'name' => 'Garden Center',
-                'description' => 'Trung tâm cây cảnh và vật tư nông nghiệp. Cung cấp cây giống, phân bón, dụng cụ làm vườn và tư vấn chăm sóc cây.',
-                'username' => 'garden_center',
-                'address' => '369 Tô Hiến Thành, Quận 10, TP.HCM',
-                'status' => 'active',
-                'is_active' => true,
-                'logo' => 'https://res.cloudinary.com/example/image/upload/v1234567890/stores/garden_logo.jpg',
-                'email' => 'gardencenter@example.com',
-                'contact' => '0903456789'
-            ],
-            [
-                'name' => 'Auto Parts Plus',
-                'description' => 'Cửa hàng phụ tùng ô tô và xe máy chính hãng. Cung cấp đầy đủ các loại phụ tùng, dầu nhớt và phụ kiện xe.',
-                'username' => 'auto_parts_plus',
-                'address' => '741 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM',
-                'status' => 'active',
-                'is_active' => true,
-                'logo' => 'https://res.cloudinary.com/example/image/upload/v1234567890/stores/auto_logo.jpg',
-                'email' => 'autoparts@example.com',
-                'contact' => '0906789012'
-            ]
         ];
 
-        foreach ($stores as $index => $storeData) {
-            // Chỉ tạo store cho user seller (không tạo cho user customer-seller)
-            $sellerUser = $sellerUsers->where('email', 'seller@greenmart.com')->first();
-            
-            if (!$sellerUser) {
-                $sellerUser = $sellerUsers->first(); // Fallback to first seller user
+        $created = 0;
+
+        foreach ($sellerUsers as $index => $sellerUser) {
+            // Nếu user này đã có store → bỏ qua để không vi phạm unique user_id
+            $existingForUser = Store::where('user_id', $sellerUser->id)->first();
+            if ($existingForUser) {
+                $this->command->warn("User {$sellerUser->email} đã có store, bỏ qua.");
+                continue;
+            }
+
+            // Chọn template xoay vòng
+            $tpl = $templates[$index % count($templates)];
+
+            // Đảm bảo username không trùng (nếu tồn tại thì thêm hậu tố _{index})
+            $username = $tpl['username'];
+            if (Store::where('username', $username)->exists()) {
+                $username = $username . '_' . ($index + 1);
             }
 
             Store::create([
                 'id' => Str::uuid(),
                 'user_id' => $sellerUser->id,
-                'name' => $storeData['name'],
-                'description' => $storeData['description'],
-                'username' => $storeData['username'],
-                'address' => $storeData['address'],
-                'status' => $storeData['status'],
-                'is_active' => $storeData['is_active'],
-                'logo' => $storeData['logo'],
-                'email' => $storeData['email'],
-                'contact' => $storeData['contact'],
+                'name' => $tpl['name'],
+                'description' => $tpl['description'],
+                'username' => $username,
+                'address' => $tpl['address'],
+                'status' => $tpl['status'],
+                'is_active' => $tpl['is_active'],
+                'logo' => $tpl['logo'],
+                'email' => $tpl['email'],
+                'contact' => $tpl['contact'],
             ]);
 
-            $this->command->info("Đã tạo store: {$storeData['name']} ({$storeData['username']})");
+            $this->command->info("Đã tạo store: {$tpl['name']} ({$username}) cho {$sellerUser->email}");
+            $created++;
         }
 
-        $this->command->info('Đã tạo thành công ' . count($stores) . ' stores.');
+        $this->command->info("Đã tạo thành công {$created} store(s) (mỗi seller tối đa 1 store).");
     }
 }
