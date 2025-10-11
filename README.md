@@ -38,6 +38,7 @@
 | 1 | 22521413 | Mai Đức Thịnh |[mdt3001](https://github.com/mdt3001) |22521413@gm.uit.edu.vn |
 | 2 | 22521162 | Huỳnh Lê Phương |[wseraskt2004](https://github.com/wseraskt2004) |22521162@gm.uit.edu.vn |
 | 3 | 22521557 | Liên Thặng Quý Trung |[QuyCHunnn](https://github.com/QuyCHunnn) |22521557@gm.uit.edu.vn |
+| 4 | 22521488 | Lê Đức Khánh Toàn |[Croslee](https://github.com/Croslee) |22521488@gm.uit.edu.vn |
 
 ## SEMINAR
 
