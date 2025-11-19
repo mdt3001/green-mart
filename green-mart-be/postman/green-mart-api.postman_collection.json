@@ -1,0 +1,367 @@
+{
+    "info": {
+        "name": "Green Mart API",
+        "_postman_id": "7c39bb34-4e90-4c2e-9d3d-f7b6a2d83bfb",
+        "description": "Collection chứa toàn bộ API auth & seller flow hiện có trong dự án Green Mart BE.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Seller Auth",
+            "item": [
+                {
+                    "name": "Seller Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Seller Test\",\n  \"email\": \"seller{{timestamp}}@example.com\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"phone_number\": \"0901234567\",\n  \"address\": \"123 Street\",\n  \"store_name\": \"Green Store\",\n  \"store_username\": \"green_store_{{timestamp}}\",\n  \"store_email\": \"store{{timestamp}}@example.com\",\n  \"store_description\": \"Fresh groceries\",\n  \"store_address\": \"456 Avenue\",\n  \"store_contact\": \"0903334444\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/seller/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "seller",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Seller Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"seller@example.com\",\n  \"password\": \"Password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/seller/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "seller",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Seller Activate (token email)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"token\": \"{{sellerActivationToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/seller/activate",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "seller",
+                                "activate"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Customer Auth",
+            "item": [
+                {
+                    "name": "Customer Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Customer Test\",\n  \"email\": \"customer{{timestamp}}@example.com\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"phone_number\": \"0988888888\",\n  \"address\": \"789 Road\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/customer/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "customer",
+                                "register"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Customer Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/customer/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "customer",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Customer Login Google",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"token\": \"<google_id_token>\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/customer/login/google",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "customer",
+                                "login",
+                                "google"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Password",
+            "item": [
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/password/forgot",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "password",
+                                "forgot"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"token\": \"<reset_token>\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/password/reset",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "password",
+                                "reset"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin Seller Approval",
+            "item": [
+                {
+                    "name": "List Pending Sellers",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/sellers/pending",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "sellers",
+                                "pending"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Approve Seller Store",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"note\": \"Documents verified\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/sellers/{{storeId}}/approve",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "sellers",
+                                "{{storeId}}",
+                                "approve"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Reject Seller Store",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"reason\": \"Thiếu giấy tờ hợp lệ\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/sellers/{{storeId}}/reject",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "sellers",
+                                "{{storeId}}",
+                                "reject"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8000"
+        },
+        {
+            "key": "adminToken",
+            "value": ""
+        },
+        {
+            "key": "storeId",
+            "value": ""
+        },
+        {
+            "key": "sellerActivationToken",
+            "value": ""
+        },
+        {
+            "key": "timestamp",
+            "value": "{{timestamp}}"
+        }
+    ]
+}

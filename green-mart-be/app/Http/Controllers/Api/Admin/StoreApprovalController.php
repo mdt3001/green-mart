@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\SellerApprovalRequest;
-use App\Http\Requests\Admin\SellerRejectionRequest;
 use App\Mail\SellerApproved;
 use App\Mail\SellerRejected;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -40,15 +39,27 @@ class StoreApprovalController extends Controller
         ]);
     }
 
-    public function approve(Store $store, SellerApprovalRequest $request)
+    public function approve(Store $store, Request $request)
     {
         $this->ensureAdmin($request->user());
+
+        $validator = Validator::make($request->all(), [
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors(),
+            ]);
+        }
 
         if ($store->status !== 'pending') {
             return response()->json([
                 'success' => false,
                 'message' => 'Cửa hàng đã được xử lý trước đó.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ]);
         }
 
         $store->loadMissing('user');
@@ -63,7 +74,6 @@ class StoreApprovalController extends Controller
             ]);
 
             $store->user->forceFill([
-                'status' => 'active',
                 'activation_token' => $activationToken,
             ])->save();
         });
@@ -76,15 +86,27 @@ class StoreApprovalController extends Controller
         ]);
     }
 
-    public function reject(Store $store, SellerRejectionRequest $request)
+    public function reject(Store $store, Request $request)
     {
         $this->ensureAdmin($request->user());
+
+        $validator = Validator::make($request->all(), [
+            'reason' => 'required|string|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors(),
+            ]);
+        }
 
         if ($store->status !== 'pending') {
             return response()->json([
                 'success' => false,
                 'message' => 'Cửa hàng đã được xử lý trước đó.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ]);
         }
 
         $store->loadMissing('user');
@@ -92,7 +114,7 @@ class StoreApprovalController extends Controller
         $store->update([
             'status' => 'rejected',
             'is_active' => false,
-            'reject_reason' => $request->input('reason'),
+            'reject_reason' => $validator->validated()['reason'],
         ]);
 
         Mail::to($store->user->email)->send(new SellerRejected($store->fresh('user')));
