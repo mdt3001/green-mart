@@ -14,11 +14,17 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('username')->unique()->nullable(false);
             $table->string('address')->nullable();
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
-            $table->boolean('is_active')->default(true);
-            $table->string('logo')->nullable();
             $table->string('email')->unique()->nullable(false);
             $table->string('contact')->nullable();
+            $table->string('logo')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'suspended'])->default('pending');
+            $table->boolean('is_active')->default(false);
+            $table->text('reject_reason')->nullable();
+            $table->string('BRCTaxCode')->nullable();
+            $table->string('BRCNumber')->nullable();
+            $table->date('BRCDateOfissue')->nullable();
+            $table->string('BRCPlaceOfissue')->nullable();
+            $table->json('BRCImages')->nullable();
             $table->timestamps();
 
             $table->index('user_id', 'idx_user_id');

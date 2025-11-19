@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $keyType = 'string';
     public $incrementing = false;
@@ -24,6 +25,19 @@ class Store extends Model
         'logo',
         'email',
         'contact',
+        'reject_reason',
+        'BRCTaxCode',
+        'BRCNumber',
+        'BRCDateOfissue',
+        'BRCPlaceOfissue',
+        'BRCImages',
+    ];
+
+
+    protected $casts = [
+        'BRCDateOfissue' => 'date',
+        'BRCImages' => 'array', // Lưu JSON dưới dạng array
+        'is_active' => 'boolean',
     ];
 
     // Relationships

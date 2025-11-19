@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class RolePermissionController
 {
     /**
      * Display a listing of the resource.
@@ -12,7 +12,6 @@ class UserController extends Controller
     public function index()
     {
         //
-        return ['a'];
     }
 
     /**

@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Http\Controllers\Api\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SellerApprovalRequest;
+use App\Http\Requests\Admin\SellerRejectionRequest;
+use App\Mail\SellerApproved;
+use App\Mail\SellerRejected;
+use App\Models\Store;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
+
+class StoreApprovalController extends Controller
+{
+    public function index(Request $request)
+    {
+        $this->ensureAdmin($request->user());
+
+        $stores = Store::with('user:id,name,email,status')
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->input('status')))
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->where(function ($sub) use ($search) {
+                    $sub->where('name', 'like', $search)
+                        ->orWhere('email', 'like', $search)
+                        ->orWhere('username', 'like', $search)
+                        ->orWhereHas('user', fn ($q) => $q->where('name', 'like', $search)->orWhere('email', 'like', $search));
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate($request->integer('per_page', 15));
+
+        return response()->json([
+            'success' => true,
+            'data' => $stores,
+        ]);
+    }
+
+    public function approve(Store $store, SellerApprovalRequest $request)
+    {
+        $this->ensureAdmin($request->user());
+
+        if ($store->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cửa hàng đã được xử lý trước đó.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $store->loadMissing('user');
+
+        $activationToken = Str::random(60);
+
+        DB::transaction(function () use ($store, $activationToken) {
+            $store->update([
+                'status' => 'approved',
+                'is_active' => true,
+                'reject_reason' => null,
+            ]);
+
+            $store->user->forceFill([
+                'status' => 'active',
+                'activation_token' => $activationToken,
+            ])->save();
+        });
+
+        Mail::to($store->user->email)->send(new SellerApproved($store->fresh('user'), $activationToken));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cửa hàng đã được duyệt.',
+        ]);
+    }
+
+    public function reject(Store $store, SellerRejectionRequest $request)
+    {
+        $this->ensureAdmin($request->user());
+
+        if ($store->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cửa hàng đã được xử lý trước đó.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $store->loadMissing('user');
+
+        $store->update([
+            'status' => 'rejected',
+            'is_active' => false,
+            'reject_reason' => $request->input('reason'),
+        ]);
+
+        Mail::to($store->user->email)->send(new SellerRejected($store->fresh('user')));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã từ chối cửa hàng.',
+        ]);
+    }
+
+    private function ensureAdmin($user): void
+    {
+        if (!$user || !$user->roles()->where('name', 'admin')->exists()) {
+            abort(Response::HTTP_FORBIDDEN, 'Bạn không có quyền thực hiện thao tác này.');
+        }
+    }
+}
