@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
+
     Route::post('seller/register', [SellerRegisterController::class, 'register']);
     Route::post('seller/login', [SellerAuthController::class, 'login']);
     Route::post('seller/activate', [SellerActivationController::class, 'activate']);
@@ -28,7 +29,11 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+    Route::post('dashboard', [DashboardController::class, 'index']);
     Route::get('sellers/pending', [StoreApprovalController::class, 'index']);
     Route::post('sellers/{store}/approve', [StoreApprovalController::class, 'approve']);
     Route::post('sellers/{store}/reject', [StoreApprovalController::class, 'reject']);
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{order}', [OrderController::class, 'show']);
+    Route::put('orders/{order}', [OrderController::class, 'update']);    
 });
