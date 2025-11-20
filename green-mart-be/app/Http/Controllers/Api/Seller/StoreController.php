@@ -1,48 +1,84 @@
 <?php
-
 namespace App\Http\Controllers\Api\Seller;
-
+use App\Http\Controllers\Controller;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class StoreController
+class StoreController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
     {
-        //
+        $this->cloudinaryService = $cloudinaryService;
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Lấy thông tin cửa hàng của seller
      */
-    public function store(Request $request)
+    public function show(Request $request)
     {
-        //
+        $store = $request->user()->store()->with('user:id,name,email,phone_number')->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $store,
+        ]);
     }
 
     /**
-     * Display the specified resource.
+     * Cập nhật thông tin cửa hàng
      */
-    public function show(string $id)
+    public function update(Request $request)
     {
-        //
-    }
+        $store = $request->user()->store;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:500',
+            'contact' => 'nullable|string|max:20',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $data = $validator->validated();
+
+            // Upload logo nếu có
+            if ($request->hasFile('logo')) {
+                // Xóa logo cũ nếu có
+                if ($store->logo) {
+                    $this->cloudinaryService->deleteImage($store->logo);
+                }
+
+                $data['logo'] = $this->cloudinaryService->uploadImage(
+                    $request->file('logo'),
+                    'green-mart/stores/logos'
+                );
+            }
+
+            $store->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật cửa hàng thành công',
+                'data' => $store->fresh(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
