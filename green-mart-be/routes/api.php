@@ -43,6 +43,7 @@ Route::prefix('public')->group(function () {
 
     // Categories
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories/{category}/subcategories', [CategoryController::class, 'subcategories']);  // Thêm mới
     Route::get('categories/{category}/products', [CategoryController::class, 'products']);
 
     // Stores

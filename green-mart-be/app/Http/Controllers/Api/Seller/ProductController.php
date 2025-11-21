@@ -31,13 +31,19 @@ class ProductController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', $search)
                         ->orWhere('description', 'like', $search)
-                        ->orWhere('category', 'like', $search);
+                        ->orWhere('category', 'like', $search)
+                        ->orWhere('subcategory', 'like', $search);  // Thêm mới
                 });
             })
             ->when(
                 $request->filled('category'),
                 fn($query) =>
                 $query->where('category', $request->input('category'))
+            )
+            ->when(
+                $request->filled('subcategory'),
+                fn($query) =>
+                $query->where('subcategory', $request->input('subcategory'))
             )
             ->when(
                 $request->filled('in_stock'),
@@ -67,6 +73,7 @@ class ProductController extends Controller
             'mrp' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0|lte:mrp',
             'category' => 'nullable|string|max:255',
+            'subcategory' => 'nullable|string|max:255',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
@@ -99,6 +106,7 @@ class ProductController extends Controller
                 'mrp' => $data['mrp'],
                 'price' => $data['price'],
                 'category' => $data['category'] ?? null,
+                'subcategory' => $data['subcategory'] ?? null,  // Thêm mới
                 'images' => $imageUrls,
                 'store_id' => $store->id,
             ]);
@@ -165,6 +173,7 @@ class ProductController extends Controller
             'mrp' => 'sometimes|numeric|min:0',
             'price' => 'sometimes|numeric|min:0|lte:mrp',
             'category' => 'nullable|string|max:255',
+            'subcategory' => 'nullable|string|max:255',  // Thêm mới
             'in_stock' => 'boolean',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
@@ -266,7 +275,8 @@ class ProductController extends Controller
     /*
      * Thay đổi trạng thái kho hàng của sản phẩm
      */
-    public function toggleStockStatus(Request $request, string $id){
+    public function toggleStockStatus(Request $request, string $id)
+    {
         $store = $request->user()->store;
 
         $product = Product::where('id', $id)
@@ -283,7 +293,7 @@ class ProductController extends Controller
         try {
             $product->in_stock = !$product->in_stock;
             $product->save();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Thay đổi trạng thái kho hàng thành công',
@@ -295,6 +305,5 @@ class ProductController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
 }

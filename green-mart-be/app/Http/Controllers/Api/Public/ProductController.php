@@ -19,13 +19,19 @@ class ProductController extends Controller
                 $search = '%' . $request->input('search') . '%';
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', $search)
-                        ->orWhere('description', 'like', $search);
+                        ->orWhere('description', 'like', $search)
+                        ->orWhere('subcategory', 'like', $search);  // Thêm mới
                 });
             })
             ->when(
                 $request->filled('category'),
                 fn($query) =>
                 $query->where('category', $request->input('category'))
+            )
+            ->when(
+                $request->filled('subcategory'),
+                fn($query) =>   // Thêm mới
+                $query->where('subcategory', $request->input('subcategory'))
             )
             ->when(
                 $request->filled('min_price'),

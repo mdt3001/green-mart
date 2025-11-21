@@ -20,6 +20,7 @@ class Product extends Model
         'price',
         'images',
         'category',
+        'subcategory',
         'in_stock',
         'store_id',
     ];
