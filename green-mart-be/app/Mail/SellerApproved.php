@@ -11,7 +11,7 @@ class SellerApproved extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Store $store, public string $activationToken)
+    public function __construct(public Store $store)
     {
     }
 
@@ -23,7 +23,6 @@ class SellerApproved extends Mailable
             ->view('emails.seller.approved', [
                 'store' => $this->store,
                 'user' => $this->store->user,
-                'activationToken' => $this->activationToken,
                 'sellerPortalUrl' => $sellerPortal,
             ]);
     }

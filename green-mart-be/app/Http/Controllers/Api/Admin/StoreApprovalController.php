@@ -20,14 +20,14 @@ class StoreApprovalController extends Controller
         $this->ensureAdmin($request->user());
 
         $stores = Store::with('user:id,name,email,status')
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->input('status')))
+            ->when($request->filled('status'), fn($query) => $query->where('status', $request->input('status')))
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->where(function ($sub) use ($search) {
                     $sub->where('name', 'like', $search)
                         ->orWhere('email', 'like', $search)
                         ->orWhere('username', 'like', $search)
-                        ->orWhereHas('user', fn ($q) => $q->where('name', 'like', $search)->orWhere('email', 'like', $search));
+                        ->orWhereHas('user', fn($q) => $q->where('name', 'like', $search)->orWhere('email', 'like', $search));
                 });
             })
             ->orderByDesc('created_at')
@@ -38,6 +38,7 @@ class StoreApprovalController extends Controller
             'data' => $stores,
         ]);
     }
+
 
     public function approve(Store $store, Request $request)
     {
@@ -64,21 +65,20 @@ class StoreApprovalController extends Controller
 
         $store->loadMissing('user');
 
-        $activationToken = Str::random(60);
 
-        DB::transaction(function () use ($store, $activationToken) {
+        DB::transaction(function () use ($store) {
             $store->update([
                 'status' => 'approved',
                 'is_active' => true,
                 'reject_reason' => null,
             ]);
 
-            $store->user->forceFill([
-                'activation_token' => $activationToken,
-            ])->save();
+            $store->user->update([
+                'status' => 'active',
+            ]);
         });
 
-        Mail::to($store->user->email)->send(new SellerApproved($store->fresh('user'), $activationToken));
+        Mail::to($store->user->email)->send(new SellerApproved($store->fresh('user')));
 
         return response()->json([
             'success' => true,

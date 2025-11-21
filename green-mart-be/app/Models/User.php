@@ -25,17 +25,18 @@ class User extends Authenticatable
 		'address',
 		'image',
 		'cart',
-		'activation_token',
+		'verification_code',
+		'verification_code_expires_at',
 		'google_id',
-		'password_reset_token',
-		'password_reset_expires_at',
+		'password_reset_code',
+		'password_reset_code_expires_at',
 	];
 
 	protected $hidden = [
 		'password',
 		'remember_token',
-		'activation_token',
 		'password_reset_token',
+		'verification_code',
 	];
 
 	protected $casts = [
@@ -43,7 +44,8 @@ class User extends Authenticatable
 		'password' => 'hashed',
 		'cart' => 'array',
 		'status' => 'string',
-		'password_reset_expires_at' => 'datetime',
+		'password_reset_code_expires_at' => 'datetime',
+		'verification_code_expires_at' => 'datetime',
 	];
 
 	public function stores()

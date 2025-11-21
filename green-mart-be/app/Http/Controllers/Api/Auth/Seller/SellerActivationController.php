@@ -1,4 +1,5 @@
 <?php
+// filepath: app/Http/Controllers/Api/Auth/Seller/SellerActivationController.php
 
 namespace App\Http\Controllers\Api\Auth\Seller;
 
@@ -9,52 +10,54 @@ use Illuminate\Support\Facades\Validator;
 
 class SellerActivationController extends Controller
 {
-    public function activate(Request $request)
+    /**
+     * Kiểm tra trạng thái store của seller
+     */
+    public function checkStoreStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
+            'email' => 'required|email',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Token không hợp lệ',
-                'errors' => $validator->errors(),
+                'message' => 'Email không hợp lệ',
+                'errors' => $validator->errors()
             ], 422);
         }
 
         $user = User::with('store')
-            ->where('activation_token', $request->input('token'))
-            ->whereHas('roles', fn ($query) => $query->where('name', 'seller'))
+            ->where('email', $request->email)
+            ->whereHas('roles', fn($query) => $query->where('name', 'seller'))
             ->first();
 
         if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Token đã được sử dụng hoặc không tồn tại',
+                'message' => 'Không tìm thấy tài khoản seller'
             ], 404);
         }
 
-        if (!$user->store || $user->store->status !== 'approved' || !$user->store->is_active) {
+        if (!$user->store) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cửa hàng chưa được phê duyệt',
-            ], 403);
+                'message' => 'Không tìm thấy thông tin cửa hàng'
+            ], 404);
         }
 
-        $user->forceFill([
-            'activation_token' => null,
-            'email_verified_at' => now(),
-            'status' => 'active',
-        ])->save();
-
-        $token = $user->createToken('seller_token', ['seller'])->plainTextToken;
+        $store = $user->store;
 
         return response()->json([
             'success' => true,
-            'message' => 'Tài khoản đã được kích hoạt, bạn có thể đăng nhập ngay.',
-            'token' => $token,
-            'token_type' => 'Bearer',
+            'data' => [
+                'email_verified' => $user->email_verified_at !== null,
+                'store_status' => $store->status, // pending, approved, rejected
+                'store_active' => $store->is_active,
+                'store_name' => $store->name,
+                'reject_reason' => $store->reject_reason,
+                'can_login' => $store->status === 'approved' && $store->is_active && $user->email_verified_at,
+            ]
         ]);
     }
 }

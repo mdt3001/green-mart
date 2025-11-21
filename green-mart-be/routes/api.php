@@ -72,12 +72,15 @@ Route::prefix('auth')->group(function () {
     Route::post('seller/register', [SellerRegisterController::class, 'register']);
     Route::post('seller/login', [SellerAuthController::class, 'login']);
     Route::post('seller/activate', [SellerActivationController::class, 'activate']);
+    Route::post('seller/verify-email', [SellerRegisterController::class, 'verifyEmail']);
+    Route::post('seller/resend-verification', [SellerRegisterController::class, 'resendVerificationCode']);
+    Route::post('seller/check-store-status', [SellerActivationController::class, 'checkStoreStatus']);
 
     Route::post('customer/register', [CustomerRegisterController::class, 'register']);
     Route::post('customer/login', [CustomerAuthController::class, 'login']);
     Route::post('customer/login/google', [SocialLoginController::class, 'googleLogin']);
     Route::post('customer/verify-email', [CustomerRegisterController::class, 'verifyEmail']);
-
+    Route::post('customer/resend-verification', [CustomerRegisterController::class, 'resendVerificationCode']);
     Route::post('password/forgot', [PasswordController::class, 'forgotPassword']);
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
 });
@@ -87,8 +90,8 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::post('dashboard', [DashboardController::class, 'index']);
     Route::get('sellers/pending', [StoreApprovalController::class, 'index']);
-    Route::post('sellers/{store}/approve', [StoreApprovalController::class, 'approve']);
-    Route::post('sellers/{store}/reject', [StoreApprovalController::class, 'reject']);
+    Route::post('sellers/approve/{store}', [StoreApprovalController::class, 'approve']);
+    Route::post('sellers/reject/{store}', [StoreApprovalController::class, 'reject']);
     Route::get('orders', [OrderController::class, 'index']);
     Route::get('orders/{order}', [OrderController::class, 'show']);
     Route::put('orders/{order}', [OrderController::class, 'update']);    

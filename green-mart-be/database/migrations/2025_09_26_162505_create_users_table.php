@@ -18,7 +18,6 @@ return new class extends Migration {
 			$table->string('address')->nullable();
 			$table->string('image')->nullable();
 			$table->json('cart')->nullable();
-			$table->string('activation_token')->nullable();
 			$table->string('google_id')->nullable();
 
 			// Password reset flow
