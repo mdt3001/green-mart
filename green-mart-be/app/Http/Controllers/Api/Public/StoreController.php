@@ -2,47 +2,83 @@
 
 namespace App\Http\Controllers\Api\Public;
 
+use App\Http\Controllers\Controller;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
-class StoreController
+class StoreController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Danh sách stores
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $stores = Store::where('is_active', true)
+            ->where('status', 'approved')
+            ->withCount('products')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', $search)
+                        ->orWhere('description', 'like', $search);
+                });
+            })
+            ->paginate($request->integer('per_page', 20));
+
+        return response()->json([
+            'success' => true,
+            'data' => $stores,
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Chi tiết store
      */
-    public function store(Request $request)
+    public function show(string $username)
     {
-        //
+        $store = Store::where('username', $username)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->withCount('products')
+            ->first();
+
+        if (!$store) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy cửa hàng',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $store,
+        ]);
     }
 
     /**
-     * Display the specified resource.
+     * Sản phẩm của store
      */
-    public function show(string $id)
+    public function products(Request $request, string $username)
     {
-        //
-    }
+        $store = Store::where('username', $username)
+            ->where('is_active', true)
+            ->where('status', 'approved')
+            ->first();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if (!$store) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy cửa hàng',
+            ], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $products = $store->products()
+            ->where('in_stock', true)
+            ->paginate($request->integer('per_page', 20));
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+        ]);
     }
 }
