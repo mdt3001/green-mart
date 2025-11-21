@@ -10,7 +10,6 @@ use App\Http\Controllers\Api\Auth\Customer\CustomerAuthController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\SocialLoginController;
 use App\Http\Controllers\Api\Seller\AnalyticsController;
-use App\Http\Controllers\Api\Seller\OrderController;
 use App\Http\Controllers\Api\Seller\ProductController;
 use App\Http\Controllers\Api\Seller\StoreController;
 use App\Http\Middleware\CheckSellerApproved;
