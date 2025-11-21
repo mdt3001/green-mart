@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\StoreApprovalController;
 use App\Http\Controllers\Api\Auth\Seller\SellerActivationController;
 use App\Http\Controllers\Api\Auth\Seller\SellerAuthController;
@@ -67,6 +69,7 @@ Route::prefix('public')->group(function () {
 //auth    
 
 Route::prefix('auth')->group(function () {
+
     Route::post('seller/register', [SellerRegisterController::class, 'register']);
     Route::post('seller/login', [SellerAuthController::class, 'login']);
     Route::post('seller/activate', [SellerActivationController::class, 'activate']);
@@ -83,9 +86,13 @@ Route::prefix('auth')->group(function () {
 //admin
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+    Route::post('dashboard', [DashboardController::class, 'index']);
     Route::get('sellers/pending', [StoreApprovalController::class, 'index']);
     Route::post('sellers/{store}/approve', [StoreApprovalController::class, 'approve']);
     Route::post('sellers/{store}/reject', [StoreApprovalController::class, 'reject']);
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{order}', [OrderController::class, 'show']);
+    Route::put('orders/{order}', [OrderController::class, 'update']);    
 });
 
 //seller
