@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\StoreApprovalController;
 use App\Http\Controllers\Api\Auth\Seller\SellerActivationController;
 use App\Http\Controllers\Api\Auth\Seller\SellerAuthController;
