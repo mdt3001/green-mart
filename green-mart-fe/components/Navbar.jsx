@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Search,
   ShoppingCart,
@@ -12,16 +13,16 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { assets } from "@/assets/assets";
 import { usePathname } from "next/navigation";
-import { useUser, useClerk, UserButton } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
+import { UserDropdown } from "@/components/UserDropdown";
 
 const Navbar = () => {
-  const { user } = useUser();
-  const { openSignIn } = useClerk();
   const router = useRouter();
+  const { user, loading } = useAuth();
 
   const [search, setSearch] = useState("");
   const cartCount = useSelector((state) => state.cart.total);
-  const pathname = usePathname(); // Lấy đường dẫn hiện tại
+  const pathname = usePathname();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ const Navbar = () => {
   return (
     <nav className="relative bg-white">
       <div className="mx-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto py-4  transition-all">
+        <div className="flex items-center justify-between max-w-7xl mx-auto py-4 transition-all">
           <Link
             href="/"
             className="relative text-4xl font-semibold text-slate-700"
@@ -48,7 +49,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden sm:flex items-center gap-4 lg:gap-8 text-gray-7 ">
+          <div className="hidden sm:flex items-center gap-4 lg:gap-8 text-gray-7">
             <Link
               className={`hover:text-primary transition ${
                 pathname === "/" ? "text-primary" : ""
@@ -100,7 +101,7 @@ const Navbar = () => {
             <div className="flex items-center gap-2 lg:gap-4">
               <Link
                 href="/wishlist"
-                className="relative flex items-center text-gray-7  transition"
+                className="relative flex items-center text-gray-7 transition"
               >
                 <Heart size={18} className="hover:text-primary transition" />
               </Link>
@@ -115,52 +116,40 @@ const Navbar = () => {
                   className="hover:text-primary transition"
                   size={18}
                 />
-                <button className="absolute -top-1 left-3 text-[8px] text-white bg-primary-hard size-3.5 rounded-full">
-                  {cartCount}
-                </button>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 left-3 text-[8px] text-white bg-primary-hard size-3.5 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </div>
 
-            {!user ? (
-              <button onClick={openSignIn} className="btn btn-fill btn-md">
-                Login
-              </button>
-            ) : (
-              <UserButton>
-                <UserButton.MenuItems>
-                  <UserButton.Action
-                    labelIcon={<PackageIcon size={16} />}
-                    label="My Orders"
-                    onClick={() => router.push("/orders")}
-                  />
-                </UserButton.MenuItems>
-              </UserButton>
+            {/* Auth Section */}
+            {!loading && (
+              <>
+                {!user ? (
+                  <Link href="/login">
+                    <button className="btn btn-fill btn-md">Login</button>
+                  </Link>
+                ) : (
+                  <UserDropdown />
+                )}
+              </>
             )}
           </div>
 
-          {/* Mobile User Button  */}
+          {/* Mobile User Button */}
           <div className="sm:hidden">
-            {!user ? (
-              <button onClick={openSignIn} className="btn btn-fill btn-md">
-                Login
-              </button>
-            ) : (
-              <div>
-                <UserButton>
-                  <UserButton.MenuItems>
-                    <UserButton.Action
-                      labelIcon={<ShoppingCart size={16} />}
-                      label="Cart"
-                      onClick={() => router.push("/cart")}
-                    />
-                    <UserButton.Action
-                      labelIcon={<PackageIcon size={16} />}
-                      label="My Orders"
-                      onClick={() => router.push("/orders")}
-                    />
-                  </UserButton.MenuItems>
-                </UserButton>
-              </div>
+            {!loading && (
+              <>
+                {!user ? (
+                  <Link href="/login">
+                    <button className="btn btn-fill btn-md">Login</button>
+                  </Link>
+                ) : (
+                  <UserDropdown />
+                )}
+              </>
             )}
           </div>
         </div>
