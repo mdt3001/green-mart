@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { sellerStep1Schema, sellerStep2Schema } from "@/lib/validations/auth";
+import { sellerRegisterSchema } from "@/lib/validations/auth";
 import { SellerStep1 } from "./_components/SellerStep1";
 import { SellerStep2 } from "./_components/SellerStep2";
 import Link from "next/link";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 
@@ -27,9 +27,8 @@ export default function SellerRegisterPage() {
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(
-      currentStep === 1 ? sellerStep1Schema : sellerStep2Schema
-    ),
+    resolver: zodResolver(sellerRegisterSchema),
+    mode: "onChange",
     defaultValues: {
       name: "",
       email: "",
@@ -59,26 +58,38 @@ export default function SellerRegisterPage() {
 
       Object.keys(data).forEach((key) => {
         if (key === "brc_images" && data[key]) {
-          Array.from(data[key]).forEach((file) => {
-            formData.append("brc_images[]", file);
-          });
+          // Xử lý multiple images
+          if (Array.isArray(data[key])) {
+            data[key].forEach((file) => {
+              formData.append("brc_images[]", file);
+            });
+          } else {
+            formData.append("brc_images[]", data[key]);
+          }
         } else if (key === "store_logo" && data[key]) {
-          formData.append(key, data[key]);
+          // Xử lý single logo
+          formData.append("store_logo", data[key]);
         } else if (data[key] !== undefined && data[key] !== "") {
           formData.append(key, data[key]);
         }
       });
 
-      await axiosInstance.post(apiPaths.auth.sellerRegister, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      console.log("Form Data Entries:", Array.from(formData.entries()));
 
-      toast.success(
-        "Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản."
+      const response = await axiosInstance.post(
+        API_PATHS.AUTH.SELLER_REGISTER,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      router.push("/login");
+      toast.success(
+        response?.data?.message ||
+          "Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản."
+      );
+      router.push("/login/seller");
     } catch (error) {
       toast.error(error.response?.data?.message || "Đăng ký thất bại!");
     } finally {
@@ -165,19 +176,10 @@ export default function SellerRegisterPage() {
           <p className="text-muted-foreground">
             Đã có tài khoản?{" "}
             <Link
-              href="/login"
+              href="/login/seller"
               className="text-primary hover:underline font-medium"
             >
               Đăng nhập ngay
-            </Link>
-          </p>
-          <p className="text-muted-foreground">
-            Bạn là khách hàng?{" "}
-            <Link
-              href="/register/customer"
-              className="text-primary hover:underline font-medium"
-            >
-              Đăng ký tài khoản khách hàng
             </Link>
           </p>
         </div>

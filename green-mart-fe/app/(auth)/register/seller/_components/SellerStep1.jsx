@@ -33,7 +33,7 @@ export function SellerStep1({ form, onNext }) {
         name="name"
         label="Họ và tên *"
         control={form.control}
-        placeholder="Mai Đức Thịnh"
+        placeholder="Nguyễn Văn A"
       />
 
       <RHFInput
@@ -41,7 +41,7 @@ export function SellerStep1({ form, onNext }) {
         label="Email *"
         control={form.control}
         type="email"
-        placeholder="thinh3012004@gmail.com"
+        placeholder="example@example.com"
       />
 
       <RHFInput

@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { loginSchema } from "@/lib/validations/auth";
 import Link from "next/link";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        apiPaths.auth.customerLogin,
+        API_PATHS.AUTH.CUSTOMER_LOGIN,
         data
       );
       const result = response.data;

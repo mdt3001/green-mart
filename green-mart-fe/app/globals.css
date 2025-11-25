@@ -9,7 +9,7 @@
 ======================== */
 @theme {
   /* Typography */
-  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
   --font-size-5xl: 3rem; /* Equivalent to text-5xl */
   --font-size-4xl: 2.25rem; /* Equivalent to text-4xl */
   --font-size-3xl: 1.875rem; /* Equivalent to text-3xl */
@@ -24,8 +24,8 @@
   --font-weight-semibold: 600;
 
   /* Colors */
-  --color-primary: #00b207 !important; 
-  --color-primary-soft: #84D187;
+  --color-primary: #00b207 !important;
+  --color-primary-soft: #84d187;
   --color-primary-hard: #2c742f;
   --color-warning: #ff8a00;
   --color-danger: #ea4b48;
@@ -37,8 +37,8 @@
   --color-gray-5: #bdbdbd;
   --color-gray-4: #e0e0e0;
   --color-gray-3: #f2f2f2;
-  --color-gray-2: #B4CCB4;
-  --color-gray-1: #DAE5DA;
+  --color-gray-2: #b4ccb4;
+  --color-gray-1: #dae5da;
   --color-greenGray-9: #0d3b1f;
   --color-greenGray-8: #14532d;
   --color-greenGray-7: #1b5e20;
@@ -264,7 +264,7 @@ button {
 
 .btn-sm {
   padding-left: 1rem; /* Equivalent to px-3 */
-  padding-right:1rem;
+  padding-right: 1rem;
   padding-top: 0.25rem; /* Equivalent to py-1 */
   padding-bottom: 0.25rem;
   font-size: var(--font-size-sm);
@@ -391,18 +391,18 @@ button {
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #00b207; /* Hoặc oklch(0.65 0.2 145) */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --primary-foreground: oklch(1 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #ea4b48; /* Hoặc oklch(0.577 0.245 27.325) */
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: #00b207; /* Ring cũng dùng primary color */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -425,8 +425,8 @@ button {
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #84d187; /* Primary soft cho dark mode */
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);

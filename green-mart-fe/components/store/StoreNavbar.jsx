@@ -1,22 +1,36 @@
-'use client'
-import Link from "next/link"
+"use client";
+import { Bell, Menu } from "lucide-react";
+import Link from "next/link";
+import StoreUserDropdown from "./StoreUserDropdown";
 
-const StoreNavbar = () => {
-
-
-    return (
-        <div className="flex items-center justify-between px-12 py-3 border-b border-slate-200 transition-all">
-            <Link href="/" className="relative text-4xl font-semibold text-slate-700">
-                <span className="text-green-600">go</span>cart<span className="text-green-600 text-5xl leading-0">.</span>
-                <p className="absolute text-xs font-semibold -top-1 -right-11 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
-                    Store
-                </p>
-            </Link>
-            <div className="flex items-center gap-3">
-                <p>Hi, Seller</p>
-            </div>
+const StoreNavbar = ({ storeInfo }) => {
+  return (
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
+      <div className="flex items-center justify-between px-6 py-4">
+        {/* Left Side - Logo */}
+        <div className="flex items-center gap-4">
+          <button className="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
+            <Menu size={24} />
+          </button>
+          <Link href="/store" className="text-2xl font-bold text-green-600">
+            GreenMart <span className="text-slate-800">Seller</span>
+          </Link>
         </div>
-    )
-}
 
-export default StoreNavbar
+        {/* Right Side - Actions */}
+        <div className="flex items-center gap-4">
+          {/* Notifications */}
+          <button className="relative p-2 hover:bg-slate-100 rounded-lg">
+            <Bell size={22} className="text-slate-600" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+
+          {/* User Dropdown */}
+          <StoreUserDropdown storeInfo={storeInfo} />
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default StoreNavbar;

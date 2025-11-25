@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { forgotPasswordSchema } from "@/lib/validations/auth";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 
@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await axiosInstance.post(apiPaths.auth.passwordForgot, data);
+      await axiosInstance.post(API_PATHS.AUTH.PASSWORD_FORGOT, data);
 
       setSuccess(true);
       toast.success("Link đặt lại mật khẩu đã được gửi đến email của bạn!");

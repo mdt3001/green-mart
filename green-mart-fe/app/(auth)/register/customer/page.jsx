@@ -16,7 +16,7 @@ import { RHFInput } from "@/components/ui/rhf-input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { customerRegisterSchema } from "@/lib/validations/auth";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -41,7 +41,7 @@ export default function CustomerRegisterPage() {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        apiPaths.auth.customerRegister,
+        API_PATHS.AUTH.CUSTOMER_REGISTER,
         data
       );
 
@@ -126,19 +126,10 @@ export default function CustomerRegisterPage() {
           <p className="text-muted-foreground">
             Đã có tài khoản?{" "}
             <Link
-              href="/login"
+              href="/login/customer"
               className="text-primary hover:underline font-medium"
             >
               Đăng nhập ngay
-            </Link>
-          </p>
-          <p className="text-muted-foreground">
-            Bạn muốn bán hàng?{" "}
-            <Link
-              href="/register/seller"
-              className="text-primary hover:underline font-medium"
-            >
-              Đăng ký tài khoản người bán
             </Link>
           </p>
         </div>

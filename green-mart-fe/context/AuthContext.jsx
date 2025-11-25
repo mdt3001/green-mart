@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from "react";
 import axiosInstance from "@/lib/axios/axiosInstance";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 
 const AuthContext = createContext();
 
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axiosInstance.get(apiPaths.customer.profile);
+          const response = await axiosInstance.get(API_PATHS.CUSTOMER.PROFILE);
           const data = response.data;
           setUser(data.user || data);
           localStorage.setItem("user", JSON.stringify(data.user || data));
