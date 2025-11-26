@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation"; // 1. Import useRouter
+import Cookies from "js-cookie"; // 2. Import js-cookie
+
 import {
   Card,
   CardContent,
@@ -22,6 +25,7 @@ import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); // Khởi tạo router
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -31,21 +35,43 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = async (data) => {
+  const emailValue = form.watch("email");
+
+  const onSubmit = async (formData) => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
         API_PATHS.AUTH.SELLER_LOGIN,
-        data
+        formData
       );
+
       const result = response.data;
 
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
+    
+      const { token, user, store } = result.data;
+
+      if (!token) {
+        throw new Error("Không tìm thấy token xác thực!");
+      }
+
+      Cookies.set("token", token, { expires: 7, path: "/" });
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      if (store) {
+        localStorage.setItem("store", JSON.stringify(store));
+      }
+
       toast.success("Đăng nhập thành công!");
-      window.location.href = "/store";
+      router.push("/store"); // Chuyển hướng sau khi đăng nhập thành công
+
+      
     } catch (error) {
-      toast.error(error.response?.data?.message || "Đăng nhập thất bại!");
+      console.error(error);
+      const message =
+        error.response?.data?.message || error.message || "Đăng nhập thất bại!";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +82,7 @@ export default function LoginPage() {
       <CardHeader>
         <CardTitle className="text-2xl text-center">Đăng nhập</CardTitle>
         <CardDescription className="text-center">
-          Đăng nhập vào tài khoản của bạn
+          Đăng nhập vào tài khoản người bán
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,15 +121,31 @@ export default function LoginPage() {
 
         <Separator className="my-6" />
 
-        <p className="text-center text-sm text-muted-foreground">
-          Chưa có tài khoản?{" "}
-          <Link
-            href="/register/seller"
-            className="text-primary hover:underline font-medium"
-          >
-            Đăng ký ngay
-          </Link>
-        </p>
+        <div className="space-y-2 text-center text-sm">
+          <p className="text-muted-foreground">
+            Chưa có tài khoản?{" "}
+            <Link
+              href="/register/seller"
+              className="text-primary hover:underline font-medium"
+            >
+              Đăng ký ngay
+            </Link>
+          </p>
+
+          <p className="text-muted-foreground">
+            Tài khoản chưa kích hoạt?{" "}
+            <Link
+              href={
+                emailValue
+                  ? `/verify-email?email=${encodeURIComponent(emailValue)}`
+                  : "/verify-email"
+              }
+              className="text-primary hover:underline font-medium"
+            >
+              Xác thực ngay
+            </Link>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

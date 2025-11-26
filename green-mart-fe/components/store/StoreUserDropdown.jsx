@@ -27,7 +27,7 @@ const StoreUserDropdown = ({ storeInfo }) => {
 
     // Force redirect sau khi logout
     setTimeout(() => {
-      window.location.replace("/login");
+      window.location.replace("/login/seller");
     }, 0);
   };
 

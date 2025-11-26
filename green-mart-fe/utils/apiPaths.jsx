@@ -4,8 +4,10 @@ export const API_PATHS = {
     PRODUCT_DETAILS: (id) => `api/public/products/${id}`,
     RELATED_PRODUCTS: (id) => `api/public/products/${id}/related`,
     CATEGORIES: "api/public/categories",
-    SUBCATEGORIES: (category) => `api/public/categories/${category}/subcategories`,
-    CATEGORY_PRODUCTS: (category) => `api/public/categories/${category}/products`,
+    SUBCATEGORIES: (category) =>
+      `api/public/categories/${category}/subcategories`,
+    CATEGORY_PRODUCTS: (category) =>
+      `api/public/categories/${category}/products`,
     STORES: "api/public/stores",
     STORE_DETAILS: (username) => `api/public/stores/${username}`,
     STORE_PRODUCTS: (username) => `api/public/stores/${username}/products`,
@@ -19,6 +21,8 @@ export const API_PATHS = {
     SELLER_REGISTER: "api/auth/seller/register",
     SELLER_LOGIN: "api/auth/seller/login",
     SELLER_ACTIVATE: "api/auth/seller/activate",
+    SELLER_VERIFY_EMAIL: "api/auth/seller/verify-email",
+    SELLER_RESEND_VERIFICATION: "api/auth/seller/resend-verification",
     CUSTOMER_REGISTER: "api/auth/customer/register",
     CUSTOMER_LOGIN: "api/auth/customer/login",
     CUSTOMER_GOOGLE_LOGIN: "api/auth/customer/login/google",

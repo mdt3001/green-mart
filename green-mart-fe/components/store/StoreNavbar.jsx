@@ -2,6 +2,7 @@
 import { Bell, Menu } from "lucide-react";
 import Link from "next/link";
 import StoreUserDropdown from "./StoreUserDropdown";
+import { assets } from "@/assets/assets";
 
 const StoreNavbar = ({ storeInfo }) => {
   return (
@@ -12,8 +13,19 @@ const StoreNavbar = ({ storeInfo }) => {
           <button className="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
             <Menu size={24} />
           </button>
-          <Link href="/store" className="text-2xl font-bold text-green-600">
-            GreenMart <span className="text-slate-800">Seller</span>
+          <Link
+            href="/store"
+            className="relative text-4xl font-semibold text-slate-700"
+          >
+            <img
+              src={assets.logo.src}
+              alt="VietOrganic"
+              className="w-8 inline mr-2 mb-2"
+            />
+            <span className="text-gray-9">GreenMart</span>
+            <p className="absolute text-xs font-semibold -top-1 -right-13 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
+              Store
+            </p>
           </Link>
         </div>
 

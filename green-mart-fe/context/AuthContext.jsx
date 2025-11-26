@@ -68,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("store");
     setUser(null);
     setIsAuthenticated(false);
     window.location.href = "/";

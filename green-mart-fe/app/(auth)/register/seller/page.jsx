@@ -53,6 +53,10 @@ export default function SellerRegisterPage() {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
+
+    // Tạo loading toast
+    const loadingToast = toast.loading("Đang xử lý đăng ký...");
+
     try {
       const formData = new FormData();
 
@@ -85,13 +89,40 @@ export default function SellerRegisterPage() {
           },
         }
       );
+
+      const responseData = response?.data;
+
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
+      // Hiển thị thông báo thành công
       toast.success(
-        response?.data?.message ||
-          "Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản."
+        responseData?.message ||
+          "Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.",
+        { duration: 5000 }
       );
-      router.push("/login/seller");
+      const emailToVerify = responseData?.data?.email;
+      setTimeout(() => {
+        // 2. Truyền email qua URL Query Params
+        // Sử dụng encodeURIComponent để đảm bảo an toàn cho chuỗi URL
+        if (emailToVerify) {
+          router.push(
+            `/verify-email?email=${encodeURIComponent(emailToVerify)}`
+          );
+        } else {
+          // Fallback nếu không lấy được email (hiếm khi xảy ra nếu API đúng chuẩn)
+          router.push(`/verify-email`);
+        }
+      }, 1000);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Đăng ký thất bại!");
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
+      // Hiển thị lỗi
+      const errorMessage = error.response?.data?.message || "Đăng ký thất bại!";
+      toast.error(errorMessage);
+
+      console.error("Registration error:", error);
     } finally {
       setIsLoading(false);
     }

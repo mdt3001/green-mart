@@ -6,17 +6,14 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 10000,
 });
 
 // Request interceptor to add the token to headers
 axiosInstance.interceptors.request.use(
   (config) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = localStorage.getItem("token"); // Adjust based on how you store the token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

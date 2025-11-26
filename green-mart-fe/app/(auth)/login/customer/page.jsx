@@ -31,6 +31,9 @@ export default function LoginPage() {
     },
   });
 
+  // 1. Theo dõi giá trị email để gắn vào link xác thực
+  const emailValue = form.watch("email");
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -56,7 +59,7 @@ export default function LoginPage() {
       <CardHeader>
         <CardTitle className="text-2xl text-center">Đăng nhập</CardTitle>
         <CardDescription className="text-center">
-          Đăng nhập vào tài khoản của bạn
+          Đăng nhập vào tài khoản khách hàng
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,15 +98,33 @@ export default function LoginPage() {
 
         <Separator className="my-6" />
 
-        <p className="text-center text-sm text-muted-foreground">
-          Chưa có tài khoản?{" "}
-          <Link
-            href="/register/customer"
-            className="text-primary hover:underline font-medium"
-          >
-            Đăng ký ngay
-          </Link>
-        </p>
+        {/* Khu vực liên kết bổ sung */}
+        <div className="space-y-2 text-center text-sm">
+          <p className="text-muted-foreground">
+            Chưa có tài khoản?{" "}
+            <Link
+              href="/register/customer"
+              className="text-primary hover:underline font-medium"
+            >
+              Đăng ký ngay
+            </Link>
+          </p>
+
+          {/* 2. Link xác thực tài khoản kèm email param */}
+          <p className="text-muted-foreground">
+            Tài khoản chưa kích hoạt?{" "}
+            <Link
+              href={
+                emailValue
+                  ? `/verify-email?email=${encodeURIComponent(emailValue)}`
+                  : "/verify-email"
+              }
+              className="text-primary hover:underline font-medium"
+            >
+              Xác thực ngay
+            </Link>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
