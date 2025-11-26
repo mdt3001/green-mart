@@ -109,8 +109,8 @@ export default function StoreManageProducts() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-5">
-        <h1 className="text-2xl text-slate-500">
-          Quản lý <span className="text-slate-800 font-medium">Sản phẩm</span>
+        <h1 className="text-2xl text-slate-800 font-medium">
+          Quản lý sản phẩm
         </h1>
         <div className="text-sm text-slate-500">
           Tổng số:{" "}

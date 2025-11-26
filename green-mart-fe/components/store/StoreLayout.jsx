@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 import SellerNavbar from "./StoreNavbar";
 import SellerSidebar from "./StoreSidebar";
-import { dummyStoreData } from "@/assets/assets";
+import { API_PATHS } from "@/utils/apiPaths";
+import axiosInstance from "@/lib/axios/axiosInstance";
 
 const StoreLayout = ({ children }) => {
   const [isSeller, setIsSeller] = useState(false);
@@ -13,9 +14,25 @@ const StoreLayout = ({ children }) => {
   const [storeInfo, setStoreInfo] = useState(null);
 
   const fetchIsSeller = async () => {
-    setIsSeller(true);
-    setStoreInfo(dummyStoreData);
-    setLoading(false);
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(API_PATHS.SELLER.STORE);
+
+      // Response structure: { success: true, data: { ...storeData } }
+      const responseData = response.data;
+
+      if (responseData.success && responseData.data) {
+        setIsSeller(true);
+        setStoreInfo(responseData.data); // Lấy cục data bên trong
+      } else {
+        setIsSeller(false);
+      }
+    } catch (error) {
+      setIsSeller(false);
+      console.error("Error checking seller status:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -26,7 +43,6 @@ const StoreLayout = ({ children }) => {
     <Loading />
   ) : isSeller ? (
     <div className="flex flex-col h-screen">
-      {/* Pass storeInfo to Navbar */}
       <SellerNavbar storeInfo={storeInfo} />
       <div className="flex flex-1 items-start h-full overflow-y-scroll no-scrollbar">
         <SellerSidebar storeInfo={storeInfo} />

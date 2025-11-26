@@ -4,53 +4,11 @@ import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import { toast } from "react-hot-toast";
-import axiosInstance from "@/lib/axios/axiosInstance"; // Đảm bảo đường dẫn đúng
-import { API_PATHS } from "@/utils/apiPaths"; // Đảm bảo đường dẫn đúng
+import axiosInstance from "@/lib/axios/axiosInstance"; 
+import { API_PATHS } from "@/utils/apiPaths"; 
+import { PRODUCT_CATEGORIES } from "@/utils/data";
 
-// Dữ liệu mẫu danh mục (Bạn có thể move ra file constant riêng)
-const PRODUCT_CATEGORIES = [
-  {
-    name: "Rau củ hữu cơ",
-    subcategories: [
-      "Rau ăn lá",
-      "Củ quả",
-      "Rau gia vị",
-      "Nấm các loại",
-      "Rau mầm",
-    ],
-  },
-  {
-    name: "Trái cây",
-    subcategories: [
-      "Trái cây nội địa",
-      "Trái cây nhập khẩu",
-      "Trái cây có múi",
-      "Dưa các loại",
-    ],
-  },
-  {
-    name: "Thịt & Trứng",
-    subcategories: ["Thịt heo sạch", "Thịt bò", "Gia cầm", "Trứng gia cầm"],
-  },
-  {
-    name: "Thủy hải sản",
-    subcategories: [
-      "Cá các loại",
-      "Tôm - Cua - Ghẹ",
-      "Mực - Bạch tuộc",
-      "Hải sản có vỏ",
-    ],
-  },
-  {
-    name: "Gạo & Ngũ cốc",
-    subcategories: [
-      "Gạo đặc sản",
-      "Gạo lứt & Hữu cơ",
-      "Các loại đậu",
-      "Hạt dinh dưỡng",
-    ],
-  },
-];
+
 
 export default function StoreAddProduct() {
   const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null });
