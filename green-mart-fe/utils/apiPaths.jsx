@@ -29,6 +29,7 @@ export const API_PATHS = {
     CUSTOMER_VERIFY_EMAIL: "api/auth/customer/verify-email",
     PASSWORD_FORGOT: "api/auth/password/forgot",
     PASSWORD_RESET: "api/auth/password/reset",
+    ADMIN_LOGIN: "api/auth/admin/login",
   },
   ADMIN: {
     DASHBOARD: "api/admin/dashboard",

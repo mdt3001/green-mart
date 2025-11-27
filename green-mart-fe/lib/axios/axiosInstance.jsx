@@ -30,12 +30,12 @@ axiosInstance.interceptors.response.use(
       if (
         !currentPath.startsWith("/login/seller") &&
         !currentPath.startsWith("/login/customer") &&
+        !currentPath.startsWith("/login/admin") &&
         !currentPath.startsWith("/register/seller") &&
         !currentPath.startsWith("/register/customer")
       ) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.href = "/login/seller";
       }
     }
     return Promise.reject(error);

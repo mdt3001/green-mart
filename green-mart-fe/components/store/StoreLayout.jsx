@@ -17,7 +17,7 @@ const StoreLayout = ({ children }) => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(API_PATHS.SELLER.STORE);
-
+      
       // Response structure: { success: true, data: { ...storeData } }
       const responseData = response.data;
 
@@ -34,7 +34,7 @@ const StoreLayout = ({ children }) => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchIsSeller();
   }, []);
@@ -54,13 +54,13 @@ const StoreLayout = ({ children }) => {
   ) : (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
       <h1 className="text-2xl sm:text-4xl font-semibold text-slate-400">
-        You are not authorized to access this page
+        Bạn không có quyền truy cập vào trang này.
       </h1>
       <Link
         href="/"
         className="bg-slate-700 text-white flex items-center gap-2 mt-8 p-2 px-6 max-sm:text-sm rounded-full"
       >
-        Go to home <ArrowRightIcon size={18} />
+        Về trang chủ <ArrowRightIcon size={18} />
       </Link>
     </div>
   );
