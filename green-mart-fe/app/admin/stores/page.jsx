@@ -1,9 +1,10 @@
 'use client'
-import { storesDummyData } from "@/assets/assets"
 import StoreInfo from "@/components/admin/StoreInfo"
 import Loading from "@/components/Loading"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import axiosInstance from "@/lib/axios/axiosInstance"
+import { API_PATHS } from "@/utils/apiPaths"
 
 export default function AdminStores() {
 
@@ -11,13 +12,30 @@ export default function AdminStores() {
     const [loading, setLoading] = useState(true)
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+        try {
+            const response = await axiosInstance.get(API_PATHS.ADMIN.PENDING_SELLERS + '?status=approved')
+            const data = response.data.data
+            setStores(data.data || [])
+        } catch (error) {
+            console.error('Error fetching stores:', error)
+            toast.error('Failed to load stores')
+        } finally {
+            setLoading(false)
+        }
     }
 
     const toggleIsActive = async (storeId) => {
-        // Logic to toggle the status of a store
-
+        try {
+            // Note: This endpoint might need to be added to the backend
+            // For now, we'll just show a message
+            toast.error('Toggle store status endpoint not implemented yet')
+            // await axiosInstance.post(`api/admin/stores/${storeId}/toggle-active`)
+            // toast.success('Store status updated')
+            // fetchStores()
+        } catch (error) {
+            console.error('Error toggling store status:', error)
+            toast.error('Failed to update store status')
+        }
     }
 
     useEffect(() => {

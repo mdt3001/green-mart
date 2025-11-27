@@ -1,9 +1,10 @@
 'use client'
-import { storesDummyData } from "@/assets/assets"
 import StoreInfo from "@/components/admin/StoreInfo"
 import Loading from "@/components/Loading"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import axiosInstance from "@/lib/axios/axiosInstance"
+import { API_PATHS } from "@/utils/apiPaths"
 
 export default function AdminApprove() {
 
@@ -12,14 +13,41 @@ export default function AdminApprove() {
 
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+        try {
+            const response = await axiosInstance.get(API_PATHS.ADMIN.PENDING_SELLERS + '?status=pending')
+            const data = response.data.data
+            setStores(data.data || [])
+        } catch (error) {
+            console.error('Error fetching stores:', error)
+            toast.error('Failed to load pending stores')
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleApprove = async ({ storeId, status }) => {
-        // Logic to approve a store
-
-
+        try {
+            if (status === 'approved') {
+                await axiosInstance.post(API_PATHS.ADMIN.APPROVE_SELLER(storeId), {
+                    note: 'Approved by admin'
+                })
+                toast.success('Store approved successfully')
+            } else {
+                const reason = prompt('Please enter rejection reason:')
+                if (!reason) {
+                    toast.error('Rejection reason is required')
+                    return
+                }
+                await axiosInstance.post(API_PATHS.ADMIN.REJECT_SELLER(storeId), {
+                    reason: reason
+                })
+                toast.success('Store rejected successfully')
+            }
+            fetchStores()
+        } catch (error) {
+            console.error('Error updating store status:', error)
+            toast.error(error.response?.data?.message || 'Failed to update store status')
+        }
     }
 
     useEffect(() => {

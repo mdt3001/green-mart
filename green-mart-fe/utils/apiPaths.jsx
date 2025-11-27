@@ -34,8 +34,8 @@ export const API_PATHS = {
   ADMIN: {
     DASHBOARD: "api/admin/dashboard",
     PENDING_SELLERS: "api/admin/sellers/pending",
-    APPROVE_SELLER: (store) => `api/admin/sellers/${store}/approve`,
-    REJECT_SELLER: (store) => `api/admin/sellers/${store}/reject`,
+    APPROVE_SELLER: (store) => `api/admin/sellers/approve/${store}`,
+    REJECT_SELLER: (store) => `api/admin/sellers/reject/${store}`,
     ORDERS: "api/admin/orders",
     ORDER_DETAILS: (order) => `api/admin/orders/${order}`,
     UPDATE_ORDER: (order) => `api/admin/orders/${order}`,

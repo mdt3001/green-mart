@@ -1,13 +1,15 @@
 'use client'
-import { dummyAdminDashboardData } from "@/assets/assets"
 import Loading from "@/components/Loading"
 import OrdersAreaChart from "@/components/OrdersAreaChart"
 import { CircleDollarSignIcon, ShoppingBasketIcon, StoreIcon, TagsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
+import axiosInstance from "@/lib/axios/axiosInstance"
+import { API_PATHS } from "@/utils/apiPaths"
+import toast from "react-hot-toast"
 
 export default function AdminDashboard() {
 
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || 'đ'
 
     const [loading, setLoading] = useState(true)
     const [dashboardData, setDashboardData] = useState({
@@ -20,14 +22,29 @@ export default function AdminDashboard() {
 
     const dashboardCardsData = [
         { title: 'Total Products', value: dashboardData.products, icon: ShoppingBasketIcon },
-        { title: 'Total Revenue', value: currency + dashboardData.revenue, icon: CircleDollarSignIcon },
+        { title: 'Total Revenue', value: currency + dashboardData.revenue.toLocaleString(), icon: CircleDollarSignIcon },
         { title: 'Total Orders', value: dashboardData.orders, icon: TagsIcon },
         { title: 'Total Stores', value: dashboardData.stores, icon: StoreIcon },
     ]
 
     const fetchDashboardData = async () => {
-        setDashboardData(dummyAdminDashboardData)
-        setLoading(false)
+        try {
+            const response = await axiosInstance.post(API_PATHS.ADMIN.DASHBOARD)
+            const data = response.data.data
+            
+            setDashboardData({
+                products: data.totalProducts || 0,
+                revenue: data.totalRevenue || 0,
+                orders: data.totalOrders || 0,
+                stores: data.totalStores || 0,
+                allOrders: data.ordersPerDay || [],
+            })
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error)
+            toast.error('Failed to load dashboard data')
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {

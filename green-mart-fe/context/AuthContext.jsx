@@ -23,12 +23,20 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = async () => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+    
     try {
       const token = localStorage.getItem("token");
       if (token) {
@@ -58,6 +66,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
   const login = (userData, token) => {
+    if (typeof window === 'undefined') return;
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
@@ -65,6 +74,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    if (typeof window === 'undefined') return;
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
@@ -74,6 +84,7 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/";
   };
   const updateUser = (updatedUserData) => {
+    if (typeof window === 'undefined') return;
     const newUserData = { ...user, ...updatedUserData };
     localStorage.setItem("user", JSON.stringify(newUserData));
     setUser(newUserData);
@@ -91,5 +102,11 @@ export const AuthProvider = ({ children }) => {
     }),
     [user, isAuthenticated, loading]
   );
+  
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return children;
+  }
+  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

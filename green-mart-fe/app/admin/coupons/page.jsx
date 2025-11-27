@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
-import { couponDummyData } from "@/assets/assets"
+import axiosInstance from "@/lib/axios/axiosInstance"
 
 export default function AdminCoupons() {
 
@@ -20,14 +20,39 @@ export default function AdminCoupons() {
     })
 
     const fetchCoupons = async () => {
-        setCoupons(couponDummyData)
+        try {
+            // Note: Coupon endpoints need to be added to the backend API
+            toast.info('Coupon API endpoints not implemented yet')
+            // const response = await axiosInstance.get('api/admin/coupons')
+            // setCoupons(response.data.data || [])
+        } catch (error) {
+            console.error('Error fetching coupons:', error)
+            toast.error('Failed to load coupons')
+        }
     }
 
     const handleAddCoupon = async (e) => {
         e.preventDefault()
-        // Logic to add a coupon
-
-
+        try {
+            // Note: Coupon endpoints need to be added to the backend API
+            toast.error('Add coupon endpoint not implemented yet')
+            // await axiosInstance.post('api/admin/coupons', newCoupon)
+            // toast.success('Coupon added successfully')
+            // fetchCoupons()
+            // Reset form
+            // setNewCoupon({
+            //     code: '',
+            //     description: '',
+            //     discount: '',
+            //     forNewUser: false,
+            //     forMember: false,
+            //     isPublic: false,
+            //     expiresAt: new Date()
+            // })
+        } catch (error) {
+            console.error('Error adding coupon:', error)
+            toast.error('Failed to add coupon')
+        }
     }
 
     const handleChange = (e) => {
@@ -35,9 +60,16 @@ export default function AdminCoupons() {
     }
 
     const deleteCoupon = async (code) => {
-        // Logic to delete a coupon
-
-
+        try {
+            // Note: Coupon endpoints need to be added to the backend API
+            toast.error('Delete coupon endpoint not implemented yet')
+            // await axiosInstance.delete(`api/admin/coupons/${code}`)
+            // toast.success('Coupon deleted successfully')
+            // fetchCoupons()
+        } catch (error) {
+            console.error('Error deleting coupon:', error)
+            toast.error('Failed to delete coupon')
+        }
     }
 
     useEffect(() => {
