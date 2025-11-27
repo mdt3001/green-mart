@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(\Illuminate\Support\Str::uuid());
             $table->float('total')->default(0)->nullable(false);
-            $table->enum('status', ['ORDER_PLACED', 'PROCESSING', 'SHIPPED', 'DELIVERED'])->default('ORDER_PLACED');
+            $table->enum('status', ['ORDER_PLACED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'])->default('ORDER_PLACED');
             $table->uuid('user_id')->nullable();
             $table->uuid('store_id')->nullable();
             $table->uuid('address_id')->nullable();

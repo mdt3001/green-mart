@@ -6,12 +6,14 @@ use App\Http\Controllers\Api\Admin\StoreApprovalController;
 use App\Http\Controllers\Api\Auth\Seller\SellerActivationController;
 use App\Http\Controllers\Api\Auth\Seller\SellerAuthController;
 use App\Http\Controllers\Api\Auth\Seller\SellerRegisterController;
+
 use App\Http\Controllers\Api\Auth\Customer\CustomerAuthController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\SocialLoginController;
 use App\Http\Controllers\Api\Seller\AnalyticsController;
 use App\Http\Controllers\Api\Seller\ProductController;
 use App\Http\Controllers\Api\Seller\StoreController;
+use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Middleware\CheckSellerApproved;
 
 use App\Http\Controllers\Api\Customer\ProfileController;
@@ -83,6 +85,8 @@ Route::prefix('auth')->group(function () {
     Route::post('customer/resend-verification', [CustomerRegisterController::class, 'resendVerificationCode']);
     Route::post('password/forgot', [PasswordController::class, 'forgotPassword']);
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
+
+    Route::post('admin/login', [CustomerAuthController::class, 'login']);
 });
 
 //admin
@@ -114,9 +118,9 @@ Route::middleware(['auth:sanctum', CheckSellerApproved::class])->prefix('seller'
 
 
     // Orders management
-    Route::get('orders', [OrderController::class, 'index']);
-    Route::get('orders/{id}', [OrderController::class, 'show']);
-    Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus']);
+    Route::get('orders', [SellerOrderController::class, 'index']);
+    Route::get('orders/{id}', [SellerOrderController::class, 'show']);
+    Route::patch('orders/{id}/status', [SellerOrderController::class, 'updateStatus']);
 
     // Analytics
     Route::get('analytics/overview', [AnalyticsController::class, 'overview']);
