@@ -185,7 +185,7 @@ const Navbar = () => {
             </div>
 
             {/* Auth Section */}
-            {!loading && (
+            {/* {!loading && (
               <>
                 {!user ? (
                   <Link href="/login">
@@ -195,7 +195,7 @@ const Navbar = () => {
                   <UserDropdown />
                 )}
               </>
-            )}
+            )} */}
           </div>
 
           {/* Mobile User Button */}

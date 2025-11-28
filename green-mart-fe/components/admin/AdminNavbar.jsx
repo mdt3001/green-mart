@@ -1,22 +1,35 @@
-'use client'
-import Link from "next/link"
+"use client";
+import Link from "next/link";
+import { Menu } from "lucide-react";
+import { assets } from "@/assets/assets";
 
 const AdminNavbar = () => {
+  return (
+    <div className="flex items-center justify-between px-3 pr-12 py-3 border-b border-slate-200 transition-all">
+      <div className="flex items-center gap-4">
+        <button className="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
+          <Menu size={24} />
+        </button>
+        <Link
+          href="/store"
+          className="relative text-4xl font-semibold text-slate-700"
+        >
+          <img
+            src={assets.logo.src}
+            alt="VietOrganic"
+            className="w-8 inline mr-2 mb-2"
+          />
+          <span className="text-gray-9">GreenMart</span>
+          <p className="absolute text-xs font-semibold -top-1 -right-14 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
+            Admin
+          </p>
+        </Link>
+      </div>
+      <div className="flex items-center gap-3">
+        <p>Xin chào, Admin</p>
+      </div>
+    </div>
+  );
+};
 
-
-    return (
-        <div className="flex items-center justify-between px-12 py-3 border-b border-slate-200 transition-all">
-            <Link href="/" className="relative text-4xl font-semibold text-slate-700">
-                <span className="text-green-600">go</span>cart<span className="text-green-600 text-5xl leading-0">.</span>
-                <p className="absolute text-xs font-semibold -top-1 -right-13 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
-                    Admin
-                </p>
-            </Link>
-            <div className="flex items-center gap-3">
-                <p>Hi, Admin</p>
-            </div>
-        </div>
-    )
-}
-
-export default AdminNavbar
+export default AdminNavbar;

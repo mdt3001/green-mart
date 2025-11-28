@@ -18,12 +18,11 @@ const StoreLayout = ({ children }) => {
     try {
       const response = await axiosInstance.get(API_PATHS.SELLER.STORE);
       
-      // Response structure: { success: true, data: { ...storeData } }
       const responseData = response.data;
 
       if (responseData.success && responseData.data) {
         setIsSeller(true);
-        setStoreInfo(responseData.data); // Lấy cục data bên trong
+        setStoreInfo(responseData.data); 
       } else {
         setIsSeller(false);
       }
