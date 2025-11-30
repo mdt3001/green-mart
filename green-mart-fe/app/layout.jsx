@@ -11,13 +11,13 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata = {
-  title: "Green Mart. - Shop smarter",
-  description: "Green Mart. - Shop smarter",
+  title: "Green Mart",
+  description: "Green Mart - Trại chăn rau số 2 Việt Nam sau hutech",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${beVietnamPro.className} antialiased`}>
         <AuthProvider>
           <StoreProvider>

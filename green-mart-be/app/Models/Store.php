@@ -60,4 +60,23 @@ class Store extends Model
     {
         return $this->hasMany(FlashSaleProduct::class);
     }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_store', 'store_id', 'coupon_code')
+                    ->withPivot('is_enabled')
+                    ->withTimestamps();
+    }
+
+    public function enabledCoupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_store', 'store_id', 'coupon_code')
+                    ->wherePivot('is_enabled', true)
+                    ->where('is_active', true)
+                    ->where(function($q) {
+                        $q->whereNull('expires_at')
+                          ->orWhere('expires_at', '>', now());
+                    })
+                    ->withTimestamps();
+    }
 }

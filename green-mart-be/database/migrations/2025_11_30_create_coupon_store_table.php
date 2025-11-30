@@ -7,21 +7,6 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('coupons', function (Blueprint $table) {
-            $table->string('code', 50)->primary();
-            $table->string('description')->nullable();
-            $table->double('discount')->default(0);
-            $table->boolean('for_new_user')->default(false);
-            $table->boolean('for_member')->default(false);
-            $table->boolean('is_public')->default(true);
-            $table->boolean('is_active')->default(true);
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-
-            $table->index('expires_at');
-        });
-
-        // Pivot table for store-coupon relationship
         Schema::create('coupon_store', function (Blueprint $table) {
             $table->string('coupon_code', 50);
             $table->uuid('store_id');
@@ -37,6 +22,5 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('coupon_store');
-        Schema::dropIfExists('coupons');
     }
 };
