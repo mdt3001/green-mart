@@ -6,6 +6,7 @@ import {
   Package,
   ShoppingCart,
   Tag,
+  Plus,
 } from "lucide-react";
 
 const StoreSidebar = () => {
@@ -18,7 +19,12 @@ const StoreSidebar = () => {
       icon: LayoutDashboard,
     },
     {
-      name: "Sản phẩm",
+      name: "Thêm sản phẩm",
+      href: "/store/add-product",
+      icon: Plus,
+    },
+    {
+      name: "Quản lý sản phẩm",
       href: "/store/manage-product",
       icon: Package,
     },
