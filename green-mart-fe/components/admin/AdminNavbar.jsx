@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { assets } from "@/assets/assets";
+import AdminUserDropdown from "./AdminUserDropdown";
 
 const AdminNavbar = () => {
   return (
@@ -11,12 +12,12 @@ const AdminNavbar = () => {
           <Menu size={24} />
         </button>
         <Link
-          href="/store"
+          href="/admin"
           className="relative text-4xl font-semibold text-slate-700"
         >
           <img
             src={assets.logo.src}
-            alt="VietOrganic"
+            alt="GreenMart"
             className="w-8 inline mr-2 mb-2"
           />
           <span className="text-gray-9">GreenMart</span>
@@ -25,8 +26,10 @@ const AdminNavbar = () => {
           </p>
         </Link>
       </div>
-      <div className="flex items-center gap-3">
-        <p>Xin chào, Admin</p>
+
+      {/* Admin User Dropdown in Top Right */}
+      <div className="flex items-center gap-4">
+        <AdminUserDropdown />
       </div>
     </div>
   );
