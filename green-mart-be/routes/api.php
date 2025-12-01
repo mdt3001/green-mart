@@ -94,6 +94,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::post('dashboard', [DashboardController::class, 'index']);
     Route::get('sellers/pending', [StoreApprovalController::class, 'index']);
+    Route::post('sellers/toggle-active/{store}', [StoreApprovalController::class, 'toggleActive']);
     Route::post('sellers/approve/{store}', [StoreApprovalController::class, 'approve']);
     Route::post('sellers/reject/{store}', [StoreApprovalController::class, 'reject']);
     Route::get('orders', [OrderController::class, 'index']);

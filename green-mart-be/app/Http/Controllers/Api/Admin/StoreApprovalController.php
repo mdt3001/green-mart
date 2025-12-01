@@ -39,6 +39,21 @@ class StoreApprovalController extends Controller
         ]);
     }
 
+    public function toggleActive(Store $store, Request $request)
+    {
+        $this->ensureAdmin($request->user());
+
+        $store->is_active = !$store->is_active;
+        $store->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Trạng thái hoạt động của cửa hàng đã được cập nhật.',
+            'data' => [
+                'is_active' => $store->is_active,
+            ],
+        ]);
+    }
 
     public function approve(Store $store, Request $request)
     {
