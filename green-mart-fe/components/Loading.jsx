@@ -1,12 +1,17 @@
-'use client'
+"use client";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Loading = () => {
+  return (
+    <div className="flex items-center justify-center">
+      <DotLottieReact
+        src="/assets/GreenLoader.lottie"
+        loop
+        autoplay
+        style={{ width: 300, height: 300 }}
+      />
+    </div>
+  );
+};
 
-    return (
-        <div className='flex items-center justify-center h-screen'>
-            <div className='w-11 h-11 rounded-full border-3 border-gray-300 border-t-green-500 animate-spin'></div>
-        </div>
-    )
-}
-
-export default Loading
+export default Loading;
