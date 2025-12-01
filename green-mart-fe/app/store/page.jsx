@@ -107,25 +107,39 @@ export default function Dashboard() {
         return status; // Fallback nếu có trạng thái lạ
     }
   };
+  // Format số tiền theo kiểu Việt Nam
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("vi-VN").format(amount) + currency;
+  };
 
+  // Format số lượng
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat("vi-VN").format(num);
+  };
   const dashboardCardsData = [
     {
-      title: "Tổng sản phẩm",
-      value: dashboardData.total_products,
+      title: "Tổng Sản Phẩm",
+      value: formatNumber(dashboardData.total_products),
       icon: ShoppingBasketIcon,
       color: "bg-blue-500",
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-500",
     },
     {
-      title: "Tổng doanh thu",
-      value: formatPrice(dashboardData.total_revenue),
+      title: "Tổng Doanh Thu",
+      value: formatCurrency(dashboardData.total_revenue),
       icon: CircleDollarSignIcon,
       color: "bg-green-500",
+      bgColor: "bg-green-50",
+      textColor: "text-green-500",
     },
     {
-      title: "Tổng đơn hàng",
-      value: dashboardData.total_orders,
+      title: "Tổng Đơn Hàng",
+      value: formatNumber(dashboardData.total_orders),
       icon: TagsIcon,
       color: "bg-orange-500",
+      bgColor: "bg-orange-50",
+      textColor: "text-orange-500",
     },
   ];
 
@@ -154,18 +168,18 @@ export default function Dashboard() {
         {dashboardCardsData.map((card, index) => (
           <div
             key={index}
-            className="flex items-center justify-between border border-slate-200 p-6 rounded-xl shadow-sm hover:shadow-md transition bg-white"
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
           >
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">
-                {card.title}
-              </p>
-              <b className="text-2xl font-bold text-slate-800">{card.value}</b>
-            </div>
-            <div
-              className={`p-4 rounded-full text-white ${card.color} bg-opacity-90 shadow-lg shadow-blue-100`}
-            >
-              <card.icon size={28} />
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-sm text-slate-500 mb-1">{card.title}</p>
+                <p className="text-2xl font-bold text-slate-800 mb-2">
+                  {card.value}
+                </p>
+              </div>
+              <div className={`${card.bgColor} p-3 rounded-xl`}>
+                <card.icon size={24} className={card.textColor} />
+              </div>
             </div>
           </div>
         ))}

@@ -28,7 +28,6 @@ const StoreLayout = ({ children }) => {
       }
     } catch (error) {
       setIsSeller(false);
-      console.error("Error checking seller status:", error);
     } finally {
       setLoading(false);
     }

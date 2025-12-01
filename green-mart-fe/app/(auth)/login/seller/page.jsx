@@ -68,7 +68,6 @@ export default function LoginPage() {
 
       
     } catch (error) {
-      console.error(error);
       const message =
         error.response?.data?.message || error.message || "Đăng nhập thất bại!";
       toast.error(message);

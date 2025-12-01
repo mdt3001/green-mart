@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { API_PATHS } from "@/utils/apiPaths";
 import { X, Image as ImageIcon, Eye } from "lucide-react";
+import { Mailbox } from "lucide-react";
 import Image from "next/image";
 
 export default function AdminApprove() {
@@ -161,7 +162,7 @@ export default function AdminApprove() {
       ) : (
         <div className="flex items-center justify-center h-80 bg-white rounded-lg border border-slate-200">
           <div className="text-center">
-            <div className="text-6xl mb-4">📭</div>
+            <Mailbox size={48} className="mx-auto text-green-600" />
             <h2 className="text-2xl text-slate-400 font-medium">
               Không có đơn đăng ký nào đang chờ
             </h2>

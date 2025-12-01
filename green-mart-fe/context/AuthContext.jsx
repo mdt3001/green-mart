@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("user", JSON.stringify(data.user || data));
           setIsAuthenticated(true);
         } catch (error) {
-          console.error("Error fetching profile:", error);
           const userStr = localStorage.getItem("user");
           if (userStr) {
             const userData = JSON.parse(userStr);
@@ -51,7 +50,6 @@ export const AuthProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error("Error checking auth status:", error);
       logout();
     } finally {
       setLoading(false);
