@@ -34,7 +34,6 @@ export default function AdminCoupons() {
       const response = await axiosInstance.get(API_PATHS.ADMIN.COUPONS);
       setCoupons(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching coupons:", error);
       toast.error("Không thể tải danh sách mã giảm giá");
     }
   };
@@ -44,7 +43,7 @@ export default function AdminCoupons() {
       const response = await axiosInstance.get(API_PATHS.ADMIN.PENDING_SELLERS);
       setStores(response.data.data?.data || []);
     } catch (error) {
-      console.error("Error fetching stores:", error);
+      toast.error("Không thể tải danh sách cửa hàng");
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,6 @@ export default function AdminCoupons() {
         store_ids: [],
       });
     } catch (error) {
-      console.error("Error adding coupon:", error);
       toast.error(
         error.response?.data?.message || "Không thể thêm mã giảm giá"
       );
@@ -98,7 +96,6 @@ export default function AdminCoupons() {
       toast.success("Xóa mã giảm giá thành công");
       fetchCoupons();
     } catch (error) {
-      console.error("Error deleting coupon:", error);
       toast.error("Không thể xóa mã giảm giá");
     }
   };
@@ -145,8 +142,8 @@ export default function AdminCoupons() {
     <div className="text-slate-500 mb-40">
       {/* Add Coupon Form */}
       <form onSubmit={handleAddCoupon} className="max-w-2xl text-sm">
-        <h2 className="text-2xl mb-4">
-          Thêm <span className="text-slate-800 font-medium">Mã Giảm Giá</span>
+        <h2 className="text-2xl mb-4 text-slate-800 font-medium">
+          Thêm mã giảm giá
         </h2>
 
         <div className="grid grid-cols-2 gap-4">
@@ -279,7 +276,7 @@ export default function AdminCoupons() {
 
         <button
           type="submit"
-          className="mt-5 py-2 px-10 rounded bg-green-600 text-white hover:bg-green-700 active:scale-95 transition"
+          className="mt-5 px-8 py-3 rounded bg-green-600 text-white hover:bg-green-700 active:scale-95 transition"
         >
           Thêm Mã Giảm Giá
         </button>

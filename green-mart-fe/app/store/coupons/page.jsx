@@ -61,7 +61,7 @@ export default function StoreCoupons() {
 
   return (
     <div className="max-w-6xl">
-      <h1 className="text-3xl font-bold text-slate-800 mb-6">
+      <h1 className="text-2xl text-slate-800 font-medium pb-6">
         Quản Lý Mã Giảm Giá
       </h1>
 

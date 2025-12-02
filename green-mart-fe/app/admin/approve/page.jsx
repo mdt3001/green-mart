@@ -34,7 +34,6 @@ export default function AdminApprove() {
       }));
       setStores(normalizedStores);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách cửa hàng:", error);
       toast.error("Không thể tải danh sách cửa hàng đang chờ");
     } finally {
       setLoading(false);
@@ -83,7 +82,6 @@ export default function AdminApprove() {
       closeModal();
       fetchStores();
     } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái cửa hàng:", error);
       toast.error(
         error.response?.data?.message ||
           "Không thể cập nhật trạng thái cửa hàng"

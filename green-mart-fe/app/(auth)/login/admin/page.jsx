@@ -19,14 +19,12 @@ import Link from "next/link";
 import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie"; 
-import { useRouter } from "next/navigation"; 
-
-
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter(); 
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -36,43 +34,37 @@ export default function LoginPage() {
     },
   });
 
+  const onSubmit = async (formData) => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        API_PATHS.AUTH.ADMIN_LOGIN,
+        formData
+      );
 
+      const result = response.data;
 
- const onSubmit = async (formData) => {
-   setIsLoading(true);
-   try {
-     const response = await axiosInstance.post(
-       API_PATHS.AUTH.ADMIN_LOGIN,
-       formData
-     );
+      const { token, user } = result.data;
 
-     const result = response.data;
+      if (!token) {
+        throw new Error("Không tìm thấy token xác thực!");
+      }
 
-     const { token, user } = result.data;
+      Cookies.set("token", token, { expires: 7, path: "/" });
 
-     if (!token) {
-       throw new Error("Không tìm thấy token xác thực!");
-     }
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-     Cookies.set("token", token, { expires: 7, path: "/" });
-
-     localStorage.setItem("token", token);
-     localStorage.setItem("user", JSON.stringify(user));
-
- 
-
-     toast.success("Đăng nhập thành công!");
-     router.push("/admin"); // Chuyển hướng sau khi đăng nhập thành công
-   } catch (error) {
-     console.error(error);
-     const message =
-       error.response?.data?.message || error.message || "Đăng nhập thất bại!";
-     toast.error(message);
-   } finally {
-     setIsLoading(false);
-   }
- };
-
+      toast.success("Đăng nhập thành công!");
+      router.push("/admin"); // Chuyển hướng sau khi đăng nhập thành công
+    } catch (error) {
+      const message =
+        error.response?.data?.message || error.message || "Đăng nhập thất bại!";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card className="w-full max-w-md">
@@ -115,7 +107,6 @@ export default function LoginPage() {
             </Button>
           </form>
         </Form>
-
       </CardContent>
     </Card>
   );

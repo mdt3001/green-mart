@@ -20,14 +20,14 @@ export function SellerStep2({ form, onBack, isLoading }) {
         name="store_name"
         label="Tên cửa hàng *"
         control={form.control}
-        placeholder="Tech Store Test"
+        placeholder="Organic Fresh Mart"
       />
 
       <RHFInput
         name="store_username"
         label="Username cửa hàng *"
         control={form.control}
-        placeholder="tech_store_test"
+        placeholder="organic_fresh_mart"
       />
 
       <RHFInput
@@ -35,14 +35,14 @@ export function SellerStep2({ form, onBack, isLoading }) {
         label="Email cửa hàng *"
         control={form.control}
         type="email"
-        placeholder="techstore.test@greenmart.com"
+        placeholder="organic_fresh_mart@greenmart.com"
       />
 
       <RHFTextarea
         name="store_description"
         label="Mô tả cửa hàng"
         control={form.control}
-        placeholder="Cửa hàng công nghệ chuyên cung cấp các sản phẩm điện tử..."
+        placeholder="Cửa hàng hữu cơ chuyên cung cấp các sản phẩm tươi sạch và an toàn cho sức khỏe..."
         rows={3}
       />
 

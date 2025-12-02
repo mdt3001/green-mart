@@ -77,6 +77,7 @@ export const API_PATHS = {
     UPDATE_STORE: "/api/seller/store",
 
     PRODUCTS: "/api/seller/products",
+    CREATE_PRODUCT: "/api/seller/products",
     PRODUCT_DETAIL: (id) => `/api/seller/products/${id}`,
     UPDATE_PRODUCT: (id) => `/api/seller/products/${id}`,
     DELETE_PRODUCT: (id) => `/api/seller/products/${id}`,

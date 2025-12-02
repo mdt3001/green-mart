@@ -248,7 +248,7 @@ export default function StoreAddProduct() {
       <button
         type="submit"
         disabled={loading}
-        className={`bg-slate-800 text-white px-8 py-3 mt-8 rounded hover:bg-slate-900 transition flex items-center justify-center min-w-[150px] ${
+        className={`bg-green-600 text-white px-8 py-3 mt-8 rounded hover:bg-green-700 transition flex items-center justify-center min-w-[150px] ${
           loading ? "opacity-70 cursor-not-allowed" : ""
         }`}
       >

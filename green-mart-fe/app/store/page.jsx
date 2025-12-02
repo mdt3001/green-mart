@@ -4,8 +4,6 @@ import {
   CircleDollarSignIcon,
   ShoppingBasketIcon,
   TagsIcon,
-  PackageIcon,
-  TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -189,7 +187,7 @@ export default function Dashboard() {
         {/* --- Order Status Section --- */}
         <div className="lg:col-span-1 border border-slate-200 rounded-xl p-6 bg-white shadow-sm h-fit">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <PackageIcon size={20} /> Trạng thái đơn hàng
+            Trạng thái đơn hàng
           </h2>
           {dashboardData.orders_by_status.length > 0 ? (
             <div className="space-y-3">
@@ -222,7 +220,7 @@ export default function Dashboard() {
         {/* --- Top Products Section --- */}
         <div className="lg:col-span-2 border border-slate-200 rounded-xl p-6 bg-white shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <TrendingUp size={20} /> Sản phẩm bán chạy (Top 5)
+            Sản phẩm bán chạy (Top 5)
           </h2>
 
           <div className="overflow-x-auto">
