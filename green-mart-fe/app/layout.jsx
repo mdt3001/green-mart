@@ -12,7 +12,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 
 export const metadata = {
   title: "Green Mart",
-  description: "Green Mart - Trại chăn rau số 2 Việt Nam sau hutech",
+  description: "Green Mart - Trại chăn rau số 1 Việt Nam",
 };
 
 export default function RootLayout({ children }) {

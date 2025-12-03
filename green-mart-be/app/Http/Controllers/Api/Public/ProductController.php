@@ -112,4 +112,41 @@ class ProductController extends Controller
             'data' => $relatedProducts,
         ]);
     }
+
+    public function latest(Request $request)
+    {
+        $limit = $request->input('limit', 10); // Mặc định lấy 10 sản phẩm
+
+        $products = Product::with('store:id,name,logo') // Eager load store
+            ->where('in_stock', true)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+        ]);
+    }
+
+    public function bestSelling(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+
+        $products = Product::with('store:id,name,logo')
+            ->where('in_stock', true)
+            // Tính tổng cột 'quantity' trong bảng order_items liên kết
+            ->withSum('orderItems', 'quantity')
+            // Sắp xếp giảm dần theo tổng số lượng bán ra
+            ->orderByDesc('order_items_sum_quantity')
+            // Nếu chưa bán được cái nào (null), thì xếp theo ngày tạo
+            ->orderByDesc('created_at')
+            ->take($limit)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+        ]);
+    }
 }

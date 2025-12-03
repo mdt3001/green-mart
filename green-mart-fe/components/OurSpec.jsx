@@ -6,9 +6,9 @@ const OurSpecs = () => {
 
     return (
         <div className='px-6 my-20 max-w-6xl mx-auto'>
-            <Title visibleButton={false} title='Our Specifications' description="We offer top-tier service and convenience to ensure your shopping experience is smooth, secure and completely hassle-free." />
+            <Title visibleButton={false} title='Cam kết dịch vụ của chúng tôi' description="Chúng tôi cung cấp dịch vụ hàng đầu và sự tiện lợi để đảm bảo trải nghiệm mua sắm của bạn suôn sẻ và an toàn." />
 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-10 mt-26'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 gap-y-10 mt-16'>
                 {
                     ourSpecsData.map((spec, index) => {
                         return (

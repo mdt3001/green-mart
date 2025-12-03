@@ -46,8 +46,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('public')->group(function () {
     // Products
     Route::get('products', [PublicProductController::class, 'index']);
-    Route::get('products/{id}', [PublicProductController::class, 'show']);
+    Route::get('products/latest', [PublicProductController::class, 'latest']);
+    Route::get('products/best-selling', [PublicProductController::class, 'bestSelling']);
     Route::get('products/{id}/related', [PublicProductController::class, 'related']);
+    Route::get('products/{id}', [PublicProductController::class, 'show']);
 
     // Categories
     Route::get('categories', [CategoryController::class, 'index']);

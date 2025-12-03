@@ -25,6 +25,8 @@ export const API_PATHS = {
     PRODUCTS: "/api/public/products",
     PRODUCT_DETAIL: (id) => `/api/public/products/${id}`,
     RELATED_PRODUCTS: (id) => `/api/public/products/${id}/related`,
+    LATEST_PRODUCTS: "/api/public/products/latest",
+    BEST_SELLING_PRODUCTS: "/api/public/products/best-selling", 
 
     CATEGORIES: "/api/public/categories",
     CATEGORY_PRODUCTS: (id) => `/api/public/categories/${id}/products`,

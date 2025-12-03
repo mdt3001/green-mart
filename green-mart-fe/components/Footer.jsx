@@ -152,29 +152,28 @@ const Footer = () => {
 
   const linkSections = [
     {
-      title: "PRODUCTS",
+      title: "Sản phẩm",
       links: [
-        { text: "Earphones", path: "/", icon: null },
-        { text: "Headphones", path: "/", icon: null },
-        { text: "Smartphones", path: "/", icon: null },
-        { text: "Laptops", path: "/", icon: null },
+        { text: "", path: "/", icon: null },
+        { text: "Rau củ tươi", path: "/", icon: null },
+        { text: "Thịt và Hải sản", path: "/", icon: null },
+        { text: "Đồ ăn vặt", path: "/", icon: null },
       ],
     },
     {
       title: "WEBSITE?",
       links: [
-        { text: "Home", path: "/", icon: null },
-        { text: "Privacy Policy", path: "/", icon: null },
-        { text: "Become Plus Member", path: "/pricing", icon: null },
-        { text: "Create Your Store", path: "/create-store", icon: null },
+        { text: "Trang chủ", path: "/", icon: null },
+        { text: "Chính sách bảo mật", path: "/", icon: null },
+        { text: "Tạo cửa hàng của bạn", path: "/create-store", icon: null },
       ],
     },
     {
-      title: "CONTACT",
+      title: "Liên hệ",
       links: [
-        { text: "+1-212-456-7890", path: "/", icon: MailIcon },
-        { text: "contact@example.com", path: "/", icon: PhoneIcon },
-        { text: "794 Francisco, 94102", path: "/", icon: MapPinIcon },
+        { text: "+89 123456789", path: "/", icon: PhoneIcon },
+        { text: "greenmart@example.com", path: "/", icon: MailIcon },
+        { text: "Quận 1, thành phố Hồ Chí Minh", path: "/", icon: MapPinIcon },
       ],
     },
   ];
@@ -200,16 +199,13 @@ const Footer = () => {
                 alt="VietOrganic"
                 className="w-8 inline mr-2 mb-2"
               />
-              <span className="text-gray-9">GReen</span>
-              <p className="absolute text-xs font-semibold top-0 -right-8 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
-                plus
-              </p>
+              <span className="text-gray-9">GreenMart</span>
             </Link>
             <p className="max-w-[410px] mt-6 text-sm">
-              Welcome to gocart, your ultimate destination for the latest and
-              smartest gadgets. From smartphones and smartwatches to essential
-              accessories, we bring you the best in innovation — all in one
-              place.
+              Chào mừng đến với Green Mart, điểm đến hàng đầu của bạn cho các
+              sản phẩm hữu cơ và bền vững. Cam kết của chúng tôi là cung cấp các
+              lựa chọn lành mạnh, thân thiện với môi trường để nâng cao cuộc
+              sống của bạn và hành tinh chúng ta.
             </p>
             <div className="flex items-center gap-3 mt-5">
               {socialIcons.map((item, i) => (
@@ -247,7 +243,7 @@ const Footer = () => {
           </div>
         </div>
         <p className="py-4 text-sm text-slate-500">
-          Copyright 2025 © gocart All Right Reserved.
+          Copyright 2025 © greenmart All Right Reserved.
         </p>
       </div>
     </footer>
