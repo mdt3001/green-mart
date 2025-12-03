@@ -2,43 +2,63 @@
 
 import { assets } from "@/assets/assets";
 import Image from "next/image";
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "react-hot-toast";
-import axiosInstance from "@/lib/axios/axiosInstance"; 
-import { API_PATHS } from "@/utils/apiPaths"; 
-import { PRODUCT_CATEGORIES } from "@/utils/data";
-
-
+import axiosInstance from "@/lib/axios/axiosInstance";
+import { API_PATHS } from "@/utils/apiPaths";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "@/lib/redux/features/category/categorySlice";
 
 export default function StoreAddProduct() {
+  const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.category);
+
   const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null });
   const [productInfo, setProductInfo] = useState({
     name: "",
     description: "",
-    mrp: "", 
-    price: "", 
-    category: "",
-    subcategory: "",
+    mrp: "",
+    price: "",
+    category_id: "",
   });
+
+  const [selectedParentId, setSelectedParentId] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (categories.length === 0) {
+      dispatch(fetchCategories());
+    }
+  }, [dispatch, categories.length]);
+
   const currentSubcategories = useMemo(() => {
-    return (
-      PRODUCT_CATEGORIES.find((c) => c.name === productInfo.category)
-        ?.subcategories || []
-    );
-  }, [productInfo.category]);
+    if (!selectedParentId) return [];
+    const parent = categories.find((c) => c.id == selectedParentId);
+    return parent?.children || [];
+  }, [categories, selectedParentId]);
 
   const onChangeHandler = (e) => {
     setProductInfo({ ...productInfo, [e.target.name]: e.target.value });
   };
 
-  const onCategoryChange = (e) => {
-    setProductInfo({
-      ...productInfo,
-      category: e.target.value,
-      subcategory: "", 
-    });
+  const onParentCategoryChange = (e) => {
+    const parentId = e.target.value;
+    setSelectedParentId(parentId);
+    
+    // Nếu chọn lại mục mặc định (rỗng) hoặc danh mục cha mới, reset category_id
+    setProductInfo((prev) => ({
+      ...prev,
+      category_id: parentId,
+    }));
+  };
+
+  const onSubCategoryChange = (e) => {
+    const subId = e.target.value;
+    // Nếu chọn sub thì lấy subId, nếu bỏ chọn sub (về rỗng) thì lấy lại parentId
+    setProductInfo((prev) => ({
+      ...prev,
+      category_id: subId || selectedParentId,
+    }));
   };
 
   const onSubmitHandler = async (e) => {
@@ -46,9 +66,12 @@ export default function StoreAddProduct() {
     setLoading(true);
 
     try {
-    
       if (Number(productInfo.price) > Number(productInfo.mrp)) {
         throw new Error("Giá bán không được cao hơn giá niêm yết!");
+      }
+
+      if (!productInfo.category_id) {
+        throw new Error("Vui lòng chọn danh mục sản phẩm!");
       }
 
       const formData = new FormData();
@@ -56,17 +79,16 @@ export default function StoreAddProduct() {
       formData.append("description", productInfo.description);
       formData.append("mrp", productInfo.mrp);
       formData.append("price", productInfo.price);
-      formData.append("category", productInfo.category);
-      formData.append("subcategory", productInfo.subcategory);
+      formData.append("category_id", productInfo.category_id);
 
       Object.keys(images).forEach((key) => {
         if (images[key]) {
-        
           formData.append("images[]", images[key]);
         }
       });
 
-
+      // Đảm bảo bạn đã định nghĩa API_PATHS.SELLER.CREATE_PRODUCT trong file utils/apiPaths.jsx
+      // Ví dụ: export const CREATE_PRODUCT = `${API_URL}/seller/products`;
       await axiosInstance.post(API_PATHS.SELLER.CREATE_PRODUCT, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -75,19 +97,20 @@ export default function StoreAddProduct() {
 
       toast.success("Thêm sản phẩm thành công!");
 
+      // Reset form
       setImages({ 1: null, 2: null, 3: null, 4: null });
       setProductInfo({
         name: "",
         description: "",
         mrp: "",
         price: "",
-        category: "",
-        subcategory: "",
+        category_id: "",
       });
+      setSelectedParentId("");
+
     } catch (error) {
       console.error(error);
-      const msg =
-        error.response?.data?.message || error.message || "Có lỗi xảy ra!";
+      const msg = error.response?.data?.message || error.message || "Có lỗi xảy ra!";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -103,6 +126,7 @@ export default function StoreAddProduct() {
         Thêm sản phẩm mới
       </h1>
 
+      {/* Phần Upload Ảnh */}
       <div className="mt-7">
         <p className="mb-2">Hình ảnh sản phẩm (Tối đa 4 ảnh)</p>
         <div className="flex gap-3 flex-wrap">
@@ -120,7 +144,7 @@ export default function StoreAddProduct() {
                   images[key]
                     ? URL.createObjectURL(images[key])
                     : assets.upload_area ||
-                      "https://placehold.co/100x100?text=Upload" 
+                      "https://placehold.co/100x100?text=Upload"
                 }
                 alt="Upload"
               />
@@ -152,6 +176,7 @@ export default function StoreAddProduct() {
         </p>
       </div>
 
+      {/* Tên sản phẩm */}
       <div className="flex flex-col gap-2 my-6">
         <label className="font-medium">Tên sản phẩm</label>
         <input
@@ -165,6 +190,7 @@ export default function StoreAddProduct() {
         />
       </div>
 
+      {/* Mô tả */}
       <div className="flex flex-col gap-2 my-6">
         <label className="font-medium">Mô tả chi tiết</label>
         <textarea
@@ -178,18 +204,19 @@ export default function StoreAddProduct() {
         />
       </div>
 
+      {/* Danh mục (Logic Parent - Child) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-xl mb-6">
         <div className="flex flex-col gap-2">
           <label className="font-medium">Danh mục chính</label>
           <select
-            onChange={onCategoryChange}
-            value={productInfo.category}
+            onChange={onParentCategoryChange}
+            value={selectedParentId}
             className="w-full p-2 px-4 outline-none border border-slate-200 rounded focus:border-slate-800 transition"
             required
           >
             <option value="">Chọn danh mục</option>
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <option key={cat.name} value={cat.name}>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
             ))}
@@ -199,23 +226,26 @@ export default function StoreAddProduct() {
         <div className="flex flex-col gap-2">
           <label className="font-medium">Danh mục phụ</label>
           <select
-            name="subcategory"
-            onChange={onChangeHandler}
-            value={productInfo.subcategory}
+            onChange={onSubCategoryChange}
+            // Nếu category_id đang giữ ID của cha thì value của select con để rỗng
+            value={productInfo.category_id == selectedParentId ? "" : productInfo.category_id}
             className="w-full p-2 px-4 outline-none border border-slate-200 rounded focus:border-slate-800 transition disabled:bg-gray-100"
-            required
-            disabled={!productInfo.category}
+            disabled={!selectedParentId || currentSubcategories.length === 0}
           >
-            <option value="">Chọn loại chi tiết</option>
+            <option value="">Chọn loại chi tiết (Tùy chọn)</option>
             {currentSubcategories.map((sub) => (
-              <option key={sub} value={sub}>
-                {sub}
+              <option key={sub.id} value={sub.id}>
+                {sub.name}
               </option>
             ))}
           </select>
+          {selectedParentId && currentSubcategories.length === 0 && (
+             <span className="text-xs text-gray-400 mt-1 italic">Danh mục này không có danh mục con.</span>
+          )}
         </div>
       </div>
 
+      {/* Giá cả */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-xl">
         <div className="flex flex-col gap-2">
           <label className="font-medium">Giá niêm yết (MRP)</label>

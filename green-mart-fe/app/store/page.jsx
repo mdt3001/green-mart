@@ -59,18 +59,13 @@ export default function Dashboard() {
     }).format(price);
   };
 
-  const getProductImage = (imageString) => {
-    try {
-      const images = JSON.parse(imageString);
-      return Array.isArray(images) && images.length > 0
-        ? images[0]
-        : assets.box_icon;
-    } catch (e) {
-      return assets.box_icon;
+  const getProductImage = (images) => {
+    if (Array.isArray(images) && images.length > 0) {
+      return images[0];
     }
+    return assets.box_icon;
   };
 
-  // Helper 1: Màu sắc cho trạng thái
   const getStatusColor = (status) => {
     switch (status) {
       case "ORDER_PLACED":
@@ -88,7 +83,6 @@ export default function Dashboard() {
     }
   };
 
-  // Helper 2: Dịch trạng thái sang Tiếng Việt (MỚI THÊM)
   const getStatusLabel = (status) => {
     switch (status) {
       case "ORDER_PLACED":
@@ -102,18 +96,18 @@ export default function Dashboard() {
       case "CANCELLED":
         return "Đã hủy";
       default:
-        return status; // Fallback nếu có trạng thái lạ
+        return status;
     }
   };
-  // Format số tiền theo kiểu Việt Nam
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN").format(amount) + currency;
   };
 
-  // Format số lượng
   const formatNumber = (num) => {
     return new Intl.NumberFormat("vi-VN").format(num);
   };
+
   const dashboardCardsData = [
     {
       title: "Tổng Sản Phẩm",
@@ -184,7 +178,6 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* --- Order Status Section --- */}
         <div className="lg:col-span-1 border border-slate-200 rounded-xl p-6 bg-white shadow-sm h-fit">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
             Trạng thái đơn hàng
@@ -201,7 +194,6 @@ export default function Dashboard() {
                       item.status
                     )}`}
                   >
-                    {/* SỬ DỤNG HÀM DỊCH TIẾNG VIỆT TẠI ĐÂY */}
                     {getStatusLabel(item.status)}
                   </span>
                   <span className="font-bold text-slate-700">
@@ -217,7 +209,6 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* --- Top Products Section --- */}
         <div className="lg:col-span-2 border border-slate-200 rounded-xl p-6 bg-white shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
             Sản phẩm bán chạy (Top 5)

@@ -8,14 +8,11 @@ import { API_PATHS } from "@/utils/apiPaths";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 
 export default function StoreOrders() {
-  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₫";
-
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // State phân trang
   const [pagination, setPagination] = useState({
     currentPage: 1,
     lastPage: 1,
@@ -24,11 +21,9 @@ export default function StoreOrders() {
     to: 0,
   });
 
-  // Fetch danh sách đơn hàng
   const fetchOrders = async (page = 1) => {
     setLoading(true);
     try {
-      // Gọi API: /seller/orders?page=1&per_page=15
       const response = await axiosInstance.get(
         `${API_PATHS.SELLER.ORDERS}?page=${page}&per_page=15`
       );
@@ -50,12 +45,9 @@ export default function StoreOrders() {
     }
   };
 
-  // Cập nhật trạng thái đơn hàng
   const updateOrderStatus = async (orderId, newStatus) => {
     const toastId = toast.loading("Đang cập nhật trạng thái...");
     try {
-      // Gọi API update (Giả sử endpoint là PATCH /seller/orders/{id}/status hoặc PUT /seller/orders/{id})
-      // Bạn cần điều chỉnh đường dẫn này theo đúng backend của bạn
       await axiosInstance.patch(
         `${API_PATHS.SELLER.UPDATE_ORDER_STATUS(orderId)}`,
         {
@@ -63,7 +55,6 @@ export default function StoreOrders() {
         }
       );
 
-      // Cập nhật UI local để không cần reload lại trang
       setOrders((prev) =>
         prev.map((order) =>
           order.id === orderId ? { ...order, status: newStatus } : order
@@ -102,7 +93,6 @@ export default function StoreOrders() {
     }).format(price);
   };
 
-  // Helper để hiển thị màu sắc cho trạng thái
   const getStatusColor = (status) => {
     switch (status) {
       case "ORDER_PLACED":
@@ -229,7 +219,6 @@ export default function StoreOrders() {
         </div>
       )}
 
-      {/* Pagination Controls */}
       {orders.length > 0 && (
         <div className="flex items-center justify-between mt-4 px-2">
           <div className="text-sm text-slate-500 hidden sm:block">
@@ -258,7 +247,6 @@ export default function StoreOrders() {
         </div>
       )}
 
-      {/* Modal Details */}
       {isModalOpen && selectedOrder && (
         <div
           onClick={closeModal}
@@ -268,7 +256,6 @@ export default function StoreOrders() {
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
           >
-            {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-slate-800">
                 Chi tiết đơn hàng #{selectedOrder.id.slice(0, 8)}...
@@ -282,9 +269,7 @@ export default function StoreOrders() {
             </div>
 
             <div className="p-6 space-y-6">
-              {/* 2 Cột thông tin */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Customer Info */}
                 <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                   <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
                     Thông tin khách hàng
@@ -305,7 +290,6 @@ export default function StoreOrders() {
                   </div>
                 </div>
 
-                {/* Shipping Info */}
                 <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                   <h3 className="font-semibold text-slate-800 mb-3">
                     Địa chỉ giao hàng
@@ -324,7 +308,6 @@ export default function StoreOrders() {
                 </div>
               </div>
 
-              {/* Products List */}
               <div>
                 <h3 className="font-semibold text-slate-800 mb-3">
                   Sản phẩm đã đặt
@@ -346,7 +329,8 @@ export default function StoreOrders() {
                             <div className="flex items-center gap-3">
                               <img
                                 src={
-                                  item.product?.images?.[0] ||
+                                  (Array.isArray(item.product?.images) &&
+                                    item.product?.images[0]) ||
                                   "https://placehold.co/50"
                                 }
                                 alt={item.product?.name}
@@ -376,7 +360,6 @@ export default function StoreOrders() {
                 </div>
               </div>
 
-              {/* Summary */}
               <div className="flex justify-end">
                 <div className="w-full md:w-1/2 space-y-2 bg-slate-50 p-4 rounded-lg">
                   <div className="flex justify-between text-sm">

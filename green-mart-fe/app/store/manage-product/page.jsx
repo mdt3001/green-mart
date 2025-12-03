@@ -7,11 +7,9 @@ import Loading from "@/components/Loading";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { API_PATHS } from "@/utils/apiPaths";
 import { assets } from "@/assets/assets";
-import { ChevronLeft, ChevronRight, Edit, Trash2, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react";
 
 export default function StoreManageProducts() {
-  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₫";
-
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
 
@@ -42,7 +40,7 @@ export default function StoreManageProducts() {
         to: responseData.to,
       });
     } catch (error) {
-      console.error("Failed to fetch products:", error);
+      console.error(error);
       toast.error("Không thể tải danh sách sản phẩm");
     } finally {
       setLoading(false);
@@ -92,7 +90,6 @@ export default function StoreManageProducts() {
     }
   };
 
-  // Định dạng tiền tệ VND
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -145,10 +142,10 @@ export default function StoreManageProducts() {
                           fill
                           className="object-cover rounded border border-slate-200"
                           src={
-                            product.images && product.images.length > 0
+                            Array.isArray(product.images) && product.images.length > 0
                               ? product.images[0]
                               : assets.upload_area
-                          } // Fallback image
+                          }
                           alt={product.name}
                           sizes="48px"
                         />
@@ -171,7 +168,7 @@ export default function StoreManageProducts() {
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell text-slate-600">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {product.category || "Chưa phân loại"}
+                      {product.category?.name || "Chưa phân loại"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right text-slate-500 line-through">
@@ -224,7 +221,6 @@ export default function StoreManageProducts() {
         </table>
       </div>
 
-      {/* Pagination Controls */}
       {products.length > 0 && (
         <div className="flex items-center justify-between mt-4 px-2">
           <div className="text-sm text-slate-500 hidden sm:block">

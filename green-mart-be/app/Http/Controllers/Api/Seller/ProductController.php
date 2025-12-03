@@ -26,29 +26,26 @@ class ProductController extends Controller
         $store = $request->user()->store;
 
         $products = Product::where('store_id', $store->id)
+            ->with('category:id,name') // Eager load category để lấy tên hiển thị
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', $search)
                         ->orWhere('description', 'like', $search)
-                        ->orWhere('category', 'like', $search)
-                        ->orWhere('subcategory', 'like', $search);  // Thêm mới
+                        // Tìm kiếm theo tên danh mục thông qua relationship
+                        ->orWhereHas('category', function ($q2) use ($search) {
+                            $q2->where('name', 'like', $search);
+                        });
                 });
             })
+            // Lọc theo Category ID
             ->when(
-                $request->filled('category'),
-                fn($query) =>
-                $query->where('category', $request->input('category'))
-            )
-            ->when(
-                $request->filled('subcategory'),
-                fn($query) =>
-                $query->where('subcategory', $request->input('subcategory'))
+                $request->filled('category_id'),
+                fn($query) => $query->where('category_id', $request->input('category_id'))
             )
             ->when(
                 $request->filled('in_stock'),
-                fn($query) =>
-                $query->where('in_stock', $request->boolean('in_stock'))
+                fn($query) => $query->where('in_stock', $request->boolean('in_stock'))
             )
             ->orderBy(
                 $request->input('sort_by', 'created_at'),
@@ -72,8 +69,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'mrp' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0|lte:mrp',
-            'category' => 'nullable|string|max:255',
-            'subcategory' => 'nullable|string|max:255',
+            'category_id' => 'required|exists:categories,id', // Sử dụng category_id
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
@@ -105,10 +101,10 @@ class ProductController extends Controller
                 'description' => $data['description'] ?? null,
                 'mrp' => $data['mrp'],
                 'price' => $data['price'],
-                'category' => $data['category'] ?? null,
-                'subcategory' => $data['subcategory'] ?? null,  // Thêm mới
+                'category_id' => $data['category_id'], // Lưu ID danh mục
                 'images' => $imageUrls,
                 'store_id' => $store->id,
+                'in_stock' => true,
             ]);
 
             return response()->json([
@@ -132,7 +128,8 @@ class ProductController extends Controller
     {
         $store = $request->user()->store;
 
-        $product = Product::where('id', $id)
+        $product = Product::with('category:id,name,slug')
+            ->where('id', $id)
             ->where('store_id', $store->id)
             ->first();
 
@@ -172,8 +169,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'mrp' => 'sometimes|numeric|min:0',
             'price' => 'sometimes|numeric|min:0|lte:mrp',
-            'category' => 'nullable|string|max:255',
-            'subcategory' => 'nullable|string|max:255',  // Thêm mới
+            'category_id' => 'nullable|exists:categories,id', // Update category_id
             'in_stock' => 'boolean',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
@@ -220,7 +216,7 @@ class ProductController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật sản phẩm thành công',
-                'data' => $product->fresh(),
+                'data' => $product->fresh('category'),
             ]);
         } catch (\Exception $e) {
             return response()->json([
