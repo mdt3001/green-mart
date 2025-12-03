@@ -47,18 +47,18 @@ export const assets = {
 export const categories = ["Headphones", "Speakers", "Watch", "Earbuds", "Mouse", "Decoration"];
 
 export const topCategoriesData = [
-    { id: "cat_1", name: "Fresh Fruit", image: top_categories_1 },
-    { id: "cat_2", name: "Vegetables", image: top_categories_2 },
-    { id: "cat_3", name: "Meat & Fish", image: top_categories_3 },
-    { id: "cat_4", name: "Snacks", image: top_categories_4 },
-    { id: "cat_5", name: "Beverages", image: top_categories_5 },
-    { id: "cat_6", name: "Beauty & Health", image: top_categories_6 },
-    { id: "cat_7", name: "Bread & Bakery", image: top_categories_7 },
-    { id: "cat_8", name: "Baking Needs", image: top_categories_8 },
-    { id: "cat_9", name: "Cooking", image: top_categories_9 },
-    { id: "cat_10", name: "Diabetic Food", image: top_categories_10 },
-    { id: "cat_11", name: "Dish Detergents", image: top_categories_11 },
-    { id: "cat_12", name: "Oil", image: top_categories_12 },
+    { id: "1", name: "Trái cây tươi", image: top_categories_1 },
+    { id: "2", name: "Rau củ tươi", image: top_categories_2 },
+    { id: "3", name: "Thịt và Hải sản", image: top_categories_3 },
+    { id: "4", name: "Đồ ăn vặt", image: top_categories_4 },
+    { id: "5", name: "Đồ uống", image: top_categories_5 },
+    { id: "6", name: "Làm đẹp & Sức khỏe", image: top_categories_6 },
+    { id: "7", name: "Bánh mì & Bánh ngọt", image: top_categories_7 },
+    { id: "8", name: "Nguyên liệu làm bánh", image: top_categories_8 },
+    { id: "9", name: "Đồ khô - Gia vị nấu ăn", image: top_categories_9 },
+    { id: "10", name: "Thực phẩm bổ sung", image: top_categories_10 },
+    { id: "11", name: "Chất tẩy rửa gia dụng", image: top_categories_11 },
+    { id: "12", name: "Dầu ăn", image: top_categories_12 },
 ]
 
 export const saleBanners = [

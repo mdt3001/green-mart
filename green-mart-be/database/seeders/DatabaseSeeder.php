@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             FlashSaleProductSeeder::class,
             RatingSeeder::class,
             WishlistSeeder::class,
+            CategorySeeder::class,
 
         ]);
     }

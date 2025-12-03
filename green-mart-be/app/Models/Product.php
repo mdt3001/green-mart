@@ -19,8 +19,7 @@ class Product extends Model
         'mrp',
         'price',
         'images',
-        'category',
-        'subcategory',
+        'category_id', // Thay category, subcategory bằng cái này
         'in_stock',
         'store_id',
     ];
@@ -30,6 +29,13 @@ class Product extends Model
     ];
 
     // Relationships
+
+    // Thêm quan hệ với Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function store()
     {
         return $this->belongsTo(Store::class);

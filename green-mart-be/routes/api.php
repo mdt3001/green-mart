@@ -51,8 +51,7 @@ Route::prefix('public')->group(function () {
 
     // Categories
     Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{category}/subcategories', [CategoryController::class, 'subcategories']);
-    Route::get('categories/{category}/products', [CategoryController::class, 'products']);
+    Route::get('categories/{id}/products', [CategoryController::class, 'products']);
 
     // Stores
     Route::get('stores', [PublicStoreController::class, 'index']);
@@ -85,7 +84,7 @@ Route::prefix('auth')->group(function () {
     Route::post('customer/login/google', [SocialLoginController::class, 'googleLogin']);
     Route::post('customer/verify-email', [CustomerRegisterController::class, 'verifyEmail']);
     Route::post('customer/resend-verification', [CustomerRegisterController::class, 'resendVerificationCode']);
-    
+
     Route::post('password/forgot', [PasswordController::class, 'forgotPassword']);
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
 
@@ -96,22 +95,22 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::post('dashboard', [DashboardController::class, 'index']);
-    
+
     // Store Management
     Route::get('sellers/pending', [StoreApprovalController::class, 'index']);
     Route::post('sellers/toggle-active/{store}', [StoreApprovalController::class, 'toggleActive']);
     Route::post('sellers/approve/{store}', [StoreApprovalController::class, 'approve']);
     Route::post('sellers/reject/{store}', [StoreApprovalController::class, 'reject']);
-    
+
     // Order Management
     Route::get('orders', [OrderController::class, 'index']);
     Route::get('orders/{order}', [OrderController::class, 'show']);
     Route::put('orders/{order}', [OrderController::class, 'update']);
-    
+
     // Coupon Management
     Route::apiResource('coupons', AdminCouponController::class);
     Route::post('coupons/{code}/assign-stores', [AdminCouponController::class, 'assignToStores']);
-    
+
     // Store Coupon Management (Admin managing store coupons)
     Route::get('stores/{storeId}/coupons', [AdminStoreController::class, 'getCoupons']);
     Route::post('stores/{storeId}/coupons/{couponCode}/toggle', [AdminStoreController::class, 'toggleCoupon']);
@@ -140,7 +139,7 @@ Route::middleware(['auth:sanctum', CheckSellerApproved::class])->prefix('seller'
     // Analytics
     Route::get('analytics/overview', [AnalyticsController::class, 'overview']);
     Route::get('analytics/products', [AnalyticsController::class, 'products']);
-    
+
     // Seller Coupon Routes
     Route::get('coupons', [SellerCouponController::class, 'index']);
     Route::post('coupons/{code}/toggle', [SellerCouponController::class, 'toggle']);
@@ -177,7 +176,7 @@ Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
     // Reviews
     Route::get('reviews', [ReviewController::class, 'index']);
     Route::post('reviews', [ReviewController::class, 'store']);
-    
+
     // Customer Coupon Routes
     Route::get('stores/{storeId}/coupons', [CustomerCouponController::class, 'getStoreActiveCoupons']);
     Route::post('coupons/validate', [CustomerCouponController::class, 'validateCoupon']);

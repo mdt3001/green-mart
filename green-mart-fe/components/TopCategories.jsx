@@ -6,16 +6,17 @@ import Link from "next/link.js";
 
 export default function TopCategories() {
   return (
-    <div className="my-20 max-w-7xl mx-5 sm:mx-auto">
+    <div className="my-10 max-w-7xl mx-5 sm:mx-auto">
       <Title
         visibleButton={false}
-        title="CATEGORY"
-        description="Shop by Top Categories"
+        title="Danh mục"
+        description="Mua sắm theo danh mục phổ biến"
       />
-      <div className="mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
+      <div className="mt-4 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
         {topCategoriesData.map((category) => (
-          <Link href={`/shop?category=${category.name}`}
-            className="flex flex-col items-center text-center border py-3 lg:py-5 cursor-pointer border-gray-4 hover:border-primary transition-all"
+          <Link
+            href={`/shop?category=${category.name}`}
+            className="flex flex-col items-center text-center  py-3 lg:py-5 cursor-pointer hover:scale-105 transition-all"
             key={category.id}
           >
             <Image

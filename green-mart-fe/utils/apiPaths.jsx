@@ -27,10 +27,7 @@ export const API_PATHS = {
     RELATED_PRODUCTS: (id) => `/api/public/products/${id}/related`,
 
     CATEGORIES: "/api/public/categories",
-    CATEGORY_SUBCATEGORIES: (category) =>
-      `/api/public/categories/${category}/subcategories`,
-    CATEGORY_PRODUCTS: (category) =>
-      `/api/public/categories/${category}/products`,
+    CATEGORY_PRODUCTS: (id) => `/api/public/categories/${id}/products`,
 
     STORES: "/api/public/stores",
     STORE_DETAIL: (username) => `/api/public/stores/${username}`,

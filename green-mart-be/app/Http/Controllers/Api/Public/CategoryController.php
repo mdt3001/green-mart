@@ -3,84 +3,66 @@
 namespace App\Http\Controllers\Api\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     /**
-     * Danh sách categories với subcategories
+     * Lấy danh sách Categories theo dạng cây (Tree)
+     * Dùng để hiển thị Menu hoặc Sidebar
      */
     public function index()
     {
-        // Lấy categories
-        $categories = Product::select('category', DB::raw('count(*) as total'))
-            ->where('in_stock', true)
-            ->whereNotNull('category')
-            ->groupBy('category')
-            ->orderBy('total', 'desc')
-            ->get();
-
-        // Lấy subcategories theo từng category
-        $result = $categories->map(function ($cat) {
-            $subcategories = Product::select('subcategory', DB::raw('count(*) as total'))
-                ->where('category', $cat->category)
-                ->where('in_stock', true)
-                ->whereNotNull('subcategory')
-                ->groupBy('subcategory')
-                ->orderBy('total', 'desc')
-                ->get();
-
-            return [
-                'category' => $cat->category,
-                'total' => $cat->total,
-                'subcategories' => $subcategories,
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * Lấy subcategories của 1 category
-     */
-    public function subcategories(string $category)
-    {
-        $subcategories = Product::select('subcategory', DB::raw('count(*) as total'))
-            ->where('category', $category)
-            ->where('in_stock', true)
-            ->whereNotNull('subcategory')
-            ->groupBy('subcategory')
-            ->orderBy('total', 'desc')
+        // Lấy các category cha (parent_id = null) và kèm theo các con (children)
+        // Select các cột cần thiết để tối ưu response
+        $categories = Category::whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->select('id', 'name', 'slug', 'parent_id');
+            }])
+            ->select('id', 'name', 'slug', 'parent_id')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $subcategories,
+            'data' => $categories,
         ]);
     }
 
     /**
-     * Sản phẩm theo category và subcategory
+     * Lấy sản phẩm thuộc Category (bao gồm cả sản phẩm của category con)
+     * Ví dụ: Chọn "Trái cây tươi" (Cha) thì phải hiện cả "Táo", "Cam" (Con)
      */
-    public function products(Request $request, string $category)
+    public function products(Request $request, $id)
     {
-        $products = Product::where('category', $category)
+        // 1. Tìm Category theo ID
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found',
+            ], 404);
+        }
+
+        // 2. Lấy danh sách ID của chính nó và các con của nó
+        // Để khi query Product thì lấy được hết
+        $categoryIds = $category->children()->pluck('id')->push($category->id);
+
+        // 3. Query Product
+        $products = Product::whereIn('category_id', $categoryIds)
             ->where('in_stock', true)
-            ->when(
-                $request->filled('subcategory'),
-                fn($query) =>
-                $query->where('subcategory', $request->input('subcategory'))
-            )
-            ->with('store:id,name,logo')
+            ->with('store:id,name,logo') // Eager load thông tin cửa hàng
             ->paginate($request->integer('per_page', 20));
 
         return response()->json([
             'success' => true,
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug
+            ],
             'data' => $products,
         ]);
     }
