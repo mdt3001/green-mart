@@ -1,24 +1,16 @@
 "use client";
-
-import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import {
-  User,
-  Package,
-  Heart,
-  Settings,
-  LogOut,
-  ChevronDown,
-  Store,
-} from "lucide-react";
-import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { LogOut, User, Settings, Store, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { assets } from "@/assets/assets";
 
-export function UserDropdown() {
-  const { user, logout } = useAuth();
+const UserDropdown = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const { user, logout } = useAuth();
   const router = useRouter();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,90 +24,102 @@ export function UserDropdown() {
   }, []);
 
   const handleLogout = () => {
-    logout();
     setIsOpen(false);
+    logout();
+    setTimeout(() => {
+      window.location.replace("/login/seller");
+    }, 0);
   };
+
+  const menuItems = [
+    {
+      icon: User,
+      label: "Profile",
+      onClick: () => {
+        router.push("/profile");
+        setIsOpen(false);
+      },
+    },
+    {
+      icon: LogOut,
+      label: "Logout",
+      onClick: handleLogout,
+      className: "text-red-600 hover:bg-red-50",
+    },
+  ];
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-100 transition-colors"
       >
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
-          {user?.name?.charAt(0).toUpperCase() || "U"}
+        <div className="relative w-10 h-10 rounded-full shadow-md overflow-hidden">
+          {userInfo?.logo ? (
+            <Image
+              src={userInfo.logo}
+              alt={userInfo.name || "user Logo"}
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+              <User className="w-5 h-5 text-green-600" />
+            </div>
+          )}
         </div>
-        <span className="hidden md:block text-sm font-medium max-w-[100px] truncate">
-          {user?.name}
-        </span>
+
+        <div className="hidden lg:block text-left">
+          <p className="text-sm font-semibold text-slate-800">
+            {userInfo?.name || "user Name"}
+          </p>
+          <p className="text-xs text-slate-500">
+            {userInfo?.email || userInfo?.user?.email || user?.email}
+          </p>
+        </div>
         <ChevronDown
-          size={16}
-          className={`hidden md:block transition-transform ${
+          size={18}
+          className={`text-slate-600 transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-          <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm font-semibold text-gray-900 truncate">
-              {user?.name}
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+          {/* user Info Header */}
+          <div className="px-4 py-3 border-b border-slate-200">
+            <p className="text-sm font-semibold text-slate-800">
+              {userInfo?.name || "user Name"}
             </p>
-            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {userInfo?.email || user?.email}
+            </p>
           </div>
 
+          {/* Menu Items */}
           <div className="py-2">
-            <Link
-              href="/profile"
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-              onClick={() => setIsOpen(false)}
-            >
-              <User size={16} />
-              <span>Tài khoản của tôi</span>
-            </Link>
-
-            <Link
-              href="/orders"
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-              onClick={() => setIsOpen(false)}
-            >
-              <Package size={16} />
-              <span>Đơn hàng</span>
-            </Link>
-
-            <Link
-              href="/wishlist"
-              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-              onClick={() => setIsOpen(false)}
-            >
-              <Heart size={16} />
-              <span>Yêu thích</span>
-            </Link>
-
-            {user?.role === "seller" && (
-              <Link
-                href="/seller/dashboard"
-                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-                onClick={() => setIsOpen(false)}
-              >
-                <Store size={16} />
-                <span>Quản lý cửa hàng</span>
-              </Link>
-            )}
-          </div>
-
-          <div className="border-t border-gray-200 pt-2">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition w-full"
-            >
-              <LogOut size={16} />
-              <span>Đăng xuất</span>
-            </button>
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={item.onClick}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors ${
+                    item.className || "text-slate-700"
+                  }`}
+                >
+                  <Icon size={18} />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
     </div>
   );
-}
+};
+
+export default UserDropdown;

@@ -48,7 +48,9 @@ export default function CustomerRegisterPage() {
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản."
       );
-      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+      router.push(
+        `/verify-email/customer?email=${encodeURIComponent(data.email)}`
+      );
     } catch (error) {
       toast.error(error.response?.data?.message || "Đăng ký thất bại!");
     } finally {

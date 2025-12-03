@@ -16,7 +16,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { assets } from "@/assets/assets";
 import { useAuth } from "@/context/AuthContext";
-import { UserDropdown } from "@/components/UserDropdown";
+import  UserDropdown  from "@/components/UserDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/lib/redux/features/category/categorySlice";
 
@@ -48,7 +48,7 @@ const Navbar = () => {
     <nav className="relative bg-white shadow-sm z-50 ">
       <div>
         {/* TOP BAR */}
-        <div className="border-b">
+        <div className="">
           <div className="max-w-7xl mx-auto px-4 xl:px-0">
             <div className="flex items-center justify-between py-2 text-sm text-gray-600">
               {/* Left Links */}
@@ -123,7 +123,7 @@ const Navbar = () => {
 
                 {!loading && user && (
                   <div className="hidden sm:block">
-                    <UserDropdown />
+                    <UserDropdown userInfo={user} />
                   </div>
                 )}
               </div>
@@ -155,11 +155,11 @@ const Navbar = () => {
                   placeholder="Tìm kiếm sản phẩm..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full px-4 py-2.5 pr-28 border border-gray-300 rounded-full outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition shadow-sm"
+                  className="w-full px-4 py-2.5  border border-gray-300 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition shadow-sm"
                 />
                 <button
                   type="submit"
-                  className="absolute right-1 top-1 bottom-1 bg-green-600 hover:bg-green-700 text-white px-6 rounded-full transition font-medium flex items-center gap-2"
+                  className="absolute right-1 top-1 bottom-1 bg-green-600 hover:bg-green-700 text-white px-6 rounded-md transition font-medium flex items-center gap-2"
                 >
                   <Search size={18} />
                 </button>

@@ -136,8 +136,8 @@ export default function LoginPage() {
             <Link
               href={
                 emailValue
-                  ? `/verify-email?email=${encodeURIComponent(emailValue)}`
-                  : "/verify-email"
+                  ? `/verify-email/seller?email=${encodeURIComponent(emailValue)}`
+                  : "/verify-email/seller"
               }
               className="text-primary hover:underline font-medium"
             >

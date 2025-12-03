@@ -107,11 +107,11 @@ export default function SellerRegisterPage() {
         // Sử dụng encodeURIComponent để đảm bảo an toàn cho chuỗi URL
         if (emailToVerify) {
           router.push(
-            `/verify-email?email=${encodeURIComponent(emailToVerify)}`
+            `/verify-email/seller?email=${encodeURIComponent(emailToVerify)}`
           );
         } else {
           // Fallback nếu không lấy được email (hiếm khi xảy ra nếu API đúng chuẩn)
-          router.push(`/verify-email`);
+          router.push(`/verify-email/seller`);
         }
       }, 1000);
     } catch (error) {

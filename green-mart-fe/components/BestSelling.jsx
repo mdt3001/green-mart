@@ -44,7 +44,7 @@ const BestSelling = () => {
           description="Đang tải..."
           href="/shop"
         />
-        <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2 justify-between">
+        <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-5">
           {[...Array(displayQuantity)].map((_, index) => (
             <div
               key={index}
@@ -71,7 +71,7 @@ const BestSelling = () => {
         description={`Hiển thị ${products.length} sản phẩm đang bán chạy`}
         href="/shop"
       />
-      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2 justify-between">
+      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-5">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

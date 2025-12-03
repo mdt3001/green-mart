@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // 1. Import useRouter
+import Cookies from "js-cookie"; // 2. Import js-cookie
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -22,6 +24,7 @@ import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -42,11 +45,15 @@ export default function LoginPage() {
         data
       );
       const result = response.data;
+      const { token, user } = result.data;
 
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
+      Cookies.set("token", token, { expires: 7, path: "/" });
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       toast.success("Đăng nhập thành công!");
-      window.location.href = "/";
+      router.push("/");
     } catch (error) {
       toast.error(error.response?.data?.message || "Đăng nhập thất bại!");
     } finally {
@@ -116,8 +123,10 @@ export default function LoginPage() {
             <Link
               href={
                 emailValue
-                  ? `/verify-email?email=${encodeURIComponent(emailValue)}`
-                  : "/verify-email"
+                  ? `/verify-email/customer?email=${encodeURIComponent(
+                      emailValue
+                    )}`
+                  : "/verify-email/customer"
               }
               className="text-primary hover:underline font-medium"
             >
