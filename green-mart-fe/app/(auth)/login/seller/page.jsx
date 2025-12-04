@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation"; // 1. Import useRouter
-import Cookies from "js-cookie"; // 2. Import js-cookie
-
 import {
   Card,
   CardContent,
@@ -22,10 +20,12 @@ import Link from "next/link";
 import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 
-export default function LoginPage() {
+export default function SellerLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter(); // Khởi tạo router
+  const router = useRouter();
+  const { login } = useAuth();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -37,40 +37,40 @@ export default function LoginPage() {
 
   const emailValue = form.watch("email");
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (data) => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
         API_PATHS.AUTH.SELLER_LOGIN,
-        formData
+        data
       );
-
       const result = response.data;
-
-    
       const { token, user, store } = result.data;
 
-      if (!token) {
-        throw new Error("Không tìm thấy token xác thực!");
-      }
+      // Chuẩn bị user data kèm store info
+      const userData = {
+        ...user,
+        store: store || null,
+      };
 
-      Cookies.set("token", token, { expires: 7, path: "/" });
+      // ✅ Gọi login() từ AuthContext
+      login(userData, token);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
+      // Lưu thêm store nếu có
       if (store) {
         localStorage.setItem("store", JSON.stringify(store));
       }
 
       toast.success("Đăng nhập thành công!");
-      router.push("/store"); // Chuyển hướng sau khi đăng nhập thành công
 
-      
+      // Redirect dựa vào có store hay chưa
+      if (store) {
+        router.push("/store");
+      } else {
+        router.push("/create-store");
+      }
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "Đăng nhập thất bại!";
-      toast.error(message);
+      toast.error(error.response?.data?.message || "Đăng nhập thất bại!");
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +136,9 @@ export default function LoginPage() {
             <Link
               href={
                 emailValue
-                  ? `/verify-email/seller?email=${encodeURIComponent(emailValue)}`
+                  ? `/verify-email/seller?email=${encodeURIComponent(
+                      emailValue
+                    )}`
                   : "/verify-email/seller"
               }
               className="text-primary hover:underline font-medium"

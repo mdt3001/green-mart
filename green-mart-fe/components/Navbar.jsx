@@ -24,7 +24,6 @@ const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading } = useAuth();
-
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
   const cartCount = useSelector((state) => state.cart.total);

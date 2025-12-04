@@ -1,13 +1,13 @@
 "use client";
-import React, {
+
+import {
   createContext,
   useContext,
   useState,
   useEffect,
-  useMemo,
+  useCallback,
 } from "react";
-import axiosInstance from "@/lib/axios/axiosInstance";
-import { API_PATHS } from "@/utils/apiPaths";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -24,70 +24,80 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Load user từ localStorage khi mount
   useEffect(() => {
-    checkAuthStatus();
+    const loadUser = () => {
+      try {
+        const token = Cookies.get("token") || localStorage.getItem("token");
+        const userData = localStorage.getItem("user");
+
+        if (token && userData) {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Error loading user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
   }, []);
 
-  const checkAuthStatus = async () => {
+  // ✅ Hàm login - lưu vào storage VÀ cập nhật state
+  const login = useCallback((userData, token) => {
     try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await axiosInstance.get(API_PATHS.CUSTOMER.PROFILE);
-          const data = response.data;
-          setUser(data.user || data);
-          localStorage.setItem("user", JSON.stringify(data.user || data));
-          setIsAuthenticated(true);
-        } catch (error) {
-          const userStr = localStorage.getItem("user");
-          if (userStr) {
-            const userData = JSON.parse(userStr);
-            setUser(userData);
-            setIsAuthenticated(true);
-          } else {
-            logout();
-          }
-        }
-      }
-    } catch (error) {
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
-  const login = (userData, token) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-    setIsAuthenticated(true);
-  };
+      // Lưu vào Cookies và localStorage
+      Cookies.set("token", token, { expires: 7, path: "/" });
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
 
-  const logout = () => {
+      // Cập nhật state NGAY LẬP TỨC
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
+    }
+  }, []);
+
+  // Hàm logout
+  const logout = useCallback(() => {
+    Cookies.remove("token");
     localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("store");
+
     setUser(null);
     setIsAuthenticated(false);
-    window.location.href = "/";
-  };
-  const updateUser = (updatedUserData) => {
-    const newUserData = { ...user, ...updatedUserData };
-    localStorage.setItem("user", JSON.stringify(newUserData));
-    setUser(newUserData);
+  }, []);
+
+  // Hàm cập nhật user
+  const updateUser = useCallback(
+    (newUserData) => {
+      try {
+        const updatedUser = { ...user, ...newUserData };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      } catch (error) {
+        console.error("Update user error:", error);
+      }
+    },
+    [user]
+  );
+
+  const value = {
+    user,
+    loading,
+    isAuthenticated,
+    login,
+    logout,
+    updateUser,
   };
 
-  const value = useMemo(
-    () => ({
-      user,
-      isAuthenticated,
-      loading,
-      login,
-      logout,
-      updateUser,
-      checkAuthStatus,
-    }),
-    [user, isAuthenticated, loading]
-  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

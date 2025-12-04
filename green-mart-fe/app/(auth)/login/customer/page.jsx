@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // 1. Import useRouter
-import Cookies from "js-cookie"; // 2. Import js-cookie
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,10 +20,12 @@ import Link from "next/link";
 import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -34,7 +35,6 @@ export default function LoginPage() {
     },
   });
 
-  // 1. Theo dõi giá trị email để gắn vào link xác thực
   const emailValue = form.watch("email");
 
   const onSubmit = async (data) => {
@@ -47,10 +47,8 @@ export default function LoginPage() {
       const result = response.data;
       const { token, user } = result.data;
 
-      Cookies.set("token", token, { expires: 7, path: "/" });
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      // ✅ Chỉ cần gọi login() - nó sẽ tự lưu vào localStorage và Cookies
+      login(user, token);
 
       toast.success("Đăng nhập thành công!");
       router.push("/");
@@ -105,7 +103,6 @@ export default function LoginPage() {
 
         <Separator className="my-6" />
 
-        {/* Khu vực liên kết bổ sung */}
         <div className="space-y-2 text-center text-sm">
           <p className="text-muted-foreground">
             Chưa có tài khoản?{" "}
@@ -117,7 +114,6 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          {/* 2. Link xác thực tài khoản kèm email param */}
           <p className="text-muted-foreground">
             Tài khoản chưa kích hoạt?{" "}
             <Link
