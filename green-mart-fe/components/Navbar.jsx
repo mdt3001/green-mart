@@ -16,9 +16,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { assets } from "@/assets/assets";
 import { useAuth } from "@/context/AuthContext";
-import  UserDropdown  from "@/components/UserDropdown";
+import UserDropdown from "@/components/UserDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/lib/redux/features/category/categorySlice";
+import axiosInstance from "@/lib/axios/axiosInstance";
+import { API_PATHS } from "@/utils/apiPaths";
 
 const Navbar = () => {
   const router = useRouter();
@@ -29,6 +31,9 @@ const Navbar = () => {
   const cartCount = useSelector((state) => state.cart.total);
 
   const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState(null);
+  const [isSuggestOpen, setIsSuggestOpen] = useState(false);
+  const [isFetchingSuggest, setIsFetchingSuggest] = useState(false);
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -40,8 +45,53 @@ const Navbar = () => {
     e.preventDefault();
     if (search.trim()) {
       router.push(`/shop?search=${encodeURIComponent(search)}`);
+      setIsSuggestOpen(false);
     }
   };
+
+  // Gợi ý tìm kiếm từ backend khi user gõ
+  useEffect(() => {
+    let cancel = false;
+
+    const fetchSuggestions = async () => {
+      const q = search.trim();
+      if (q.length < 2) {
+        setSuggestions(null);
+        setIsSuggestOpen(false);
+        return;
+      }
+      try {
+        setIsFetchingSuggest(true);
+        const res = await axiosInstance.get(API_PATHS.PUBLIC.SEARCH_SUGGESTIONS, {
+          params: { q },
+        });
+        if (cancel) return;
+        setSuggestions(res.data?.data || null);
+        setIsSuggestOpen(true);
+      } catch (err) {
+        if (cancel) return;
+        setSuggestions(null);
+        setIsSuggestOpen(false);
+      } finally {
+        if (!cancel) setIsFetchingSuggest(false);
+      }
+    };
+
+    const timer = setTimeout(fetchSuggestions, 250); // debounce nhẹ
+    return () => {
+      cancel = true;
+      clearTimeout(timer);
+    };
+  }, [search]);
+
+  // Khi rời trang shop, reset ô search
+  useEffect(() => {
+    if (!pathname.startsWith("/shop")) {
+      setSearch("");
+      setSuggestions(null);
+      setIsSuggestOpen(false);
+    }
+  }, [pathname]);
 
   return (
     <nav className="relative bg-white shadow-sm z-50 ">
@@ -162,6 +212,93 @@ const Navbar = () => {
                 >
                   <Search size={18} />
                 </button>
+
+                {/* Suggestions dropdown */}
+                {isSuggestOpen && suggestions && (
+                  <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-72 overflow-y-auto text-sm">
+                    {isFetchingSuggest && (
+                      <div className="px-4 py-2 text-gray-500">Đang tải...</div>
+                    )}
+
+                    {!isFetchingSuggest && (
+                      <>
+                        {/* Sản phẩm */}
+                        {suggestions.products?.length > 0 && (
+                          <div className="border-b border-gray-100">
+                            <p className="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-500 uppercase">
+                              Sản phẩm
+                            </p>
+                            {suggestions.products.map((name) => (
+                              <button
+                                key={`p-${name}`}
+                                type="button"
+                                className="w-full text-left px-4 py-1.5 hover:bg-gray-50"
+                                onClick={() => {
+                                  router.push(`/shop?search=${encodeURIComponent(name)}`);
+                                  setIsSuggestOpen(false);
+                                }}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Category */}
+                        {suggestions.categories?.length > 0 && (
+                          <div className="border-b border-gray-100">
+                            <p className="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-500 uppercase">
+                              Danh mục
+                            </p>
+                            {suggestions.categories.map((name) => (
+                              <button
+                                key={`c-${name}`}
+                                type="button"
+                                className="w-full text-left px-4 py-1.5 hover:bg-gray-50"
+                                onClick={() => {
+                                  router.push(`/shop?search=${encodeURIComponent(name)}`);
+                                  setIsSuggestOpen(false);
+                                }}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Store */}
+                        {suggestions.stores?.length > 0 && (
+                          <div>
+                            <p className="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-500 uppercase">
+                              Cửa hàng
+                            </p>
+                            {suggestions.stores.map((name) => (
+                              <button
+                                key={`s-${name}`}
+                                type="button"
+                                className="w-full text-left px-4 py-1.5 hover:bg-gray-50"
+                                onClick={() => {
+                                  router.push(`/shop?search=${encodeURIComponent(name)}`);
+                                  setIsSuggestOpen(false);
+                                }}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {(!suggestions.products?.length &&
+                          !suggestions.categories?.length &&
+                          !suggestions.stores?.length) && (
+                            <div className="px-4 py-2 text-gray-500">
+                              Không có gợi ý phù hợp.
+                            </div>
+                          )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </form>
 
@@ -205,18 +342,16 @@ const Navbar = () => {
             <div className="flex items-center gap-8 h-12">
               <Link
                 href="/"
-                className={`flex items-center gap-2 hover:text-green-400 transition h-full font-medium ${
-                  pathname === "/" ? "text-green-400" : ""
-                }`}
+                className={`flex items-center gap-2 hover:text-green-400 transition h-full font-medium ${pathname === "/" ? "text-green-400" : ""
+                  }`}
               >
                 Trang chủ
               </Link>
 
               <div className="group relative h-full flex items-center">
                 <button
-                  className={`flex items-center gap-1 hover:text-green-400 transition font-medium ${
-                    pathname.includes("/shop") ? "text-green-400" : ""
-                  }`}
+                  className={`flex items-center gap-1 hover:text-green-400 transition font-medium ${pathname.includes("/shop") ? "text-green-400" : ""
+                    }`}
                 >
                   Sản phẩm
                   <ChevronDown size={16} />
@@ -233,30 +368,8 @@ const Navbar = () => {
                           >
                             {cat.name}
                           </Link>
-                          {cat.children && cat.children.length > 0 && (
-                            <ChevronRight
-                              size={14}
-                              className="text-gray-400 group-hover/sub:text-green-600"
-                            />
-                          )}
-                        </div>
 
-                        {cat.children && cat.children.length > 0 && (
-                          <div className="absolute top-0 left-full w-60 bg-white shadow-lg rounded-md border border-gray-100 hidden group-hover/sub:block ml-0.5">
-                            <ul className="py-2">
-                              {cat.children.map((sub) => (
-                                <li key={sub.id}>
-                                  <Link
-                                    href={`/shop?category=${sub.id}`}
-                                    className="block px-4 py-2 hover:bg-green-50 hover:text-green-600 transition-colors"
-                                  >
-                                    {sub.name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -265,17 +378,15 @@ const Navbar = () => {
 
               <Link
                 href="/about"
-                className={`hover:text-green-400 transition font-medium ${
-                  pathname === "/about" ? "text-green-400" : ""
-                }`}
+                className={`hover:text-green-400 transition font-medium ${pathname === "/about" ? "text-green-400" : ""
+                  }`}
               >
                 Về chúng tôi
               </Link>
               <Link
                 href="/contact"
-                className={`hover:text-green-400 transition font-medium ${
-                  pathname === "/contact" ? "text-green-400" : ""
-                }`}
+                className={`hover:text-green-400 transition font-medium ${pathname === "/contact" ? "text-green-400" : ""
+                  }`}
               >
                 Liên hệ
               </Link>

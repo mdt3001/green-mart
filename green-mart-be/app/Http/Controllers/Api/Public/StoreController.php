@@ -32,11 +32,11 @@ class StoreController extends Controller
     }
 
     /**
-     * Chi tiết store
+     * Chi tiết store theo ID
      */
-    public function show(string $username)
+    public function show(string $id)
     {
-        $store = Store::where('username', $username)
+        $store = Store::where('id', $id)
             ->where('is_active', true)
             ->where('status', 'approved')
             ->withCount('products')
@@ -56,11 +56,11 @@ class StoreController extends Controller
     }
 
     /**
-     * Sản phẩm của store
+     * Sản phẩm của store theo ID
      */
-    public function products(Request $request, string $username)
+    public function products(Request $request, string $id)
     {
-        $store = Store::where('username', $username)
+        $store = Store::where('id', $id)
             ->where('is_active', true)
             ->where('status', 'approved')
             ->first();

@@ -9,10 +9,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Cart() {
-  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$";
+  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "đ";
 
   const { cartItems } = useSelector((state) => state.cart);
-  const products = useSelector((state) => state.product.list);
+  const products = useSelector((state) => state.product.products) || [];
 
   const dispatch = useDispatch();
 
@@ -50,29 +50,29 @@ export default function Cart() {
       <div className="max-w-7xl mx-auto ">
         {/* Title */}
         <PageTitle
-          heading="My Cart"
-          text="items in your cart"
-          linkText="Add more"
+          heading="Giỏ hàng"
+          text="Sản phẩm trong giỏ hàng"
+          linkText="Thêm sản phẩm"
         />
 
         <div className="flex items-start justify-between gap-5 max-lg:flex-col">
           <table className="w-full max-w-4xl text-slate-600 table-auto">
             <thead>
               <tr className="max-sm:text-sm">
-                <th className="text-left">Product</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th className="max-md:hidden">Remove</th>
+                <th className="text-left">Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Tổng giá</th>
+                <th className="max-md:hidden">Xóa</th>
               </tr>
             </thead>
             <tbody>
               {cartArray.map((item, index) => (
                 <tr key={index} className="space-x-2">
                   <td className="flex gap-3 my-4">
-                    <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md">
+                    <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md overflow-hidden">
                       <Image
                         src={item.images[0]}
-                        className="h-14 w-auto"
+                        className="h-14 w-auto object-cover w-full h-full"
                         alt=""
                         width={45}
                         height={45}
@@ -82,8 +82,8 @@ export default function Cart() {
                       <p className="max-sm:text-sm">{item.name}</p>
                       <p className="text-xs text-slate-500">{item.category}</p>
                       <p>
+                        {item.price.toLocaleString('vi-VN')}
                         {currency}
-                        {item.price}
                       </p>
                     </div>
                   </td>
@@ -91,8 +91,8 @@ export default function Cart() {
                     <Counter productId={item.id} />
                   </td>
                   <td className="text-center">
+                    {(item.price * item.quantity).toLocaleString('vi-VN')}
                     {currency}
-                    {(item.price * item.quantity).toLocaleString()}
                   </td>
                   <td className="text-center max-md:hidden">
                     <button

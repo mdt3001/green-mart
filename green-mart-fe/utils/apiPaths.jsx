@@ -26,14 +26,14 @@ export const API_PATHS = {
     PRODUCT_DETAIL: (id) => `/api/public/products/${id}`,
     RELATED_PRODUCTS: (id) => `/api/public/products/${id}/related`,
     LATEST_PRODUCTS: "/api/public/products/latest",
-    BEST_SELLING_PRODUCTS: "/api/public/products/best-selling", 
+    BEST_SELLING_PRODUCTS: "/api/public/products/best-selling",
 
     CATEGORIES: "/api/public/categories",
     CATEGORY_PRODUCTS: (id) => `/api/public/categories/${id}/products`,
 
     STORES: "/api/public/stores",
-    STORE_DETAIL: (username) => `/api/public/stores/${username}`,
-    STORE_PRODUCTS: (username) => `/api/public/stores/${username}/products`,
+    STORE_DETAIL: (id) => `/api/public/stores/${id}`,
+    STORE_PRODUCTS: (id) => `/api/public/stores/${id}/products`,
 
     SEARCH: "/api/public/search",
     SEARCH_SUGGESTIONS: "/api/public/search/suggestions",

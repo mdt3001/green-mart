@@ -55,10 +55,10 @@ Route::prefix('public')->group(function () {
     Route::get('categories', [CategoryController::class, 'index']);
     Route::get('categories/{id}/products', [CategoryController::class, 'products']);
 
-    // Stores
+    // Stores (theo ID)
     Route::get('stores', [PublicStoreController::class, 'index']);
-    Route::get('stores/{username}', [PublicStoreController::class, 'show']);
-    Route::get('stores/{username}/products', [PublicStoreController::class, 'products']);
+    Route::get('stores/{id}', [PublicStoreController::class, 'show']);
+    Route::get('stores/{id}/products', [PublicStoreController::class, 'products']);
 
     // Search
     Route::get('search', [SearchController::class, 'search']);

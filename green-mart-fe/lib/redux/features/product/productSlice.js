@@ -1,13 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { API_PATHS } from "@/utils/apiPaths";
+import axiosInstance from "@/lib/axios/axiosInstance";
+
+// Lấy danh sách sản phẩm cho trang shop - mọi filter (search, category, price, sort...) xử lý ở backend
+export const fetchProducts = createAsyncThunk(
+  "product/fetchProducts",
+  async (params = {}, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(API_PATHS.PUBLIC.PRODUCTS, {
+        params,
+      });
+
+      // API trả về { success: true, data: { current_page, data: [...], ... } }
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Lỗi khi tải sản phẩm");
+    }
+  }
+);
 
 export const fetchProductsByCategory = createAsyncThunk(
   "product/fetchProductsByCategory",
   async ({ categoryId, page = 1 }, { rejectWithValue }) => {
     try {
       const url = `${API_PATHS.PUBLIC.CATEGORY_PRODUCTS(categoryId)}?page=${page}`;
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
 
 
       return {
@@ -24,9 +41,9 @@ export const fetchProductsByCategory = createAsyncThunk(
 const productSlice = createSlice({
   name: "product",
   initialState: {
-    products: [],
-    pagination: {},
-    currentCategory: null,
+    products: [],          // danh sách sản phẩm hiện tại
+    pagination: {},        // object phân trang từ backend
+    currentCategory: null, // giữ nguyên cho các màn khác nếu dùng
     loading: false,
     error: null,
   },
@@ -38,6 +55,21 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Dùng cho trang shop - gọi /api/public/products
+      .addCase(fetchProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pagination = action.payload || {};
+        state.products = action.payload?.data || [];
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(fetchProductsByCategory.pending, (state) => {
         state.loading = true;
         state.error = null;

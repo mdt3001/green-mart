@@ -30,9 +30,11 @@ class SearchController extends Controller
             ->where(function ($q) use ($search) {
                 $q->where('name', 'like', $search)
                     ->orWhere('description', 'like', $search)
-                    ->orWhere('category', 'like', $search);
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', $search);
+                    });
             })
-            ->with('store:id,name,logo')
+            ->with(['store:id,name,logo', 'category'])
             ->limit(10)
             ->get();
 
@@ -79,12 +81,11 @@ class SearchController extends Controller
             ->limit(5)
             ->pluck('name');
 
-        // Lấy categories gợi ý
-        $categories = Product::where('in_stock', true)
-            ->where('category', 'like', $search)
+        // Lấy categories gợi ý (cả cha và con)
+        $categories = \App\Models\Category::where('name', 'like', $search)
             ->distinct()
-            ->limit(3)
-            ->pluck('category');
+            ->limit(5)
+            ->pluck('name');
 
         // Lấy store names gợi ý
         $storeNames = Store::where('is_active', true)

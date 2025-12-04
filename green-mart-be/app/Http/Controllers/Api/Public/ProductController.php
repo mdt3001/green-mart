@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,25 +14,36 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::with('store:id,name,logo')
+        $products = Product::with(['store:id,name,logo', 'category'])
             ->where('in_stock', true)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', $search)
                         ->orWhere('description', 'like', $search)
-                        ->orWhere('subcategory', 'like', $search);  // Thêm mới
+                        ->orWhereHas('category', function ($q2) use ($search) {
+                            $q2->where('name', 'like', $search);
+                        });
                 });
             })
+            // Lọc theo category cha: lấy luôn sản phẩm thuộc các category con
             ->when(
-                $request->filled('category'),
-                fn($query) =>
-                $query->where('category', $request->input('category'))
+                $request->filled('parent_category_id'),
+                function ($query) use ($request) {
+                    $parentId = $request->input('parent_category_id');
+                    $parent = Category::find($parentId);
+
+                    if ($parent) {
+                        // Lấy id của chính nó + category con trực tiếp
+                        $categoryIds = $parent->children()->pluck('id')->push($parent->id);
+                        $query->whereIn('category_id', $categoryIds);
+                    }
+                }
             )
             ->when(
-                $request->filled('subcategory'),
-                fn($query) =>   // Thêm mới
-                $query->where('subcategory', $request->input('subcategory'))
+                $request->filled('category_id'),
+                fn($query) =>
+                $query->where('category_id', $request->input('category_id'))
             )
             ->when(
                 $request->filled('min_price'),

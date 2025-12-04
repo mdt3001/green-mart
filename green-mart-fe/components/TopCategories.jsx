@@ -15,7 +15,7 @@ export default function TopCategories() {
       <div className="mt-4 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between">
         {topCategoriesData.map((category) => (
           <Link
-            href={`/shop?category=${category.name}`}
+            href={`/shop?category=${category.id}`}
             className="flex flex-col items-center text-center  py-3 lg:py-5 cursor-pointer hover:scale-105 transition-all"
             key={category.id}
           >
@@ -33,3 +33,5 @@ export default function TopCategories() {
     </div>
   );
 }
+
+
