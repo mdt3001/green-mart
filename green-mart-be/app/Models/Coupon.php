@@ -46,6 +46,12 @@ class Coupon extends Model
         return $this->hasMany(Order::class, 'coupon_code', 'code');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_coupons', 'coupon_code', 'user_id', 'code', 'id')
+                    ->withTimestamps();
+    }
+
     // Scopes
     public function scopeActive($query)
     {

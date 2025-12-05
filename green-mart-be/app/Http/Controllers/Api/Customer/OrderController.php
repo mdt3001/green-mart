@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Address;
+use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -99,8 +100,43 @@ class OrderController extends Controller
 
             // Xử lý coupon (nếu có)
             $couponData = null;
+            $discountAmount = 0;
+            $finalTotal = $total;
+            
             if ($request->filled('coupon_code')) {
-                // TODO: Implement coupon logic
+                $code = strtoupper($request->coupon_code);
+                $coupon = Coupon::where('code', $code)->where('is_active', true)->first();
+
+                if (!$coupon || $coupon->isExpired()) {
+                    throw new \Exception('Mã giảm giá không hợp lệ hoặc đã hết hạn');
+                }
+
+                // Kiểm tra coupon có áp dụng cho store này không
+                $isEnabled = $coupon->stores()->where('stores.id', $request->store_id)->wherePivot('is_enabled', true)->exists();
+                if (!$isEnabled && !$coupon->is_public) {
+                    throw new \Exception('Mã không khả dụng cho cửa hàng này');
+                }
+
+                // Kiểm tra điều kiện user
+                $user = $request->user();
+                if ($coupon->for_new_user && $user->orders()->exists()) {
+                    throw new \Exception('Chỉ dành cho người dùng mới');
+                }
+
+                if ($coupon->for_member && !$user->is_member) {
+                    throw new \Exception('Chỉ dành cho thành viên');
+                }
+
+                // Tính discount
+                $discountAmount = ($total * $coupon->discount) / 100;
+                $finalTotal = max(0, $total - $discountAmount);
+
+                $couponData = [
+                    'code' => $coupon->code,
+                    'description' => $coupon->description,
+                    'discount' => $coupon->discount,
+                    'discount_amount' => $discountAmount,
+                ];
             }
 
             // Tạo đơn hàng
@@ -109,12 +145,13 @@ class OrderController extends Controller
                 'user_id' => $request->user()->id,
                 'store_id' => $request->store_id,
                 'address_id' => $request->address_id,
-                'total' => $total,
+                'total' => $finalTotal,
                 'status' => 'ORDER_PLACED',
                 'payment_method' => $request->payment_method,
                 'is_paid' => false,
                 'is_coupon_used' => !is_null($couponData),
                 'coupon' => $couponData,
+                'coupon_code' => $couponData ? $couponData['code'] : null,
             ]);
 
             // Tạo order items

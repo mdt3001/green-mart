@@ -23,6 +23,7 @@ class Order extends Model
         'payment_method',
         'is_coupon_used',
         'coupon',
+        'coupon_code',
     ];
 
     protected $casts = [
@@ -55,5 +56,10 @@ class Order extends Model
     public function ratings()
     {
         return $this->hasMany(Rating::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon_code', 'code');
     }
 }

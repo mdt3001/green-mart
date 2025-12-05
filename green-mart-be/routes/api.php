@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\Public\CategoryController;
 use App\Http\Controllers\Api\Public\StoreController as PublicStoreController;
 use App\Http\Controllers\Api\Public\SearchController;
 use App\Http\Controllers\Api\Public\FlashSaleController;
+use App\Http\Controllers\Api\Public\CouponController as PublicCouponController;
 
 use App\Http\Controllers\Api\Auth\PasswordController;
 
@@ -69,6 +70,9 @@ Route::prefix('public')->group(function () {
     Route::get('flash-sales/products', [FlashSaleController::class, 'allProducts']);
     Route::get('flash-sales/{id}', [FlashSaleController::class, 'show']);
     Route::get('flash-sales/{id}/products', [FlashSaleController::class, 'products']);
+
+    // Coupons
+    Route::get('coupons', [PublicCouponController::class, 'index']);
 });
 
 //auth    
@@ -181,5 +185,9 @@ Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
 
     // Customer Coupon Routes
     Route::get('stores/{storeId}/coupons', [CustomerCouponController::class, 'getStoreActiveCoupons']);
+    Route::get('stores/{storeId}/available-coupons', [CustomerCouponController::class, 'getAvailableCoupons']);
     Route::post('coupons/validate', [CustomerCouponController::class, 'validateCoupon']);
+    Route::post('coupons/save', [CustomerCouponController::class, 'saveCoupon']);
+    Route::get('coupons/saved', [CustomerCouponController::class, 'getSavedCoupons']);
+    Route::delete('coupons/saved/{code}', [CustomerCouponController::class, 'removeSavedCoupon']);
 });

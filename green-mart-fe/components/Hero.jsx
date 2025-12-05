@@ -4,9 +4,11 @@ import { ArrowRightIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import CategoriesMarquee from "./CategoriesMarquee";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$";
+  const router = useRouter();
 
   return (
     <div className="mx-6">
@@ -17,9 +19,9 @@ const Hero = () => {
               <span className="bg-primary px-3 py-1 max-sm:ml-1 rounded-full text-white text-xs">
                 Mới
               </span>{" "}
-              Free Ship cho đơn hàng trên 100.000đ{" "}
+              Free Ship cho mọi đơn hàng{" "}
               <ChevronRightIcon
-                className="group-hover:ml-2 transition-all"
+                className="group-hover:ml-2 transition-all cursor-pointer"
                 size={16}
               />
             </div>
@@ -33,10 +35,13 @@ const Hero = () => {
               </p>
             </div>
             <div className="mt-8">
-              <button className="btn btn-border btn-md">
+              <button
+                className="btn btn-border btn-md cursor-pointer"
+                onClick={() => router.push("/shop")}
+              >
                 MUA NGAY{" "}
                 <ArrowRightIcon
-                  className="group-hover:ml-4 transition-all inline ml-2"
+                  className="group-hover:ml-4 transition-all inline ml-2 cursor-pointer"
                   size={16}
                 />
               </button>
@@ -56,12 +61,12 @@ const Hero = () => {
               </p>
               <p className="text-3xl">75% OFF</p>
               <p>Trái cây & Rau củ</p>
-              <p className="flex items-center gap-1 mt-4 text-primary cursor-pointer">
+              <p className="flex items-center gap-1 mt-4 text-primary cursor-pointer" onClick={() => router.push("/shop")}>
                 MUA NGAY{" "}
                 <ArrowRightIcon
                   className="group-hover:ml-2 transition-all cursor-pointer"
                   size={18}
-                />{" "}
+                /> 
               </p>
             </div>
             <Image
@@ -81,14 +86,14 @@ const Hero = () => {
               <div className="flex flex-col items-center justify-center text-center">
                 <p className="text-white text-xl">BEST DEAL</p>
                 <p className="text-white text-3xl">
-                    Ưu đãi đặc biệt trong tháng này
+                  Ưu đãi đặc biệt trong tháng này
                 </p>
-                <p className="flex items-center gap-1 mt-4 text-primary cursor-pointer">
+                <p className="flex items-center gap-1 mt-4 text-primary cursor-pointer" onClick={() => router.push("/shop")}>
                   MUA NGAY{" "}
                   <ArrowRightIcon
-                    className="group-hover:ml-2 transition-all"
+                    className="group-hover:ml-2 transition-all cursor-pointer"
                     size={18}
-                  />{" "}
+                  />
                 </p>
               </div>
             </div>

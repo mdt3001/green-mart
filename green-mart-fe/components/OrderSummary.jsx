@@ -8,6 +8,8 @@ import { fetchAddresses } from "@/lib/redux/features/address/addressSlice";
 import {
     validateCoupon,
     clearCoupon,
+    fetchAvailableCoupons,
+    fetchSavedCoupons,
 } from "@/lib/redux/features/coupon/couponSlice";
 import { createOrder } from "@/lib/redux/features/order/orderSlice";
 import { clearCartApi } from "@/lib/redux/features/cart/cartSlice";
@@ -25,25 +27,54 @@ const OrderSummary = ({ totalPrice, items }) => {
     const [paymentMethod, setPaymentMethod] = useState("COD");
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
-    const [couponCodeInput, setCouponCodeInput] = useState("");
+    const [selectedCouponCode, setSelectedCouponCode] = useState("");
 
     useEffect(() => {
         dispatch(fetchAddresses());
-    }, [dispatch]);
+        if (user) {
+            dispatch(fetchSavedCoupons()).then((result) => {
+                if (result.type === 'coupon/fetchSavedCoupons/fulfilled') {
+                    console.log('Saved coupons loaded:', result.payload);
+                }
+            });
+        }
+    }, [dispatch, user]);
 
-    const handleCouponCode = async (event) => {
-        event.preventDefault();
-        if (!couponCodeInput.trim() || items.length === 0) return;
+    useEffect(() => {
+        // Fetch available coupons (saved + store coupons) when items change
+        if (user) {
+            if (items.length > 0) {
+                const storeId = items?.[0]?.store_id || items?.[0]?.store?.id;
+                if (storeId) {
+                    dispatch(fetchAvailableCoupons(storeId));
+                } else {
+                    // Nếu không có storeId, chỉ hiển thị saved coupons
+                    dispatch(fetchSavedCoupons());
+                }
+            } else {
+                // Nếu không có items, hiển thị saved coupons
+                dispatch(fetchSavedCoupons());
+            }
+        }
+    }, [items, dispatch, user]);
+
+    const handleCouponSelect = async (couponCode) => {
+        if (!couponCode || items.length === 0) {
+            dispatch(clearCoupon());
+            setSelectedCouponCode("");
+            return;
+        }
         try {
-            // Giả định tất cả sản phẩm cùng store; nếu khác store cần tách đơn
             const storeId = items?.[0]?.store_id || items?.[0]?.store?.id;
             if (!storeId) throw new Error("Không xác định được cửa hàng của đơn.");
-            const res = await dispatch(
-                validateCoupon({ code: couponCodeInput, store_id: storeId })
+            await dispatch(
+                validateCoupon({ code: couponCode, store_id: storeId })
             ).unwrap();
+            setSelectedCouponCode(couponCode);
             toast.success("Áp dụng mã thành công");
         } catch (err) {
             toast.error(err?.message || "Mã không hợp lệ");
+            setSelectedCouponCode("");
         }
     };
 
@@ -77,7 +108,6 @@ const OrderSummary = ({ totalPrice, items }) => {
                 payload.coupon_code = couponState.current.code;
             }
             await dispatch(createOrder(payload)).unwrap();
-            // Xóa giỏ hàng trên server để navbar & trang giỏ cập nhật ngay
             dispatch(clearCartApi());
             dispatch(clearCoupon());
             toast.success("Đặt hàng thành công");
@@ -141,15 +171,43 @@ const OrderSummary = ({ totalPrice, items }) => {
                 </div>
                 {
                     !couponState.current ? (
-                        <form onSubmit={e => toast.promise(handleCouponCode(e), { loading: 'Kiểm tra mã giảm giá...' })} className='flex justify-center gap-2 mt-3'>
-                            <input onChange={(e) => setCouponCodeInput(e.target.value)} value={couponCodeInput} type="text" placeholder='Mã giảm giá' className='border border-slate-400 p-1.5 rounded flex-1 outline-none' />
-                            <button className='bg-slate-600 text-white px-3 rounded hover:bg-slate-800 active:scale-95 transition-all cursor-pointer'>Áp dụng</button>
-                        </form>
+                        <div className='mt-3'>
+                            {(() => {
+                                // Ưu tiên hiển thị available coupons, nếu không có thì hiển thị saved coupons
+                                const couponsToShow = (couponState.list && couponState.list.length > 0)
+                                    ? couponState.list
+                                    : (couponState.savedCoupons && couponState.savedCoupons.length > 0)
+                                        ? couponState.savedCoupons
+                                        : [];
+
+                                // Debug log
+                                if (couponsToShow.length === 0) {
+                                    console.log('No coupons to show. List:', couponState.list, 'Saved:', couponState.savedCoupons);
+                                }
+
+                                return couponsToShow.length > 0 ? (
+                                    <select
+                                        className='border border-slate-400 p-2 w-full outline-none rounded'
+                                        value={selectedCouponCode}
+                                        onChange={(e) => handleCouponSelect(e.target.value)}
+                                    >
+                                        <option value="">Chọn mã giảm giá</option>
+                                        {couponsToShow.map((coupon) => (
+                                            <option key={coupon.code} value={coupon.code}>
+                                                {coupon.code} - Giảm {coupon.discount}% {coupon.description ? `(${coupon.description})` : ''}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <p className='text-xs text-slate-400 text-center'>Không có mã giảm giá khả dụng</p>
+                                );
+                            })()}
+                        </div>
                     ) : (
                         <div className='w-full flex items-center justify-center gap-2 text-xs mt-2'>
                             <p>Mã: <span className='font-semibold ml-1'>{couponState.current.code.toUpperCase()}</span></p>
                             <p>{couponState.current.description}</p>
-                            <XIcon size={18} onClick={() => dispatch(clearCoupon())} className='hover:text-red-700 transition cursor-pointer' />
+                            <XIcon size={18} onClick={() => { dispatch(clearCoupon()); setSelectedCouponCode(""); }} className='hover:text-red-700 transition cursor-pointer' />
                         </div>
                     )
                 }

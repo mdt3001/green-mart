@@ -82,4 +82,10 @@ class User extends Authenticatable
 	{
 		return $this->belongsToMany(Role::class, 'user_roles');
 	}
+
+	public function savedCoupons()
+	{
+		return $this->belongsToMany(Coupon::class, 'user_coupons', 'user_id', 'coupon_code', 'id', 'code')
+					->withTimestamps();
+	}
 }

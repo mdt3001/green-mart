@@ -7,10 +7,17 @@ import Loading from "@/components/Loading";
 import Image from "next/image";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { API_PATHS } from "@/utils/apiPaths";
+import CouponCard from "@/components/CouponCard";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchStoreCoupons, fetchSavedCoupons } from "@/lib/redux/features/coupon/couponSlice";
+import { useAuth } from "@/context/AuthContext";
 
 export default function StoreShop() {
     // Param tên là username nhưng giá trị là storeId (vì folder route là [username])
     const { username: storeId } = useParams();
+    const dispatch = useDispatch();
+    const { user } = useAuth();
+    const { list: storeCoupons } = useSelector((state) => state.coupon);
 
     const [products, setProducts] = useState([]);
     const [storeInfo, setStoreInfo] = useState(null);
@@ -46,8 +53,12 @@ export default function StoreShop() {
 
         if (storeId) {
             fetchStoreData();
+            dispatch(fetchStoreCoupons(storeId));
+            if (user) {
+                dispatch(fetchSavedCoupons());
+            }
         }
-    }, [storeId]);
+    }, [storeId, dispatch, user]);
 
     if (loading) {
         return <Loading />;
@@ -91,6 +102,20 @@ export default function StoreShop() {
                     </div>
                 </div>
             </div>
+
+            {/* Store Coupons */}
+            {storeCoupons.length > 0 && (
+                <div className="max-w-7xl mx-auto mt-8 mb-8">
+                    <h2 className="text-2xl font-semibold text-slate-800 mb-6">
+                        Mã giảm giá của cửa hàng
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {storeCoupons.map((coupon) => (
+                            <CouponCard key={coupon.code} coupon={coupon} />
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Products */}
             <div className="max-w-7xl mx-auto mb-40">
