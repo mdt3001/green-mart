@@ -1,34 +1,87 @@
-import { PlusIcon, SquarePenIcon, XIcon } from 'lucide-react';
-import React, { useState } from 'react'
-import AddressModal from './AddressModal';
-import { useSelector } from 'react-redux';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { PlusIcon, SquarePenIcon, XIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import AddressModal from "./AddressModal";
+import { useSelector, useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { fetchAddresses } from "@/lib/redux/features/address/addressSlice";
+import {
+    validateCoupon,
+    clearCoupon,
+} from "@/lib/redux/features/coupon/couponSlice";
+import { createOrder } from "@/lib/redux/features/order/orderSlice";
+import { useAuth } from "@/context/AuthContext";
 
 const OrderSummary = ({ totalPrice, items }) => {
-
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || 'đ';
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "đ";
 
     const router = useRouter();
+    const dispatch = useDispatch();
+    const addressList = useSelector((state) => state.address.list);
+    const couponState = useSelector((state) => state.coupon);
+    const { user } = useAuth();
 
-    const addressList = useSelector(state => state.address.list);
-
-    const [paymentMethod, setPaymentMethod] = useState('COD');
+    const [paymentMethod, setPaymentMethod] = useState("COD");
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
-    const [couponCodeInput, setCouponCodeInput] = useState('');
-    const [coupon, setCoupon] = useState('');
+    const [couponCodeInput, setCouponCodeInput] = useState("");
+
+    useEffect(() => {
+        dispatch(fetchAddresses());
+    }, [dispatch]);
 
     const handleCouponCode = async (event) => {
         event.preventDefault();
-        
-    }
+        if (!couponCodeInput.trim() || items.length === 0) return;
+        try {
+            // Giả định tất cả sản phẩm cùng store; nếu khác store cần tách đơn
+            const storeId = items?.[0]?.store_id || items?.[0]?.store?.id;
+            if (!storeId) throw new Error("Không xác định được cửa hàng của đơn.");
+            const res = await dispatch(
+                validateCoupon({ code: couponCodeInput, store_id: storeId })
+            ).unwrap();
+            toast.success("Áp dụng mã thành công");
+        } catch (err) {
+            toast.error(err?.message || "Mã không hợp lệ");
+        }
+    };
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
-
-        router.push('/orders')
-    }
+        if (!user) {
+            toast.error("Bạn cần đăng nhập trước khi đặt hàng");
+            setTimeout(() => router.push("/login/customer"), 1200);
+            return;
+        }
+        if (!selectedAddress) {
+            toast.error("Vui lòng chọn địa chỉ giao hàng");
+            return;
+        }
+        if (!items.length) {
+            toast.error("Giỏ hàng trống");
+            return;
+        }
+        try {
+            const storeId = items?.[0]?.store_id || items?.[0]?.store?.id;
+            const payload = {
+                store_id: storeId,
+                address_id: selectedAddress.id,
+                payment_method: paymentMethod,
+                items: items.map((it) => ({
+                    product_id: it.id,
+                    quantity: it.quantity || 1,
+                })),
+            };
+            if (couponState.current?.code) {
+                payload.coupon_code = couponState.current.code;
+            }
+            await dispatch(createOrder(payload)).unwrap();
+            toast.success("Đặt hàng thành công");
+            router.push("/orders");
+        } catch (err) {
+            toast.error(err?.message || "Không thể đặt hàng");
+        }
+    };
 
     return (
         <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
@@ -74,32 +127,32 @@ const OrderSummary = ({ totalPrice, items }) => {
                     <div className='flex flex-col gap-1 text-slate-400'>
                         <p>Tổng tiền sản phẩm:</p>
                         <p>Phí vận chuyển:</p>
-                        {coupon && <p>Mã giảm giá:</p>}
+                        {couponState.current && <p>Mã giảm giá:</p>}
                     </div>
                     <div className='flex flex-col gap-1 font-medium text-right'>
-                        <p>{currency}{totalPrice.toLocaleString()}</p>
+                        <p>{totalPrice.toLocaleString('vi-VN')}{currency}</p>
                         <p>Miễn phí</p>
-                        {coupon && <p>{`-${currency}${(coupon.discount / 100 * totalPrice).toFixed(2)}`}</p>}
+                        {couponState.current && <p>{`-${(couponState.current.discount / 100 * totalPrice).toLocaleString('vi-VN')}${currency}`}</p>}
                     </div>
                 </div>
                 {
-                    !coupon ? (
+                    !couponState.current ? (
                         <form onSubmit={e => toast.promise(handleCouponCode(e), { loading: 'Kiểm tra mã giảm giá...' })} className='flex justify-center gap-2 mt-3'>
                             <input onChange={(e) => setCouponCodeInput(e.target.value)} value={couponCodeInput} type="text" placeholder='Mã giảm giá' className='border border-slate-400 p-1.5 rounded flex-1 outline-none' />
                             <button className='bg-slate-600 text-white px-3 rounded hover:bg-slate-800 active:scale-95 transition-all cursor-pointer'>Áp dụng</button>
                         </form>
                     ) : (
                         <div className='w-full flex items-center justify-center gap-2 text-xs mt-2'>
-                            <p>Mã: <span className='font-semibold ml-1'>{coupon.code.toUpperCase()}</span></p>
-                            <p>{coupon.description}</p>
-                            <XIcon size={18} onClick={() => setCoupon('')} className='hover:text-red-700 transition cursor-pointer' />
+                            <p>Mã: <span className='font-semibold ml-1'>{couponState.current.code.toUpperCase()}</span></p>
+                            <p>{couponState.current.description}</p>
+                            <XIcon size={18} onClick={() => dispatch(clearCoupon())} className='hover:text-red-700 transition cursor-pointer' />
                         </div>
                     )
                 }
             </div>
             <div className='flex justify-between py-4'>
                 <p>Tổng tiền thanh toán:</p>
-                <p className='font-medium text-right'>{currency}{coupon ? (totalPrice - (coupon.discount / 100 * totalPrice)).toLocaleString('vi-VN') : totalPrice.toLocaleString('vi-VN')}</p>
+                <p className='font-medium text-right'>{couponState.current ? (totalPrice - (couponState.current.discount / 100 * totalPrice)).toLocaleString('vi-VN') : totalPrice.toLocaleString('vi-VN')}{currency}</p>
             </div>
             <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'Đặt hàng...' })} className='w-full bg-slate-700 text-white py-2.5 rounded hover:bg-slate-900 active:scale-95 transition-all'>Đặt hàng</button>
 

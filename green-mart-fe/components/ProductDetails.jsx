@@ -23,13 +23,13 @@ const ProductDetails = ({ product }) => {
 
   const cart = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   const [mainImage, setMainImage] = useState(product.images?.[0]);
 
   const addToCartHandler = () => {
-    if (!user) {
+    if (!isAuthenticated) {
       toast("Bạn cần đăng nhập mới có thể thêm sản phẩm vào giỏ hàng!")
       setTimeout(() => {
         router.push("/login/customer");
