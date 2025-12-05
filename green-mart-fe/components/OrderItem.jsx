@@ -16,6 +16,40 @@ const OrderItem = ({ order }) => {
 
     const { list: ratings = [] } = useSelector(state => state.rating);
 
+    const getStatusColor = (status) => {
+        switch (status) {
+            case "ORDER_PLACED":
+                return "bg-blue-100 text-blue-800";
+            case "PROCESSING":
+                return "bg-yellow-100 text-yellow-800";
+            case "SHIPPED":
+                return "bg-purple-100 text-purple-800";
+            case "DELIVERED":
+                return "bg-green-100 text-green-800";
+            case "CANCELLED":
+                return "bg-red-100 text-red-800";
+            default:
+                return "bg-gray-100 text-gray-800";
+        }
+    };
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case "ORDER_PLACED":
+                return "Mới đặt";
+            case "PROCESSING":
+                return "Đang xử lý";
+            case "SHIPPED":
+                return "Đang giao";
+            case "DELIVERED":
+                return "Đã giao";
+            case "CANCELLED":
+                return "Đã hủy";
+            default:
+                return status;
+        }
+    };
+
     const normalizedRatings = useMemo(() => {
         return ratings.map((r) => ({
             orderId: r.order_id || r.orderId,
@@ -50,7 +84,7 @@ const OrderItem = ({ order }) => {
                                             : (
                                                 <button
                                                     onClick={() => setRatingModal({ orderId: order.id, productId: item.product.id })}
-                                                    className={`text-green-500 hover:bg-green-50 transition ${order.status !== "DELIVERED" && order.status !== "delivered" && 'hidden'}`}
+                                                    className={`text-green-500 hover:bg-green-50 transition ${order.status !== "DELIVERED" && 'hidden'}`}
                                                 >
                                                     Đánh giá sản phẩm
                                                 </button>
@@ -79,15 +113,10 @@ const OrderItem = ({ order }) => {
 
                 <td className="text-left space-y-2 text-sm max-md:hidden">
                     <div
-                        className={`flex items-center justify-center gap-1 rounded-full p-1 ${order.status === 'confirmed'
-                            ? 'text-yellow-500 bg-yellow-100'
-                            : order.status === 'delivered'
-                                ? 'text-green-500 bg-green-100'
-                                : 'text-slate-500 bg-slate-100'
-                            }`}
+                        className={`flex items-center justify-center gap-1 rounded-full p-1 ${getStatusColor(order.status)}`}
                     >
                         <DotIcon size={10} className="scale-250" />
-                        {order.status.split('_').join(' ').toLowerCase()}
+                        {getStatusLabel(order.status)}
                     </div>
                 </td>
             </tr>
@@ -99,8 +128,8 @@ const OrderItem = ({ order }) => {
                     <p>{order.address.phone}</p>
                     <br />
                     <div className="flex items-center">
-                        <span className='text-center mx-auto px-6 py-1.5 rounded bg-green-100 text-green-700' >
-                            {order.status.replace(/_/g, ' ').toLowerCase()}
+                        <span className={`text-center mx-auto px-6 py-1.5 rounded ${getStatusColor(order.status)}`}>
+                            {getStatusLabel(order.status)}
                         </span>
                     </div>
                 </td>

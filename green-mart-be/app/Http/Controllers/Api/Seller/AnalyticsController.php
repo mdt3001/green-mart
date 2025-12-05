@@ -21,11 +21,14 @@ class AnalyticsController extends Controller
 
         $startDate = Carbon::now()->subDays($period);
 
-        // Tổng doanh thu
-        $totalRevenue = Order::where('store_id', $store->id)
-            ->where('is_paid', true)
-            ->where('created_at', '>=', $startDate)
-            ->sum('total');
+        // Tổng doanh thu - tính từ order_items để chính xác hơn, chỉ tính đơn đã giao hoặc đã thanh toán
+        $totalRevenue = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.store_id', $store->id)
+            ->where('orders.created_at', '>=', $startDate)
+            ->whereIn('orders.status', ['DELIVERED', 'SHIPPED']) // Chỉ tính đơn đã giao hoặc đang giao
+            ->select(DB::raw('SUM(order_items.quantity * order_items.price) as total'))
+            ->value('total') ?? 0;
 
         // Tổng đơn hàng
         $totalOrders = Order::where('store_id', $store->id)
@@ -61,14 +64,16 @@ class AnalyticsController extends Controller
             ->limit(10)
             ->get();
 
-        // Doanh thu theo ngày
-        $revenueByDay = Order::where('store_id', $store->id)
-            ->where('is_paid', true)
-            ->where('created_at', '>=', $startDate)
+        // Doanh thu theo ngày - tính từ order_items
+        $revenueByDay = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.store_id', $store->id)
+            ->where('orders.created_at', '>=', $startDate)
+            ->whereIn('orders.status', ['DELIVERED', 'SHIPPED'])
             ->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total) as revenue'),
-                DB::raw('COUNT(*) as orders')
+                DB::raw('DATE(orders.created_at) as date'),
+                DB::raw('SUM(order_items.quantity * order_items.price) as revenue'),
+                DB::raw('COUNT(DISTINCT orders.id) as orders')
             )
             ->groupBy('date')
             ->orderBy('date')
