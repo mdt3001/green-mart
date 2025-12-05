@@ -57,14 +57,14 @@ const UserDropdown = ({ userInfo }) => {
         setIsOpen(false);
       },
     },
-    {
-      icon: Heart,
-      label: "Yêu thích",
-      onClick: () => {
-        router.push("/wishlist");
-        setIsOpen(false);
-      },
-    },
+    // {
+    //   icon: Heart,
+    //   label: "Yêu thích",
+    //   onClick: () => {
+    //     router.push("/wishlist");
+    //     setIsOpen(false);
+    //   },
+    // },
     {
       icon: LogOut,
       label: "Đăng xuất",

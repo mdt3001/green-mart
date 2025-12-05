@@ -311,7 +311,7 @@ const Navbar = () => {
             </form>
 
             <div className="flex items-center gap-4 sm:gap-6 text-gray-700">
-              <Link
+              {/* <Link
                 href="/wishlist"
                 className="relative hover:text-green-600 transition group"
               >
@@ -319,13 +319,13 @@ const Navbar = () => {
                   size={24}
                   className="group-hover:scale-110 transition-transform"
                 />
-              </Link>
+              </Link> */}
 
-              <span className="h-8 w-px bg-gray-200 hidden sm:block"></span>
+              {/* <span className="h-8 w-px bg-gray-200 hidden sm:block"></span> */}
 
               <Link
                 href="/cart"
-                className="relative hover:text-green-600 transition group"
+                className="relative hover:text-green-600 transition group sm:mr-18"
               >
                 <ShoppingCart
                   size={24}

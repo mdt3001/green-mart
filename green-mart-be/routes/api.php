@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Auth\Seller\SellerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerAuthController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\SocialLoginController;
+use App\Http\Controllers\Api\Auth\Admin\AdminAuthController;
 
 use App\Http\Controllers\Api\Seller\AnalyticsController;
 use App\Http\Controllers\Api\Seller\ProductController;
@@ -94,7 +95,7 @@ Route::prefix('auth')->group(function () {
     Route::post('password/forgot', [PasswordController::class, 'forgotPassword']);
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
 
-    Route::post('admin/login', [CustomerAuthController::class, 'login']);
+    Route::post('admin/login', [AdminAuthController::class, 'login']);
 });
 
 //admin

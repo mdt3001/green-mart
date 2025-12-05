@@ -227,7 +227,7 @@ export default function Dashboard() {
 
         <div className="lg:col-span-2 border border-slate-200 rounded-xl p-6 bg-white shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            Sản phẩm bán chạy (Top 5)
+            Top các sản phẩm bán chạy
           </h2>
 
           <div className="overflow-x-auto">
