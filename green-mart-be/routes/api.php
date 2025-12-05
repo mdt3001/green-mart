@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\Seller\ProductController;
 use App\Http\Controllers\Api\Seller\StoreController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Api\Seller\CouponController as SellerCouponController;
+use App\Http\Controllers\Api\Seller\SellerProfileController;
 
 use App\Http\Middleware\CheckSellerApproved;
 
@@ -126,6 +127,11 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 //seller
 
 Route::middleware(['auth:sanctum', CheckSellerApproved::class])->prefix('seller')->group(function () {
+    // Profile management
+    Route::get('profile', [SellerProfileController::class, 'show']);
+    Route::put('profile', [SellerProfileController::class, 'update']);
+    Route::post('profile/change-password', [SellerProfileController::class, 'changePassword']);
+
     // Store management
     Route::get('store', [StoreController::class, 'show']);
     Route::put('store', [StoreController::class, 'update']);

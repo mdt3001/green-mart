@@ -18,7 +18,7 @@ class DashboardController extends Controller
 
         // Get statistics
         $totalProducts = Product::count();
-        $totalRevenue = Order::where('is_paid', true)->sum('total');
+        $totalRevenue = Order::where('is_paid', true)->sum('total') ?? 0;
         $totalOrders = Order::count();
         $totalStores = Store::where('status', 'approved')->count();
 

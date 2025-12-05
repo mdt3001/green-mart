@@ -74,6 +74,7 @@ class StoreController extends Controller
 
         $products = $store->products()
             ->where('in_stock', true)
+            ->with('store:id,name,logo')
             ->withCount('ratings')
             ->withAvg('ratings', 'rating')
             ->paginate($request->integer('per_page', 20));
