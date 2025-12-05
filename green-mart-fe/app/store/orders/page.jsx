@@ -38,7 +38,6 @@ export default function StoreOrders() {
         to: responseData.to,
       });
     } catch (error) {
-      console.error(error);
       toast.error("Không thể tải danh sách đơn hàng");
     } finally {
       setLoading(false);
@@ -63,7 +62,6 @@ export default function StoreOrders() {
 
       toast.success("Cập nhật thành công!", { id: toastId });
     } catch (error) {
-      console.error(error);
       toast.error(error.response?.data?.message || "Cập nhật thất bại", {
         id: toastId,
       });

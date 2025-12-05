@@ -84,7 +84,7 @@ export default function Product() {
             onClick={() => router.push("/shop")}
             className="hover:text-black"
           >
-            Cửa hàng
+            Sản phẩm
           </button>
           <span>/</span>
           <span className="font-semibold text-black">{product.name}</span>

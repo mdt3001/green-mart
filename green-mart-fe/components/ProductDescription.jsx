@@ -1,5 +1,5 @@
 'use client'
-import { ArrowRight, StarIcon } from "lucide-react"
+import { ArrowRight, StarIcon, User } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -28,9 +28,16 @@ const ProductDescription = ({ product }) => {
             {/* Reviews */}
             {selectedTab === "Đánh giá" && (
                 <div className="flex flex-col gap-3 mt-14">
-                    {product.rating.map((item,index) => (
+                    {product.rating.map((item, index) => (
                         <div key={index} className="flex gap-5 mb-10">
-                            <Image src={item.user.image} alt="" className="size-10 rounded-full" width={100} height={100} />
+                            {item.user.image ? (
+                                <Image src={item.user.image} alt="" className="size-10 rounded-full" width={100} height={100} />)
+                                : (
+                                    <div className="size-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <User className="w-4 h-4 text-green-600" />
+                                    </div>
+                                )
+                            }
                             <div>
                                 <div className="flex items-center" >
                                     {Array(5).fill('').map((_, index) => (
@@ -39,7 +46,7 @@ const ProductDescription = ({ product }) => {
                                 </div>
                                 <p className="text-sm max-w-lg my-4">{item.review}</p>
                                 <p className="font-medium text-slate-800">{item.user.name}</p>
-                                <p className="mt-3 font-light">{new Date(item.createdAt).toDateString()}</p>
+                                <p className="mt-3 font-light">{new Date(item.created_at).toLocaleDateString('vi-VN')}</p>
                             </div>
                         </div>
                     ))}

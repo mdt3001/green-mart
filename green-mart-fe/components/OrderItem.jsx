@@ -1,24 +1,35 @@
 'use client'
 import Image from "next/image";
 import { DotIcon } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Rating from "./Rating";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import RatingModal from "./RatingModal";
+import { createRating } from "@/lib/redux/features/rating/ratingSlice";
 
 const OrderItem = ({ order }) => {
+    const items = order.order_items || [];
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
     const [ratingModal, setRatingModal] = useState(null);
+    const dispatch = useDispatch();
 
-    const { ratings } = useSelector(state => state.rating);
+    const { list: ratings = [] } = useSelector(state => state.rating);
+
+    const normalizedRatings = useMemo(() => {
+        return ratings.map((r) => ({
+            orderId: r.order_id || r.orderId,
+            productId: r.product_id || r.productId,
+            rating: r.rating,
+        }));
+    }, [ratings]);
 
     return (
         <>
             <tr className="text-sm">
                 <td className="text-left">
                     <div className="flex flex-col gap-6">
-                        {order.orderItems.map((item, index) => (
+                        {items.map((item, index) => (
                             <div key={index} className="flex items-center gap-4">
                                 <div className="w-20 aspect-square bg-slate-100 flex items-center justify-center rounded-md">
                                     <Image
@@ -32,20 +43,33 @@ const OrderItem = ({ order }) => {
                                 <div className="flex flex-col justify-center text-sm">
                                     <p className="font-medium text-slate-600 text-base">{item.product.name}</p>
                                     <p>{currency}{item.price} Qty : {item.quantity} </p>
-                                    <p className="mb-1">{new Date(order.createdAt).toDateString()}</p>
+                                    <p className="mb-1">{new Date(order.created_at).toDateString()}</p>
                                     <div>
-                                        {ratings.find(rating => order.id === rating.orderId && item.product.id === rating.productId)
-                                            ? <Rating value={ratings.find(rating => order.id === rating.orderId && item.product.id === rating.productId).rating} />
-                                            : <button onClick={() => setRatingModal({ orderId: order.id, productId: item.product.id })} className={`text-green-500 hover:bg-green-50 transition ${order.status !== "DELIVERED" && 'hidden'}`}>Rate Product</button>
+                                        {normalizedRatings.find(rating => order.id === rating.orderId && item.product.id === rating.productId)
+                                            ? <Rating value={normalizedRatings.find(rating => order.id === rating.orderId && item.product.id === rating.productId).rating} />
+                                            : (
+                                                <button
+                                                    onClick={() => setRatingModal({ orderId: order.id, productId: item.product.id })}
+                                                    className={`text-green-500 hover:bg-green-50 transition ${order.status !== "DELIVERED" && order.status !== "delivered" && 'hidden'}`}
+                                                >
+                                                    Đánh giá sản phẩm
+                                                </button>
+                                            )
                                         }</div>
-                                    {ratingModal && <RatingModal ratingModal={ratingModal} setRatingModal={setRatingModal} />}
+                                    {ratingModal && (
+                                        <RatingModal
+                                            ratingModal={ratingModal}
+                                            setRatingModal={setRatingModal}
+                                            onSubmit={(payload) => dispatch(createRating(payload)).unwrap()}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         ))}
                     </div>
                 </td>
 
-                <td className="text-center max-md:hidden">{currency}{order.total}</td>
+                <td className="text-center max-md:hidden">{order.total.toLocaleString('vi-VN')}{currency}</td>
 
                 <td className="text-left max-md:hidden">
                     <p>{order.address.name}, {order.address.street},</p>

@@ -39,12 +39,13 @@ const ProductDetails = ({ product }) => {
     dispatch(addCartItem({ productId, quantity: 1 }));
   };
 
-  const ratingsArray = Array.isArray(product.rating) ? product.rating : [];
+  const ratingsArray = Array.isArray(product.ratings) ? product.ratings : [];
   const averageRating =
-    ratingsArray.length > 0
+    product?.ratings_avg_rating ??
+    (ratingsArray.length > 0
       ? ratingsArray.reduce((acc, item) => acc + (item.rating || 0), 0) /
       ratingsArray.length
-      : 0;
+      : 0);
 
   return (
     <div className="flex max-lg:flex-col gap-12">

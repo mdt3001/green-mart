@@ -145,7 +145,8 @@ function ShopContent() {
 
   // Filter Rating (Frontend)
   const getAverageRating = (p) => {
-    const arr = Array.isArray(p?.rating) ? p.rating : [];
+    if (p?.ratings_avg_rating != null) return Number(p.ratings_avg_rating) || 0;
+    const arr = Array.isArray(p?.ratings) ? p.ratings : [];
     if (arr.length === 0) return 0;
     const sum = arr.reduce((acc, cur) => acc + (Number(cur?.rating) || 0), 0);
     return sum / arr.length;

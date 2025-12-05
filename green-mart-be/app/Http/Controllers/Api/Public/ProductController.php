@@ -60,6 +60,8 @@ class ProductController extends Controller
                 fn($query) =>
                 $query->where('store_id', $request->input('store_id'))
             )
+            ->withCount('ratings')
+            ->withAvg('ratings', 'rating')
             ->orderBy(
                 $request->input('sort_by', 'created_at'),
                 $request->input('sort_order', 'desc')
@@ -131,6 +133,8 @@ class ProductController extends Controller
 
         $products = Product::with('store:id,name,logo') // Eager load store
             ->where('in_stock', true)
+            ->withCount('ratings')
+            ->withAvg('ratings', 'rating')
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();
@@ -149,6 +153,8 @@ class ProductController extends Controller
             ->where('in_stock', true)
             // Tính tổng cột 'quantity' trong bảng order_items liên kết
             ->withSum('orderItems', 'quantity')
+            ->withCount('ratings')
+            ->withAvg('ratings', 'rating')
             // Sắp xếp giảm dần theo tổng số lượng bán ra
             ->orderByDesc('order_items_sum_quantity')
             // Nếu chưa bán được cái nào (null), thì xếp theo ngày tạo

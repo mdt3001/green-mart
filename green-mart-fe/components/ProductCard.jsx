@@ -7,12 +7,14 @@ import React from "react";
 const ProductCard = ({ product }) => {
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "₫";
 
-  const ratingArray = Array.isArray(product?.rating) ? product.rating : [];
+  const ratingArray = Array.isArray(product?.ratings) ? product.ratings : [];
   const averageRating =
-    ratingArray.length > 0
+    product?.ratings_avg_rating ??
+    (ratingArray.length > 0
       ? ratingArray.reduce((acc, item) => acc + item.rating, 0) /
-        ratingArray.length
-      : 0;
+      ratingArray.length
+      : 0);
+  const ratingCount = product?.ratings_count ?? ratingArray.length;
 
   const sale =
     product.mrp && product.mrp > product.price
@@ -76,9 +78,9 @@ const ProductCard = ({ product }) => {
                   fill={averageRating >= index + 1 ? "#00C950" : "#D1D5DB"}
                 />
               ))}
-            {ratingArray.length > 0 && (
+            {ratingCount > 0 && (
               <span className="text-xs text-gray-500">
-                ({ratingArray.length})
+                ({ratingCount})
               </span>
             )}
           </div>

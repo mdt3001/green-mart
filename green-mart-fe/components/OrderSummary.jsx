@@ -10,6 +10,7 @@ import {
     clearCoupon,
 } from "@/lib/redux/features/coupon/couponSlice";
 import { createOrder } from "@/lib/redux/features/order/orderSlice";
+import { clearCartApi } from "@/lib/redux/features/cart/cartSlice";
 import { useAuth } from "@/context/AuthContext";
 
 const OrderSummary = ({ totalPrice, items }) => {
@@ -76,6 +77,9 @@ const OrderSummary = ({ totalPrice, items }) => {
                 payload.coupon_code = couponState.current.code;
             }
             await dispatch(createOrder(payload)).unwrap();
+            // Xóa giỏ hàng trên server để navbar & trang giỏ cập nhật ngay
+            dispatch(clearCartApi());
+            dispatch(clearCoupon());
             toast.success("Đặt hàng thành công");
             router.push("/orders");
         } catch (err) {

@@ -60,8 +60,24 @@ export default function Dashboard() {
   };
 
   const getProductImage = (images) => {
-    if (Array.isArray(images) && images.length > 0) {
-      return images[0];
+    let imageArray = [];
+
+    if (typeof images === 'string') {
+      try {
+        imageArray = JSON.parse(images);
+      } catch (e) {
+        console.error("Lỗi phân tích JSON cho hình ảnh:", e);
+      }
+    }
+    else if (Array.isArray(images)) {
+      imageArray = images;
+    }
+
+    if (imageArray.length > 0) {
+      const firstImage = imageArray[0];
+      if (typeof firstImage === 'string' && firstImage.startsWith('http')) {
+        return firstImage;
+      }
     }
     return assets.box_icon;
   };
