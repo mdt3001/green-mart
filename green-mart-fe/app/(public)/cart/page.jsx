@@ -2,7 +2,7 @@
 import Counter from "@/components/Counter";
 import OrderSummary from "@/components/OrderSummary";
 import PageTitle from "@/components/PageTitle";
-import { deleteItemFromCart } from "@/lib/redux/features/cart/cartSlice";
+import { removeFromCart } from "@/lib/redux/features/cart/cartSlice";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export default function Cart() {
   };
 
   const handleDeleteItemFromCart = (productId) => {
-    dispatch(deleteItemFromCart({ productId }));
+    dispatch(removeFromCart(productId));
   };
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function Cart() {
                     <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md overflow-hidden">
                       <Image
                         src={item.images[0]}
-                        className="h-14 w-auto object-cover w-full h-full"
+                        className="object-cover w-full h-full"
                         alt=""
                         width={45}
                         height={45}
@@ -112,7 +112,7 @@ export default function Cart() {
     </div>
   ) : (
     <div className="min-h-[80vh] mx-6 flex items-center justify-center text-slate-400">
-      <h1 className="text-2xl sm:text-4xl font-semibold">Your cart is empty</h1>
+      <h1 className="text-2xl sm:text-4xl font-semibold">Giỏ hàng của bạn chưa có sản phẩm nào</h1>
     </div>
   );
 }

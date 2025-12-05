@@ -184,7 +184,7 @@ function ShopContent() {
           className={`cursor-pointer ${!breadcrumbCategory ? 'font-bold text-black' : 'hover:text-black'}`}
           onClick={() => router.push("/shop")}
         >
-          Cửa hàng
+          Sản phẩm
         </span>
         {breadcrumbCategory && (
           <>

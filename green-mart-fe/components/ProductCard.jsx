@@ -57,7 +57,7 @@ const ProductCard = ({ product }) => {
           </div>
         </div> */}
       </div>
-      <div className="flex justify-between gap-3 text-sm text-slate-800 pt-2 max-w-60">
+      <div className="text-sm text-slate-800 pt-2 max-w-60">
         <div className="flex-1 min-w-0">
           <p className="truncate font-medium">{product.name}</p>
           {product.store && (
@@ -95,9 +95,9 @@ const ProductCard = ({ product }) => {
             )}
           </div>
         </div>
-        <div className="bg-gray-1 rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors my-2 flex-shrink-0">
+        {/* <div className="bg-gray-1 rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors my-2 flex-shrink-0">
           <ShoppingCart className="w-5 h-5" />
-        </div>
+        </div> */}
       </div>
     </Link>
   );
