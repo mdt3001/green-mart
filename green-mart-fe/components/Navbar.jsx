@@ -19,6 +19,7 @@ import { useAuth } from "@/context/AuthContext";
 import UserDropdown from "@/components/UserDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/lib/redux/features/category/categorySlice";
+import { fetchCart } from "@/lib/redux/features/cart/cartSlice";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { API_PATHS } from "@/utils/apiPaths";
 
@@ -40,6 +41,13 @@ const Navbar = () => {
       dispatch(fetchCategories());
     }
   }, [dispatch, categories.length]);
+
+  // Load cart sau khi đã đăng nhập (có user) để badge hiển thị ngay
+  useEffect(() => {
+    if (!loading && user) {
+      dispatch(fetchCart());
+    }
+  }, [dispatch, loading, user]);
 
   const handleSearch = (e) => {
     e.preventDefault();

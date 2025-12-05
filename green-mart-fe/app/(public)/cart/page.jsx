@@ -2,53 +2,45 @@
 import Counter from "@/components/Counter";
 import OrderSummary from "@/components/OrderSummary";
 import PageTitle from "@/components/PageTitle";
-import { removeFromCart } from "@/lib/redux/features/cart/cartSlice";
+import { removeCartItem, fetchCart } from "@/lib/redux/features/cart/cartSlice";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Loading from "@/components/Loading";
 
 export default function Cart() {
   const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "đ";
 
-  const { cartItems } = useSelector((state) => state.cart);
-  const products = useSelector((state) => state.product.products) || [];
-
+  const { items, loading, cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  const [cartArray, setCartArray] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-
-  const createCartArray = () => {
-    setTotalPrice(0);
-    const cartArray = [];
-    for (const [key, value] of Object.entries(cartItems)) {
-      const product = products.find((product) => product.id === key);
-      if (product) {
-        cartArray.push({
-          ...product,
-          quantity: value,
-        });
-        setTotalPrice((prev) => prev + product.price * value);
-      }
-    }
-    setCartArray(cartArray);
-  };
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
 
   const handleDeleteItemFromCart = (productId) => {
-    dispatch(removeFromCart(productId));
+    dispatch(removeCartItem({ productId }));
   };
 
-  useEffect(() => {
-    if (products.length > 0) {
-      createCartArray();
-    }
-  }, [cartItems, products]);
+  const cartArray = items.map((item) => {
+    const product = item.product || item;
+    const quantity = item.quantity || item.qty || cartItems[product.id] || 0;
+    return { ...product, quantity };
+  });
+
+  const totalPrice = cartArray.reduce(
+    (sum, i) => sum + (i.price || 0) * (i.quantity || 0),
+    0
+  );
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return cartArray.length > 0 ? (
     <div className="min-h-screen mx-6 text-slate-800">
       <div className="max-w-7xl mx-auto ">
-        {/* Title */}
         <PageTitle
           heading="Giỏ hàng"
           text="Sản phẩm trong giỏ hàng"
@@ -71,7 +63,7 @@ export default function Cart() {
                   <td className="flex gap-3 my-4">
                     <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md overflow-hidden">
                       <Image
-                        src={item.images[0]}
+                        src={item.images?.[0]}
                         className="object-cover w-full h-full"
                         alt=""
                         width={45}
@@ -80,9 +72,11 @@ export default function Cart() {
                     </div>
                     <div>
                       <p className="max-sm:text-sm">{item.name}</p>
-                      <p className="text-xs text-slate-500">{item.category}</p>
+                      <p className="text-xs text-slate-500">
+                        {item.category?.name || ""}
+                      </p>
                       <p>
-                        {item.price.toLocaleString('vi-VN')}
+                        {Number(item.price || 0).toLocaleString("vi-VN")}
                         {currency}
                       </p>
                     </div>
@@ -91,7 +85,9 @@ export default function Cart() {
                     <Counter productId={item.id} />
                   </td>
                   <td className="text-center">
-                    {(item.price * item.quantity).toLocaleString('vi-VN')}
+                    {(Number(item.price || 0) * (item.quantity || 0)).toLocaleString(
+                      "vi-VN"
+                    )}
                     {currency}
                   </td>
                   <td className="text-center max-md:hidden">
@@ -112,7 +108,9 @@ export default function Cart() {
     </div>
   ) : (
     <div className="min-h-[80vh] mx-6 flex items-center justify-center text-slate-400">
-      <h1 className="text-2xl sm:text-4xl font-semibold">Giỏ hàng của bạn chưa có sản phẩm nào</h1>
+      <h1 className="text-2xl sm:text-4xl font-semibold">
+        Giỏ hàng của bạn chưa có sản phẩm nào
+      </h1>
     </div>
   );
 }

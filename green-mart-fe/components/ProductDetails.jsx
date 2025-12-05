@@ -1,6 +1,6 @@
 "use client";
 
-import { addToCart } from "@/lib/redux/features/cart/cartSlice";
+import { addCartItem } from "@/lib/redux/features/cart/cartSlice";
 import {
   StarIcon,
   TagIcon,
@@ -13,6 +13,9 @@ import { useState } from "react";
 import Image from "next/image";
 import Counter from "./Counter";
 import { useDispatch, useSelector } from "react-redux";
+import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
+
 
 const ProductDetails = ({ product }) => {
   const productId = product.id;
@@ -20,13 +23,20 @@ const ProductDetails = ({ product }) => {
 
   const cart = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-
+  const { user } = useAuth();
   const router = useRouter();
 
   const [mainImage, setMainImage] = useState(product.images?.[0]);
 
   const addToCartHandler = () => {
-    dispatch(addToCart({ productId }));
+    if (!user) {
+      toast("Bạn cần đăng nhập mới có thể thêm sản phẩm vào giỏ hàng!")
+      setTimeout(() => {
+        router.push("/login/customer");
+      }, 3000);
+      return;
+    }
+    dispatch(addCartItem({ productId, quantity: 1 }));
   };
 
   const ratingsArray = Array.isArray(product.rating) ? product.rating : [];
