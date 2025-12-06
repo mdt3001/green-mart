@@ -1,0 +1,75 @@
+services:
+  - type: web
+    name: greenmart-backend
+    runtime: docker
+    plan: free
+    repo: https://github.com/mdt3001/green-mart
+    rootDir: green-mart-be
+    dockerfilePath: green-mart-be/Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: GreenMart
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://greenmart-backend.onrender.com
+      
+      # Database (Aiven MySQL)
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      
+      # Session & Cache
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      
+      # Cloudinary
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      
+      # Mail
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@greenmart.com
+      - key: MAIL_FROM_NAME
+        value: GreenMart
+      
+      # Frontend
+      - key: FRONTEND_URL
+        value: https://greenmart.vercel.app
+      
+      # CORS
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: greenmart.vercel.app
