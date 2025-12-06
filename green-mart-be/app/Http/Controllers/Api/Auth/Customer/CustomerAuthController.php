@@ -77,7 +77,7 @@ class CustomerAuthController extends Controller
                         'name' => $user->name,
                         'email' => $user->email,
                         'phone_number' => $user->phone_number,
-                        'avatar' => $user->avatar,
+                        'image' => $user->image,
                         'status' => $user->status,
                         'roles' => $user->roles->pluck('name'),
                     ],
