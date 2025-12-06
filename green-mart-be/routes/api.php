@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\Public\FlashSaleController;
 use App\Http\Controllers\Api\Public\CouponController as PublicCouponController;
 
 use App\Http\Controllers\Api\Auth\PasswordController;
+use App\Http\Controllers\Api\Chat\ChatController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +75,23 @@ Route::prefix('public')->group(function () {
 
     // Coupons
     Route::get('coupons', [PublicCouponController::class, 'index']);
+});
+
+// Chatbot routes (public for guests, enhanced for authenticated users)
+Route::prefix('chat')->group(function () {
+    Route::post('message', [ChatController::class, 'sendMessage']);
+    Route::get('test', function() {
+        $service = app(\App\Services\ChatService::class);
+        $result = $service->processMessage(
+            request('message', 'Xin chào'), 
+            null, 
+            'test-session-' . uniqid()
+        );
+        return response()->json(['success' => true, 'data' => $result]);
+    }); // Test route for browser
+    Route::get('history', [ChatController::class, 'getHistory']);
+    Route::get('suggestions', [ChatController::class, 'getQuickSuggestions']);
+    Route::delete('history', [ChatController::class, 'clearHistory']);
 });
 
 //auth    

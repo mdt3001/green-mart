@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('flash_sales', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(\Illuminate\Support\Str::uuid());
+            $table->uuid('id')->primary();
             $table->string('name')->nullable(false);
-            $table->timestamp('start_time')->nullable(false);
-            $table->timestamp('end_time')->nullable(false);
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
 
