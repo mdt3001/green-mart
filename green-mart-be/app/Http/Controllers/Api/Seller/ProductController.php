@@ -27,6 +27,8 @@ class ProductController extends Controller
 
         $products = Product::where('store_id', $store->id)
             ->with('category:id,name') // Eager load category để lấy tên hiển thị
+            ->withCount('ratings')
+            ->withAvg('ratings', 'rating')
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->where(function ($q) use ($search) {

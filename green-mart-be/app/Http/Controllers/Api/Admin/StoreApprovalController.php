@@ -93,7 +93,8 @@ class StoreApprovalController extends Controller
             ]);
         });
 
-        Mail::to($store->user->email)->send(new SellerApproved($store->fresh('user')));
+        // Gửi mail với store object (không phải user)
+        Mail::to($store->user->email)->send(new SellerApproved($store->fresh(['user'])));
 
         return response()->json([
             'success' => true,

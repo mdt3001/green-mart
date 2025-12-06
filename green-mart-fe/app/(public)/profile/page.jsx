@@ -1,528 +1,330 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { API_PATHS } from "@/utils/apiPaths";
-import Loading from "@/components/Loading";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { User, Mail, Phone, MapPin, Store, Save, Lock, Upload } from "lucide-react";
+import { User, Mail, Phone, MapPin, Camera, Lock, Save } from "lucide-react";
+import Loading from "@/components/Loading";
 
-export default function ProfilePage() {
+function ProfileContent() {
     const { user: authUser, updateUser } = useAuth();
-    const router = useRouter();
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const [changingPassword, setChangingPassword] = useState(false);
-    const [activeTab, setActiveTab] = useState("profile");
-    
-    const [profileData, setProfileData] = useState({
-        name: "",
-        email: "",
-        phone_number: "",
-        address: "",
-        image: null,
-    });
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [imagePreview, setImagePreview] = useState(null);
 
-    const [storeData, setStoreData] = useState({
-        name: "",
-        description: "",
-        address: "",
-        email: "",
-        logo: null,
-    });
+    const {
+        register: registerProfile,
+        handleSubmit: handleSubmitProfile,
+        formState: { errors: profileErrors },
+        reset: resetProfile,
+    } = useForm();
 
-    const [passwordData, setPasswordData] = useState({
-        current_password: "",
-        password: "",
-        password_confirmation: "",
-    });
-
-    const isSeller = authUser?.roles?.includes("seller");
-    const isCustomer = authUser?.roles?.includes("customer");
+    const {
+        register: registerPassword,
+        handleSubmit: handleSubmitPassword,
+        formState: { errors: passwordErrors },
+        reset: resetPassword,
+    } = useForm();
 
     useEffect(() => {
-        if (!authUser) {
-            router.push("/login/customer");
-            return;
-        }
         fetchProfile();
-    }, [authUser, router]);
+    }, []);
 
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const profilePath = isSeller 
-                ? API_PATHS.SELLER.PROFILE 
-                : API_PATHS.CUSTOMER.PROFILE;
-            
-            const response = await axiosInstance.get(profilePath);
-            const data = response.data.data;
-            
-            setProfileData({
-                name: data.name || "",
-                email: data.email || "",
-                phone_number: data.phone_number || "",
-                address: data.address || "",
-                image: data.image || null,
+            const response = await axiosInstance.get(API_PATHS.CUSTOMER.PROFILE);
+            const userData = response.data?.data || response.data;
+            setUser(userData);
+            resetProfile({
+                name: userData.name,
+                phone_number: userData.phone_number || "",
+                address: userData.address || "",
             });
-
-            if (isSeller && data.store) {
-                setStoreData({
-                    name: data.store.name || "",
-                    description: data.store.description || "",
-                    address: data.store.address || "",
-                    email: data.store.email || "",
-                    logo: data.store.logo || null,
-                });
-            }
         } catch (error) {
-            console.error("Error fetching profile:", error);
-            toast.error("Không thể tải thông tin profile");
+            toast.error("Không thể tải thông tin tài khoản");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleProfileUpdate = async (e) => {
-        e.preventDefault();
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const onSubmitProfile = async (data) => {
         try {
-            setSaving(true);
+            setUpdating(true);
             const formData = new FormData();
-            
-            if (profileData.name) formData.append("name", profileData.name);
-            if (profileData.phone_number) formData.append("phone_number", profileData.phone_number);
-            if (profileData.address) formData.append("address", profileData.address);
-            if (profileData.imageFile) {
-                formData.append("image", profileData.imageFile);
+            formData.append("name", data.name);
+            if (data.phone_number) formData.append("phone_number", data.phone_number);
+            if (data.address) formData.append("address", data.address);
+
+            const imageInput = document.getElementById("avatar-input");
+            if (imageInput?.files[0]) {
+                formData.append("image", imageInput.files[0]);
             }
 
-            const updatePath = isSeller 
-                ? API_PATHS.SELLER.UPDATE_PROFILE 
-                : API_PATHS.CUSTOMER.UPDATE_PROFILE;
+            const response = await axiosInstance.put(API_PATHS.CUSTOMER.UPDATE_PROFILE, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
-            const response = await axiosInstance.put(updatePath, formData);
-
-            updateUser(response.data.data);
+            const updatedUser = response.data?.data || response.data;
+            setUser(updatedUser);
+            updateUser(updatedUser);
             toast.success("Cập nhật thông tin thành công");
+            setImagePreview(null);
         } catch (error) {
-            console.error("Error updating profile:", error);
             toast.error(error.response?.data?.message || "Cập nhật thất bại");
         } finally {
-            setSaving(false);
+            setUpdating(false);
         }
     };
 
-    const handleStoreUpdate = async (e) => {
-        e.preventDefault();
-        try {
-            setSaving(true);
-            const formData = new FormData();
-            
-            if (storeData.name) formData.append("name", storeData.name);
-            if (storeData.description) formData.append("description", storeData.description);
-            if (storeData.address) formData.append("address", storeData.address);
-            if (storeData.logoFile) {
-                formData.append("logo", storeData.logoFile);
-            }
-
-            await axiosInstance.put(API_PATHS.SELLER.UPDATE_STORE, formData);
-
-            toast.success("Cập nhật cửa hàng thành công");
-            fetchProfile();
-        } catch (error) {
-            console.error("Error updating store:", error);
-            toast.error(error.response?.data?.message || "Cập nhật thất bại");
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const handleChangePassword = async (e) => {
-        e.preventDefault();
+    const onSubmitPassword = async (data) => {
         try {
             setChangingPassword(true);
-            const changePasswordPath = isSeller 
-                ? API_PATHS.SELLER.CHANGE_PASSWORD 
-                : API_PATHS.CUSTOMER.CHANGE_PASSWORD;
-
-            await axiosInstance.post(changePasswordPath, passwordData);
-            toast.success("Đổi mật khẩu thành công");
-            setPasswordData({
-                current_password: "",
-                password: "",
-                password_confirmation: "",
+            await axiosInstance.post(API_PATHS.CUSTOMER.CHANGE_PASSWORD, {
+                current_password: data.current_password,
+                password: data.password,
+                password_confirmation: data.password_confirmation,
             });
+            toast.success("Đổi mật khẩu thành công");
+            resetPassword();
+            setShowPasswordForm(false);
         } catch (error) {
-            console.error("Error changing password:", error);
             toast.error(error.response?.data?.message || "Đổi mật khẩu thất bại");
         } finally {
             setChangingPassword(false);
         }
     };
 
-    const handleImageChange = (e, type = "profile") => {
-        const file = e.target.files[0];
-        if (file) {
-            if (type === "profile") {
-                setProfileData({
-                    ...profileData,
-                    imageFile: file,
-                    imagePreview: URL.createObjectURL(file),
-                });
-            } else {
-                setStoreData({
-                    ...storeData,
-                    logoFile: file,
-                    logoPreview: URL.createObjectURL(file),
-                });
-            }
-        }
-    };
-
     if (loading) return <Loading />;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-4xl mx-auto px-4">
-                <h1 className="text-3xl font-bold text-gray-800 mb-6">Hồ sơ của tôi</h1>
+        <div className="min-h-[70vh] mx-6">
+            <div className="max-w-4xl mx-auto my-12">
+                <h1 className="text-3xl font-semibold text-slate-800 mb-8">Tài khoản của tôi</h1>
 
-                {/* Tabs */}
-                <div className="bg-white rounded-lg shadow-sm mb-6">
-                    <div className="flex border-b">
-                        <button
-                            onClick={() => setActiveTab("profile")}
-                            className={`px-6 py-3 font-medium ${
-                                activeTab === "profile"
-                                    ? "text-primary border-b-2 border-primary"
-                                    : "text-gray-500 hover:text-gray-700"
-                            }`}
-                        >
-                            Thông tin cá nhân
-                        </button>
-                        {isSeller && (
-                            <button
-                                onClick={() => setActiveTab("store")}
-                                className={`px-6 py-3 font-medium ${
-                                    activeTab === "store"
-                                        ? "text-primary border-b-2 border-primary"
-                                        : "text-gray-500 hover:text-gray-700"
-                                }`}
-                            >
-                                Cửa hàng
-                            </button>
-                        )}
-                        <button
-                            onClick={() => setActiveTab("password")}
-                            className={`px-6 py-3 font-medium ${
-                                activeTab === "password"
-                                    ? "text-primary border-b-2 border-primary"
-                                    : "text-gray-500 hover:text-gray-700"
-                            }`}
-                        >
-                            Đổi mật khẩu
-                        </button>
-                    </div>
-                </div>
-
-                {/* Profile Tab */}
-                {activeTab === "profile" && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <form onSubmit={handleProfileUpdate}>
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Ảnh đại diện
-                                </label>
-                                <div className="flex items-center gap-4">
-                                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Sidebar - Avatar */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                            <div className="flex flex-col items-center">
+                                <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 mb-4">
+                                    {imagePreview || user?.image ? (
                                         <Image
-                                            src={profileData.imagePreview || profileData.image || "/default-avatar.png"}
-                                            alt="Avatar"
-                                            width={96}
-                                            height={96}
-                                            className="w-full h-full object-cover"
+                                            src={imagePreview || user?.image}
+                                            alt={user?.name}
+                                            fill
+                                            className="object-cover"
                                         />
-                                    </div>
-                                    <label className="cursor-pointer">
-                                        <div className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2">
-                                            <Upload size={16} />
-                                            Chọn ảnh
+                                    ) : (
+                                        <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                                            <User size={48} className="text-slate-400" />
                                         </div>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => handleImageChange(e, "profile")}
-                                        />
-                                    </label>
+                                    )}
                                 </div>
+                                <label
+                                    htmlFor="avatar-input"
+                                    className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg cursor-pointer transition text-sm text-slate-700"
+                                >
+                                    <Camera size={16} />
+                                    Đổi ảnh đại diện
+                                </label>
+                                <input
+                                    id="avatar-input"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleImageChange}
+                                />
+                                <p className="text-sm text-slate-500 mt-4 text-center">
+                                    {user?.email}
+                                </p>
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {/* Right Content - Forms */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Profile Form */}
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                            <h2 className="text-xl font-semibold text-slate-800 mb-6 flex items-center gap-2">
+                                <User size={20} />
+                                Thông tin cá nhân
+                            </h2>
+                            <form onSubmit={handleSubmitProfile(onSubmitProfile)} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <User size={16} className="inline mr-2" />
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Họ và tên
                                     </label>
                                     <input
+                                        {...registerProfile("name", { required: "Vui lòng nhập họ và tên" })}
                                         type="text"
-                                        value={profileData.name}
-                                        onChange={(e) =>
-                                            setProfileData({ ...profileData, name: e.target.value })
-                                        }
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
+                                    {profileErrors.name && (
+                                        <p className="text-red-500 text-xs mt-1">{profileErrors.name.message}</p>
+                                    )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Mail size={16} className="inline mr-2" />
+                                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                        <Mail size={16} />
                                         Email
                                     </label>
                                     <input
                                         type="email"
-                                        value={profileData.email}
+                                        value={user?.email || ""}
                                         disabled
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500"
                                     />
+                                    <p className="text-xs text-slate-400 mt-1">Email không thể thay đổi</p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Phone size={16} className="inline mr-2" />
+                                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                        <Phone size={16} />
                                         Số điện thoại
                                     </label>
                                     <input
+                                        {...registerProfile("phone_number")}
                                         type="tel"
-                                        value={profileData.phone_number}
-                                        onChange={(e) =>
-                                            setProfileData({
-                                                ...profileData,
-                                                phone_number: e.target.value,
-                                            })
-                                        }
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <MapPin size={16} className="inline mr-2" />
+                                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                        <MapPin size={16} />
                                         Địa chỉ
                                     </label>
-                                    <input
-                                        type="text"
-                                        value={profileData.address}
-                                        onChange={(e) =>
-                                            setProfileData({
-                                                ...profileData,
-                                                address: e.target.value,
-                                            })
-                                        }
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
-                            >
-                                <Save size={16} />
-                                {saving ? "Đang lưu..." : "Lưu thay đổi"}
-                            </button>
-                        </form>
-                    </div>
-                )}
-
-                {/* Store Tab (Seller only) */}
-                {activeTab === "store" && isSeller && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <form onSubmit={handleStoreUpdate}>
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Logo cửa hàng
-                                </label>
-                                <div className="flex items-center gap-4">
-                                    <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
-                                        <Image
-                                            src={storeData.logoPreview || storeData.logo || "/default-store.png"}
-                                            alt="Store Logo"
-                                            width={128}
-                                            height={128}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                    <label className="cursor-pointer">
-                                        <div className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2">
-                                            <Upload size={16} />
-                                            Chọn logo
-                                        </div>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => handleImageChange(e, "store")}
-                                        />
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Store size={16} className="inline mr-2" />
-                                        Tên cửa hàng
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={storeData.name}
-                                        onChange={(e) =>
-                                            setStoreData({ ...storeData, name: e.target.value })
-                                        }
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Mô tả
-                                    </label>
                                     <textarea
-                                        value={storeData.description}
-                                        onChange={(e) =>
-                                            setStoreData({
-                                                ...storeData,
-                                                description: e.target.value,
-                                            })
-                                        }
-                                        rows={4}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        {...registerProfile("address")}
+                                        rows={3}
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <MapPin size={16} className="inline mr-2" />
-                                        Địa chỉ cửa hàng
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={storeData.address}
-                                        onChange={(e) =>
-                                            setStoreData({
-                                                ...storeData,
-                                                address: e.target.value,
-                                            })
-                                        }
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={updating}
+                                    className="w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    <Save size={18} />
+                                    {updating ? "Đang lưu..." : "Lưu thay đổi"}
+                                </button>
+                            </form>
+                        </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Mail size={16} className="inline mr-2" />
-                                        Email cửa hàng
-                                    </label>
-                                    <input
-                                        type="email"
-                                        value={storeData.email}
-                                        disabled
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                                    />
-                                </div>
+                        {/* Password Form */}
+                        <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                                    <Lock size={20} />
+                                    Đổi mật khẩu
+                                </h2>
+                                <button
+                                    onClick={() => {
+                                        setShowPasswordForm(!showPasswordForm);
+                                        resetPassword();
+                                    }}
+                                    className="text-sm text-green-600 hover:text-green-700"
+                                >
+                                    {showPasswordForm ? "Hủy" : "Đổi mật khẩu"}
+                                </button>
                             </div>
 
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
-                            >
-                                <Save size={16} />
-                                {saving ? "Đang lưu..." : "Lưu thay đổi"}
-                            </button>
-                        </form>
+                            {showPasswordForm && (
+                                <form onSubmit={handleSubmitPassword(onSubmitPassword)} className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                            Mật khẩu hiện tại
+                                        </label>
+                                        <input
+                                            {...registerPassword("current_password", {
+                                                required: "Vui lòng nhập mật khẩu hiện tại",
+                                            })}
+                                            type="password"
+                                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        />
+                                        {passwordErrors.current_password && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {passwordErrors.current_password.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                            Mật khẩu mới
+                                        </label>
+                                        <input
+                                            {...registerPassword("password", {
+                                                required: "Vui lòng nhập mật khẩu mới",
+                                                minLength: {
+                                                    value: 8,
+                                                    message: "Mật khẩu phải có ít nhất 8 ký tự",
+                                                },
+                                            })}
+                                            type="password"
+                                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        />
+                                        {passwordErrors.password && (
+                                            <p className="text-red-500 text-xs mt-1">{passwordErrors.password.message}</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                            Xác nhận mật khẩu mới
+                                        </label>
+                                        <input
+                                            {...registerPassword("password_confirmation", {
+                                                required: "Vui lòng xác nhận mật khẩu",
+                                                validate: (value) =>
+                                                    value === document.getElementById("password")?.value ||
+                                                    "Mật khẩu xác nhận không khớp",
+                                            })}
+                                            type="password"
+                                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        />
+                                        {passwordErrors.password_confirmation && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {passwordErrors.password_confirmation.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={changingPassword}
+                                        className="w-full bg-slate-700 text-white py-2.5 rounded-lg hover:bg-slate-800 active:scale-95 transition-all disabled:opacity-50"
+                                    >
+                                        {changingPassword ? "Đang đổi..." : "Đổi mật khẩu"}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
                     </div>
-                )}
-
-                {/* Password Tab */}
-                {activeTab === "password" && (
-                    <div className="bg-white rounded-lg shadow-sm p-6">
-                        <form onSubmit={handleChangePassword}>
-                            <div className="space-y-4 mb-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        <Lock size={16} className="inline mr-2" />
-                                        Mật khẩu hiện tại
-                                    </label>
-                                    <input
-                                        type="password"
-                                        value={passwordData.current_password}
-                                        onChange={(e) =>
-                                            setPasswordData({
-                                                ...passwordData,
-                                                current_password: e.target.value,
-                                            })
-                                        }
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Mật khẩu mới
-                                    </label>
-                                    <input
-                                        type="password"
-                                        value={passwordData.password}
-                                        onChange={(e) =>
-                                            setPasswordData({
-                                                ...passwordData,
-                                                password: e.target.value,
-                                            })
-                                        }
-                                        required
-                                        minLength={8}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Xác nhận mật khẩu mới
-                                    </label>
-                                    <input
-                                        type="password"
-                                        value={passwordData.password_confirmation}
-                                        onChange={(e) =>
-                                            setPasswordData({
-                                                ...passwordData,
-                                                password_confirmation: e.target.value,
-                                            })
-                                        }
-                                        required
-                                        minLength={8}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={changingPassword}
-                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center gap-2 disabled:opacity-50"
-                            >
-                                <Lock size={16} />
-                                {changingPassword ? "Đang đổi..." : "Đổi mật khẩu"}
-                            </button>
-                        </form>
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );
 }
 
+export default function Profile() {
+    return <ProfileContent />;
+}

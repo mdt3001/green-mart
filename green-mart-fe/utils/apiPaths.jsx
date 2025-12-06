@@ -74,10 +74,6 @@ export const API_PATHS = {
 
   // Seller/Store
   SELLER: {
-    PROFILE: "/api/seller/profile",
-    UPDATE_PROFILE: "/api/seller/profile",
-    CHANGE_PASSWORD: "/api/seller/profile/change-password",
-
     STORE: "/api/seller/store",
     UPDATE_STORE: "/api/seller/store",
 

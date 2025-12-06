@@ -33,26 +33,10 @@ const StoreUserDropdown = ({ storeInfo }) => {
 
   const menuItems = [
     {
-      icon: Store,
-      label: "Store Dashboard",
-      onClick: () => {
-        router.push("/store");
-        setIsOpen(false);
-      },
-    },
-    {
-      icon: Settings,
-      label: "Store Settings",
-      onClick: () => {
-        router.push("/store/settings");
-        setIsOpen(false);
-      },
-    },
-    {
       icon: User,
-      label: "Profile",
+      label: "Tài khoản của tôi",
       onClick: () => {
-        router.push("/profile");
+        router.push("/store/profile");
         setIsOpen(false);
       },
     },
