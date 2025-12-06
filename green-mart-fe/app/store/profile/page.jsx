@@ -6,7 +6,16 @@ import { API_PATHS } from "@/utils/apiPaths";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { Store, Mail, Phone, MapPin, Camera, Lock, Save, User } from "lucide-react";
+import {
+  Store,
+  Mail,
+  Phone,
+  MapPin,
+  Camera,
+  Lock,
+  Save,
+  User,
+} from "lucide-react";
 import Loading from "@/components/Loading";
 
 export default function SellerProfile() {
@@ -99,16 +108,22 @@ export default function SellerProfile() {
       if (data.phone_number) formData.append("phone_number", data.phone_number);
       if (data.address) formData.append("address", data.address);
 
+      formData.append("_method", "PUT");
+
       const imageInput = document.getElementById("avatar-input");
       if (imageInput?.files[0]) {
         formData.append("image", imageInput.files[0]);
       }
 
-      const response = await axiosInstance.put(API_PATHS.CUSTOMER.UPDATE_PROFILE, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosInstance.post(
+        API_PATHS.CUSTOMER.UPDATE_PROFILE,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const updatedUser = response.data?.data || response.data;
       setUser(updatedUser);
@@ -131,16 +146,22 @@ export default function SellerProfile() {
       if (data.address) formData.append("address", data.address);
       if (data.contact) formData.append("contact", data.contact);
 
+      formData.append("_method", "PUT");
+
       const logoInput = document.getElementById("logo-input");
       if (logoInput?.files[0]) {
         formData.append("logo", logoInput.files[0]);
       }
 
-      const response = await axiosInstance.put(API_PATHS.SELLER.UPDATE_STORE, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosInstance.post(
+        API_PATHS.SELLER.UPDATE_STORE,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const updatedStore = response.data?.data || response.data;
       setStore(updatedStore);
@@ -175,7 +196,9 @@ export default function SellerProfile() {
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl font-semibold text-slate-800 mb-6">Hồ sơ của tôi</h1>
+      <h1 className="text-2xl font-semibold text-slate-800 mb-6">
+        Hồ sơ của tôi
+      </h1>
 
       <div className="space-y-6">
         {/* User Profile Section */}
@@ -216,18 +239,25 @@ export default function SellerProfile() {
               />
             </div>
 
-            <form onSubmit={handleSubmitProfile(onSubmitProfile)} className="space-y-4">
+            <form
+              onSubmit={handleSubmitProfile(onSubmitProfile)}
+              className="space-y-4"
+            >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Họ và tên
                 </label>
                 <input
-                  {...registerProfile("name", { required: "Vui lòng nhập họ và tên" })}
+                  {...registerProfile("name", {
+                    required: "Vui lòng nhập họ và tên",
+                  })}
                   type="text"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 {profileErrors.name && (
-                  <p className="text-red-500 text-xs mt-1">{profileErrors.name.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {profileErrors.name.message}
+                  </p>
                 )}
               </div>
 
@@ -318,18 +348,25 @@ export default function SellerProfile() {
               />
             </div>
 
-            <form onSubmit={handleSubmitStore(onSubmitStore)} className="space-y-4">
+            <form
+              onSubmit={handleSubmitStore(onSubmitStore)}
+              className="space-y-4"
+            >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Tên cửa hàng
                 </label>
                 <input
-                  {...registerStore("name", { required: "Vui lòng nhập tên cửa hàng" })}
+                  {...registerStore("name", {
+                    required: "Vui lòng nhập tên cửa hàng",
+                  })}
                   type="text"
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 {storeErrors.name && (
-                  <p className="text-red-500 text-xs mt-1">{storeErrors.name.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {storeErrors.name.message}
+                  </p>
                 )}
               </div>
 
@@ -411,7 +448,10 @@ export default function SellerProfile() {
           </div>
 
           {showPasswordForm && (
-            <form onSubmit={handleSubmitPassword(onSubmitPassword)} className="space-y-4 max-w-md">
+            <form
+              onSubmit={handleSubmitPassword(onSubmitPassword)}
+              className="space-y-4 max-w-md"
+            >
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Mật khẩu hiện tại
@@ -447,7 +487,9 @@ export default function SellerProfile() {
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 {passwordErrors.password && (
-                  <p className="text-red-500 text-xs mt-1">{passwordErrors.password.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {passwordErrors.password.message}
+                  </p>
                 )}
               </div>
 
@@ -486,4 +528,3 @@ export default function SellerProfile() {
     </div>
   );
 }
-

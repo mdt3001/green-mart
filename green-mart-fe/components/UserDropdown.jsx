@@ -21,7 +21,7 @@ const UserDropdown = ({ userInfo }) => {
   // Lấy thông tin từ props, không đọc localStorage
   const displayName = userInfo?.name || "Người dùng";
   const displayEmail = userInfo?.email || "";
-  const displayAvatar = userInfo?.avatar || userInfo?.logo || null;
+  const displayAvatar = userInfo?.image || userInfo?.logo || null;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
