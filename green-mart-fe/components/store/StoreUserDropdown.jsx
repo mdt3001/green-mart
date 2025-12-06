@@ -42,7 +42,7 @@ const StoreUserDropdown = ({ storeInfo }) => {
     },
     {
       icon: LogOut,
-      label: "Logout",
+      label: "Đăng xuất",
       onClick: handleLogout,
       className: "text-red-600 hover:bg-red-50",
     },
