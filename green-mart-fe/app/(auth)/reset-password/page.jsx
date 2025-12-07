@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
@@ -15,11 +15,11 @@ import { Form } from "@/components/ui/form";
 import { RHFInput } from "@/components/ui/rhf-input";
 import { Button } from "@/components/ui/button";
 import { resetPasswordSchema } from "@/lib/validations/auth";
-import { apiPaths } from "@/utils/apiPaths";
+import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
 
@@ -44,7 +44,7 @@ export default function ResetPasswordPage() {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await axiosInstance.post(apiPaths.auth.passwordReset, data);
+      await axiosInstance.post(API_PATHS.AUTH.RESET_PASSWORD, data);
 
       toast.success("Đặt lại mật khẩu thành công!");
       window.location.href = "/login";
@@ -58,7 +58,9 @@ export default function ResetPasswordPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Đặt lại mật khẩu</CardTitle>
+        <CardTitle className="text-2xl text-center">
+          Đặt lại mật khẩu
+        </CardTitle>
         <CardDescription className="text-center">
           Nhập mật khẩu mới của bạn
         </CardDescription>
@@ -67,27 +69,18 @@ export default function ResetPasswordPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <RHFInput
-              name="email"
-              label="Email"
-              control={form.control}
-              type="email"
-              placeholder="example@gmail.com"
-              disabled
-            />
-
-            <RHFInput
               name="password"
               label="Mật khẩu mới"
-              control={form.control}
               type="password"
+              control={form.control}
               placeholder="••••••••"
             />
 
             <RHFInput
               name="password_confirmation"
-              label="Xác nhận mật khẩu mới"
-              control={form.control}
+              label="Xác nhận mật khẩu"
               type="password"
+              control={form.control}
               placeholder="••••••••"
             />
 
@@ -98,5 +91,17 @@ export default function ResetPasswordPage() {
         </Form>
       </CardContent>
     </Card>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600"></div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

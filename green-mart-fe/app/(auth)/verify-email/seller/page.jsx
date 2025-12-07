@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ import axiosInstance from "@/lib/axios/axiosInstance";
 import toast from "react-hot-toast";
 import { CheckCircle2, Store, Clock } from "lucide-react"; // Import thêm icon
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   // State lưu data thành công để hiển thị giao diện thông báo
@@ -180,5 +180,17 @@ export default function VerifyEmailPage() {
         </Form>
       </CardContent>
     </Card>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600"></div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
