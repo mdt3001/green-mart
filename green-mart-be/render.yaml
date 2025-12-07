@@ -68,8 +68,8 @@ services:
       
       # Frontend
       - key: FRONTEND_URL
-        value: https://greenmart.vercel.app
+        value: https://green-mart-fe.vercel.app
       
       # CORS
       - key: SANCTUM_STATEFUL_DOMAINS
-        value: greenmart.vercel.app
+        value: green-mart-fe.vercel.app
