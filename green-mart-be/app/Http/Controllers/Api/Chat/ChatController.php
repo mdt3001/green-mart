@@ -32,6 +32,7 @@ class ChatController extends Controller
         $message = $request->input('message');
 
         try {
+            // Use pattern matching chatbot
             $response = $this->chatService->processMessage($message, $userId, $sessionId);
 
             return response()->json([
@@ -40,7 +41,8 @@ class ChatController extends Controller
                     'response' => $response['message'],
                     'intent' => $response['intent'],
                     'confidence' => $response['confidence'],
-                    'suggestions' => $response['suggestions'],
+                    'suggestions' => $response['suggestions'] ?? [],
+                    'quick_actions' => $response['quick_actions'] ?? [],
                     'metadata' => $response['metadata'],
                     'session_id' => $sessionId,
                 ],

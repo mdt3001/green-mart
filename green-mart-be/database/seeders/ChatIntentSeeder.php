@@ -44,6 +44,20 @@ class ChatIntentSeeder extends Seeder
                 'is_active' => true,
             ],
             [
+                'intent_name' => 'login',
+                'patterns' => [
+                    'đăng nhập|login|sign in|đăng ký|register|sign up',
+                    'tài khoản|account|đăng kí',
+                    '/^(đăng nhập|login)/i',
+                    '/^(đăng ký|register|đăng kí)/i',
+                ],
+                'responses' => [
+                    'Tôi sẽ chuyển bạn đến trang đăng nhập/đăng ký.',
+                ],
+                'description' => 'Login/Register intent',
+                'is_active' => true,
+            ],
+            [
                 'intent_name' => 'order_status',
                 'patterns' => [
                     'đơn hàng|kiểm tra đơn|order|theo dõi đơn|trạng thái đơn',
@@ -62,13 +76,17 @@ class ChatIntentSeeder extends Seeder
                 'patterns' => [
                     'tìm sản phẩm|tìm kiếm|search|sản phẩm|mua',
                     'có không|có bán|có sản phẩm',
-                    '/tìm.*sản phẩm/i',
-                    '/có (bán|không|sản phẩm)/i',
+                    'hải sản|tôm|cá|mực|cua|ghẹ|ốc|ngao|sò',
+                    'trái cây|rau củ|quả|xoài|cam|táo|chuối',
+                    'thịt|gà|bò|heo|thực phẩm|đồ tươi',
+                    '/tìm.*(sản phẩm|hải sản|trái cây|rau|thịt)/i',
+                    '/có (bán|không|sản phẩm).*(tôm|cá|mực|trái cây)/i',
+                    '/(mua|cần|muốn).*(tôm|cá|mực|cua|hải sản|trái cây)/i',
                 ],
                 'responses' => [
                     'Tôi sẽ giúp bạn tìm sản phẩm.',
                 ],
-                'description' => 'Product search and inquiry',
+                'description' => 'Product search - hải sản, trái cây, thực phẩm tươi sống',
                 'is_active' => true,
             ],
             [

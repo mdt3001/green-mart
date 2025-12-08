@@ -168,15 +168,58 @@ const ChatBot = () => {
                 {/* Suggestions */}
                 {msg.sender === "bot" && msg.suggestions && msg.suggestions.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2 ml-2">
-                    {msg.suggestions.map((suggestion, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className="text-xs bg-white hover:bg-green-50 text-green-600 border border-green-200 rounded-full px-3 py-1 transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
+                    {msg.suggestions.map((suggestion, idx) => {
+                      // Check if suggestion is object with link
+                      if (typeof suggestion === 'object' && suggestion.type === 'link') {
+                        return (
+                          <a
+                            key={idx}
+                            href={suggestion.url}
+                            className="text-xs bg-green-600 hover:bg-green-700 text-white rounded-full px-4 py-2 transition-colors inline-flex items-center gap-1 shadow-sm"
+                          >
+                            {suggestion.text}
+                          </a>
+                        );
+                      }
+                      // Regular text suggestion
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSuggestionClick(typeof suggestion === 'object' ? suggestion.text : suggestion)}
+                          className="text-xs bg-white hover:bg-green-50 text-green-600 border border-green-200 rounded-full px-3 py-1 transition-colors"
+                        >
+                          {typeof suggestion === 'object' ? suggestion.text : suggestion}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* Quick Actions */}
+                {msg.sender === "bot" && msg.quick_actions && msg.quick_actions.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2 ml-2">
+                    {msg.quick_actions.map((action, idx) => {
+                      if (action.type === 'link') {
+                        return (
+                          <a
+                            key={idx}
+                            href={action.url}
+                            className="text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 transition-colors inline-flex items-center gap-1"
+                          >
+                            {action.text}
+                          </a>
+                        );
+                      }
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => action.action === 'search' && handleSuggestionClick('Tìm sản phẩm')}
+                          className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full px-3 py-1 transition-colors"
+                        >
+                          {action.text}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>

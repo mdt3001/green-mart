@@ -38,6 +38,7 @@ class ChatService
             'intent' => $intentData['intent'],
             'confidence' => $intentData['confidence'],
             'suggestions' => $response['suggestions'] ?? [],
+            'quick_actions' => $response['quick_actions'] ?? [],
             'metadata' => $response['metadata'] ?? null,
         ];
     }
@@ -107,6 +108,7 @@ class ChatService
         
         return match($intent) {
             'greeting' => $this->handleGreeting($intentData),
+            'login' => $this->handleLogin(),
             'order_status' => $this->handleOrderStatus($message, $userId),
             'product_search' => $this->handleProductSearch($message),
             'store_info' => $this->handleStoreInfo($message),
@@ -142,12 +144,30 @@ class ChatService
         ];
     }
 
+    private function handleLogin(): array
+    {
+        return [
+            'message' => 'Bạn có thể đăng nhập hoặc đăng ký tài khoản để truy cập đầy đủ tính năng.',
+            'quick_actions' => [
+                ['text' => 'Đăng nhập', 'url' => '/login', 'type' => 'link'],
+                ['text' => 'Đăng ký', 'url' => '/register', 'type' => 'link'],
+            ],
+        ];
+    }
+
     private function handleOrderStatus(string $message, ?int $userId): array
     {
         if (!$userId) {
             return [
                 'message' => 'Bạn cần đăng nhập để kiểm tra trạng thái đơn hàng. Vui lòng đăng nhập và thử lại.',
-                'suggestions' => ['Đăng nhập', 'Đăng ký'],
+                'suggestions' => [
+                    ['text' => 'Đăng nhập', 'url' => '/login', 'type' => 'link'],
+                    ['text' => 'Đăng ký', 'url' => '/register', 'type' => 'link'],
+                ],
+                'quick_actions' => [
+                    ['text' => 'Tìm sản phẩm', 'action' => 'search'],
+                    ['text' => 'Xem Flash Sale', 'action' => 'flash_sale'],
+                ],
             ];
         }
 
@@ -260,7 +280,10 @@ class ChatService
                     'item_count' => $o->orderItems->count(),
                 ])->toArray(),
             ],
-            'suggestions' => $recentOrders->pluck('order_code')->map(fn($code) => "#{$code}")->toArray(),
+            'suggestions' => $recentOrders->take(3)->pluck('order_code')->map(fn($code) => "#{$code}")->toArray(),
+            'quick_actions' => [
+                ['text' => '📦 Xem tất cả đơn hàng', 'url' => '/profile/orders', 'type' => 'link'],
+            ],
         ];
     }
 
@@ -275,10 +298,27 @@ class ChatService
         preg_match('/dưới\s*(\d+)k?/i', $message, $maxPrice);
         preg_match('/trên\s*(\d+)k?/i', $message, $minPrice);
 
-        if (strlen($keywords) < 2 && empty($priceRange) && empty($maxPrice) && empty($minPrice)) {
+        // Check if user selected a category suggestion
+        $categoryMap = [
+            'tất cả sản phẩm' => 'all',
+            'trái cây tươi' => 'Trái cây tươi',
+            'rau củ tươi' => 'Rau củ tươi',
+            'thịt & hải sản' => 'Thịt & Hải sản',
+            'thịt hải sản' => 'Thịt & Hải sản',
+        ];
+        
+        $selectedCategory = false; // false = not selected, null or string = selected
+        foreach ($categoryMap as $key => $categoryName) {
+            if (stripos($message, $key) !== false) {
+                $selectedCategory = $categoryName;
+                break;
+            }
+        }
+
+        if (strlen($keywords) < 2 && empty($priceRange) && empty($maxPrice) && empty($minPrice) && $selectedCategory === false) {
             return [
                 'message' => 'Bạn đang tìm sản phẩm gì? Hãy cho tôi biết tên, loại sản phẩm hoặc khoảng giá bạn muốn.',
-                'suggestions' => ['Sản phẩm mới', 'Sản phẩm bán chạy', 'Flash sale', 'Sản phẩm dưới 500k'],
+                'suggestions' => ['Tất cả sản phẩm', 'Trái cây tươi', 'Rau củ tươi', 'Thịt & Hải sản'],
             ];
         }
 
@@ -288,8 +328,20 @@ class ChatService
             ->withCount('ratings')
             ->withAvg('ratings', 'rating');
 
-        // Search by keywords
-        if (strlen($keywords) >= 2) {
+        // Filter by selected category (skip if 'all')
+        if ($selectedCategory !== false && $selectedCategory !== 'all') {
+            $query->whereHas('category', function($q) use ($selectedCategory) {
+                $q->where('name', 'like', "%{$selectedCategory}%")
+                  ->orWhere(function($q2) use ($selectedCategory) {
+                      $q2->whereHas('parent', function($q3) use ($selectedCategory) {
+                          $q3->where('name', 'like', "%{$selectedCategory}%");
+                      });
+                  });
+            });
+        }
+
+        // Search by keywords (only if no category selected)
+        if (strlen($keywords) >= 2 && $selectedCategory === false) {
             $query->where(function($q) use ($keywords) {
                 $q->where('name', 'like', "%{$keywords}%")
                   ->orWhere('description', 'like', "%{$keywords}%")
@@ -329,7 +381,7 @@ class ChatService
             if ($fallbackProducts->isEmpty()) {
                 return [
                     'message' => "Xin lỗi, hiện tại không có sản phẩm phù hợp. Hãy thử tìm kiếm với từ khóa khác!",
-                    'suggestions' => ['Xem tất cả sản phẩm', 'Sản phẩm mới', 'Flash sale'],
+                    'suggestions' => ['Tất cả sản phẩm', 'Trái cây tươi', 'Rau củ tươi', 'Thịt & Hải sản'],
                 ];
             }
 
@@ -344,21 +396,50 @@ class ChatService
                         'rating' => round($p->ratings_avg_rating ?? 0, 1),
                         'store_name' => $p->store->name ?? 'N/A',
                         'image' => $p->image,
+                        'url' => "/product/{$p->id}",
                     ])->toArray(),
                 ],
-                'suggestions' => ['Xem tất cả sản phẩm', 'Danh mục sản phẩm'],
+                'suggestions' => $fallbackProducts->map(fn($p) => [
+                    'text' => "Xem " . substr($p->name, 0, 30),
+                    'url' => "/product/{$p->id}",
+                    'type' => 'link'
+                ])->toArray(),
             ];
         }
 
         $productList = $products->map(function($p) {
             $rating = $p->ratings_avg_rating ? round($p->ratings_avg_rating, 1) . '⭐' : 'Chưa có đánh giá';
             return "• {$p->name} - " . number_format($p->price) . "đ ({$rating})";
-        })->take(3)->join("\n");
+        })->take(5)->join("\n");
         
-        $message = "Tôi tìm thấy {$products->count()} sản phẩm phù hợp:\n\n{$productList}";
+        // Generate message based on category selection or search
+        if ($selectedCategory !== false) {
+            $categoryLabel = $selectedCategory === 'all' ? 'tất cả' : $selectedCategory;
+            $message = "Danh sách sản phẩm {$categoryLabel} ({$products->count()} sản phẩm):\n\n{$productList}";
+        } else {
+            $message = "Tôi tìm thấy {$products->count()} sản phẩm phù hợp:\n\n{$productList}";
+        }
         
-        if ($products->count() > 3) {
-            $message .= "\n\n...và " . ($products->count() - 3) . " sản phẩm khác.";
+        if ($products->count() > 5) {
+            $message .= "\n\n...và " . ($products->count() - 5) . " sản phẩm khác.";
+        }
+
+        // Generate suggestions based on category
+        $suggestions = [];
+        if ($selectedCategory !== false) {
+            // When category is selected, show product links
+            $suggestions = $products->take(5)->map(fn($p) => [
+                'text' => "Xem " . substr($p->name, 0, 25) . (strlen($p->name) > 25 ? '...' : ''),
+                'url' => "/product/{$p->id}",
+                'type' => 'link'
+            ])->toArray();
+        } else {
+            // When searching by keyword, show top 3 products
+            $suggestions = $products->take(3)->map(fn($p) => [
+                'text' => "Xem " . substr($p->name, 0, 25) . (strlen($p->name) > 25 ? '...' : ''),
+                'url' => "/product/{$p->id}",
+                'type' => 'link'
+            ])->toArray();
         }
 
         return [
@@ -374,9 +455,14 @@ class ChatService
                     'store_name' => $p->store->name ?? 'N/A',
                     'category_name' => $p->category->name ?? 'N/A',
                     'image' => $p->image,
+                    'url' => "/product/{$p->id}", // Link tới trang chi tiết sản phẩm
                 ])->toArray(),
             ],
-            'suggestions' => ['Xem chi tiết', 'Tìm sản phẩm khác', 'So sánh giá'],
+            'suggestions' => $suggestions,
+            'quick_actions' => [
+                ['text' => '🔍 Tìm sản phẩm khác', 'action' => 'search'],
+                ['text' => '📋 Xem tất cả', 'url' => '/shop', 'type' => 'link'],
+            ]
         ];
     }
 
