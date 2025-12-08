@@ -17,6 +17,8 @@ import { useState, useEffect } from "react";
 import { assets } from "@/assets/assets";
 import { useAuth } from "@/context/AuthContext";
 import UserDropdown from "@/components/UserDropdown";
+import NotificationDropdown from "@/components/NotificationDropdown";
+import CartDropdown from "@/components/CartDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "@/lib/redux/features/category/categorySlice";
 import { fetchCart } from "@/lib/redux/features/cart/cartSlice";
@@ -41,13 +43,6 @@ const Navbar = () => {
       dispatch(fetchCategories());
     }
   }, [dispatch, categories.length]);
-
-  // Load cart sau khi đã đăng nhập (có user) để badge hiển thị ngay
-  useEffect(() => {
-    if (!loading && user) {
-      dispatch(fetchCart());
-    }
-  }, [dispatch, loading, user]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -144,13 +139,7 @@ const Navbar = () => {
 
               {/* Right Links */}
               <div className="flex items-center gap-4 sm:gap-6">
-                <Link
-                  href="/notifications"
-                  className="hover:text-green-600 transition flex items-center gap-1"
-                >
-                  <Bell size={16} />
-                  <span className="hidden sm:inline">Thông Báo</span>
-                </Link>
+                <NotificationDropdown />
                 <Link
                   href="/help"
                   className="hover:text-green-600 transition flex items-center gap-1"
@@ -310,7 +299,7 @@ const Navbar = () => {
               </div>
             </form>
 
-            <div className="flex items-center gap-4 sm:gap-6 text-gray-700">
+            <div className="flex items-center gap-3 sm:gap-5 text-gray-700">
               {/* <Link
                 href="/wishlist"
                 className="relative hover:text-green-600 transition group"
@@ -323,20 +312,9 @@ const Navbar = () => {
 
               {/* <span className="h-8 w-px bg-gray-200 hidden sm:block"></span> */}
 
-              <Link
-                href="/cart"
-                className="relative hover:text-green-600 transition group sm:mr-18"
-              >
-                <ShoppingCart
-                  size={24}
-                  className="group-hover:scale-110 transition-transform"
-                />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 text-[10px] font-bold text-white bg-red-500 w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              <div className="sm:mr-2">
+                <CartDropdown />
+              </div>
 
               <div className="sm:hidden">
                 {!loading && user && <UserDropdown />}

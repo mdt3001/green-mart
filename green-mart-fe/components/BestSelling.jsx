@@ -14,7 +14,6 @@ const BestSelling = () => {
   useEffect(() => {
     const fetchBestSelling = async () => {
       try {
-        setLoading(true);
         const response = await axiosInstance.get(
           API_PATHS.PUBLIC.BEST_SELLING_PRODUCTS,
           {
@@ -33,7 +32,9 @@ const BestSelling = () => {
       }
     };
 
-    fetchBestSelling();
+    // Delay fetch to avoid blocking initial render
+    const timer = setTimeout(fetchBestSelling, 200);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {

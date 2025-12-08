@@ -14,7 +14,6 @@ const LatestProducts = () => {
   useEffect(() => {
     const fetchLatestProducts = async () => {
       try {
-        setLoading(true);
         const response = await axiosInstance.get(API_PATHS.PUBLIC.LATEST_PRODUCTS, {
           params: { limit: displayQuantity },
         });
@@ -30,7 +29,9 @@ const LatestProducts = () => {
       }
     };
 
-    fetchLatestProducts();
+    // Delay fetch to avoid blocking initial render
+    const timer = setTimeout(fetchLatestProducts, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {

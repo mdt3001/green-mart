@@ -19,7 +19,6 @@ const PublicCoupons = () => {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        setLoading(true);
         const res = await axiosInstance.get(API_PATHS.PUBLIC.COUPONS);
         setCoupons(res.data?.data || []);
       } catch (error) {
@@ -29,10 +28,15 @@ const PublicCoupons = () => {
       }
     };
 
-    fetchCoupons();
-    if (user) {
-      dispatch(fetchSavedCoupons());
-    }
+    // Delay fetch to avoid blocking initial render
+    const timer = setTimeout(() => {
+      fetchCoupons();
+      if (user) {
+        dispatch(fetchSavedCoupons());
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer);
   }, [dispatch, user]);
 
   if (loading) {

@@ -69,29 +69,32 @@ export default function Product() {
   }
 
   return (
-    <div className="mx-6">
+    <div className="mx-6 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-gray-600 text-sm mt-8 mb-5">
+        <div className="flex items-center gap-2 text-gray-600 text-sm py-4 border-b border-gray-100">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-1 hover:text-black"
+            className="flex items-center gap-1 hover:text-green-600 transition-colors"
           >
             <House size={16} />
+            <span className="hidden sm:inline">Trang chủ</span>
           </button>
           <span>/</span>
           <button
             onClick={() => router.push("/shop")}
-            className="hover:text-black"
+            className="hover:text-green-600 transition-colors"
           >
             Sản phẩm
           </button>
           <span>/</span>
-          <span className="font-semibold text-black">{product.name}</span>
+          <span className="font-medium text-gray-900 truncate max-w-xs sm:max-w-md">{product.name}</span>
         </div>
 
         {/* Product Details */}
-        <ProductDetails product={product} />
+        <div className="py-8">
+          <ProductDetails product={product} />
+        </div>
 
         {/* Description & Reviews */}
         <ProductDescription product={product} />
