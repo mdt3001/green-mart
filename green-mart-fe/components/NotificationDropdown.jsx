@@ -56,11 +56,6 @@ const NotificationDropdown = () => {
   const [notifications, setLocalNotifications] = useState([]);
   const dropdownRef = useRef(null);
 
-  // Don't show notification button if not logged in
-  if (!loading && !user) {
-    return null;
-  }
-
   useEffect(() => {
     // Initialize with shared state
     setLocalNotifications(sharedNotifications);
@@ -144,6 +139,11 @@ const NotificationDropdown = () => {
   const unreadNotifications = notifications.filter((n) => !n.isRead);
   const displayNotifications = unreadNotifications;
   const unreadCount = unreadNotifications.length;
+
+  // Don't show notification button if not logged in
+  if (!loading && !user) {
+    return null;
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>
