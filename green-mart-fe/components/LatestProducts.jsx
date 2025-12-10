@@ -69,7 +69,7 @@ const LatestProducts = () => {
         description={`Hiển thị ${products.length} sản phẩm mới nhất`}
         href="/shop"
       />
-      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-5">
+      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

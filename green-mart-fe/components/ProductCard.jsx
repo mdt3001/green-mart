@@ -35,7 +35,7 @@ const ProductCard = ({ product }) => {
       href={`/product/${product.id}`}
       className="group max-xl:mx-auto border p-2 rounded-lg bg-white hover:shadow-md hover:border-green-600 transition-shadow flex flex-col items-start"
     >
-     <div className="relative  h-40 sm:w-60 sm:h-68 rounded-lg overflow-hidden">
+     <div className="relative  h-40 sm:w-58 sm:h-66 rounded-lg overflow-hidden">
   <Image
     fill
     className="group-hover:scale-115 transition duration-300 object-cover"

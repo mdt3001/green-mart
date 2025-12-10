@@ -60,7 +60,11 @@ const BestSelling = () => {
   if (error) {
     return (
       <div className="mx-6 my-10 max-w-7xl sm:mx-auto">
-        <Title title="Sản phẩm đang bán chạy" description={error} href="/shop" />
+        <Title
+          title="Sản phẩm đang bán chạy"
+          description={error}
+          href="/shop"
+        />
       </div>
     );
   }
@@ -72,7 +76,7 @@ const BestSelling = () => {
         description={`Hiển thị ${products.length} sản phẩm đang bán chạy`}
         href="/shop"
       />
-      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-5">
+      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
