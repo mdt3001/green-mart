@@ -44,6 +44,7 @@ php artisan config:cache\n\
 php artisan route:cache\n\
 php artisan view:cache\n\
 php artisan migrate --force\n\
+php artisan db:seed --class=ChatIntentSeeder --force\n\
 service nginx start\n\
 php-fpm' > /start.sh && chmod +x /start.sh
 
