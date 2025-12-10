@@ -145,7 +145,7 @@ const ProductDetails = ({ product }) => {
           )}
           <button
             onClick={() =>
-              !cart[productId] ? addToCartHandler() : router.push("/cart")
+              !cart[productId] ? handleAddToCart() : router.push("/cart")
             }
             className="bg-green-600  text-white px-10 py-3 text-sm font-medium rounded hover:bg-green-700 active:scale-95 transition"
           >

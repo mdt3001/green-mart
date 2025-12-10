@@ -78,11 +78,11 @@ export default function ContactPage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-green-600 to-green-500 text-white py-16">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-4">
             <MessageCircle size={32} />
           </div>
           <h1 className="text-4xl font-bold mb-4">Liên hệ với chúng tôi</h1>
-          <p className="text-lg text-green-50">
+          <p className="text-xl text-green-50">
             Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn
           </p>
         </div>

@@ -36,12 +36,13 @@ import top_categories_12 from "./top_categories_12.png"
 import sale_banner_1 from "./sale_banner_1.png"
 import sale_banner_2 from "./sale_banner_2.png"
 import sale_banner_3 from "./sale_banner_3.png"
+import kera from "./kera.jpg"
 
 export const assets = {
     upload_area, hero_model_img,
     hero_product_img1, hero_product_img2, gs_logo, logo,
     product_img1, product_img2, product_img3, product_img4, product_img5, product_img6,
-    product_img7, product_img8, product_img9, product_img10, product_img11, product_img12,
+    product_img7, product_img8, product_img9, product_img10, product_img11, product_img12, kera, profile_pic1, profile_pic2, profile_pic3
 }
 
 export const categories = ["Headphones", "Speakers", "Watch", "Earbuds", "Mouse", "Decoration"];

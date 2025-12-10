@@ -26,7 +26,7 @@ class AnalyticsController extends Controller
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.store_id', $store->id)
             ->where('orders.created_at', '>=', $startDate)
-            ->whereIn('orders.status', ['DELIVERED', 'SHIPPED']) // Chỉ tính đơn đã giao hoặc đang giao
+            ->where('is_paid', true)
             ->select(DB::raw('SUM(order_items.quantity * order_items.price) as total'))
             ->value('total') ?? 0;
 
@@ -69,7 +69,7 @@ class AnalyticsController extends Controller
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.store_id', $store->id)
             ->where('orders.created_at', '>=', $startDate)
-            ->whereIn('orders.status', ['DELIVERED', 'SHIPPED'])
+            ->where('is_paid', true)
             ->select(
                 DB::raw('DATE(orders.created_at) as date'),
                 DB::raw('SUM(order_items.quantity * order_items.price) as revenue'),

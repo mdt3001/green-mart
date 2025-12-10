@@ -2,7 +2,7 @@
 import Loading from "@/components/Loading";
 import OrdersAreaChart from "@/components/OrdersAreaChart";
 import {
-  CircleDollarSignIcon,
+  HandCoins ,
   ShoppingBasketIcon,
   StoreIcon,
   TagsIcon,
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     {
       title: "Tổng Doanh Thu",
       value: formatCurrency(dashboardData.revenue),
-      icon: CircleDollarSignIcon,
+      icon: HandCoins ,
       color: "bg-green-500",
       bgColor: "bg-green-50",
       textColor: "text-green-500",

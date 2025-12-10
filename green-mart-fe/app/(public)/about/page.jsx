@@ -77,7 +77,7 @@ export default function AboutPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-6">
             <Heart size={40} />
           </div>
-          <h1 className="text-5xl font-bold mb-6">Về Green Mart</h1>
+          <h1 className="text-4xl font-bold mb-6">Về Green Mart</h1>
           <p className="text-xl text-green-50 max-w-3xl mx-auto">
             Chúng tôi tin rằng mỗi gia đình đều xứng đáng được thưởng thức
             những sản phẩm tươi ngon, sạch sẽ và an toàn cho sức khỏe
@@ -120,7 +120,7 @@ export default function AboutPage() {
                   người.
                 </p>
                 <p>
-                  Với hơn 5 năm kinh nghiệm trong ngành, chúng tôi đã xây dựng
+                  Với kinh nghiệm của mình, chúng tôi đã xây dựng
                   mạng lưới đối tác rộng khắp với các trang trại, nhà cung cấp
                   uy tín. Mỗi sản phẩm trên Green Mart đều được chọn lọc kỹ
                   càng, đảm bảo nguồn gốc rõ ràng và chất lượng tuyệt vời.
@@ -131,9 +131,9 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="relative h-96 rounded-xl overflow-hidden">
+            <div className="relative h-full rounded-xl overflow-hidden">
               <Image
-                src={assets.logo.src}
+                src={assets.kera.src}
                 alt="About Green Mart"
                 fill
                 className="object-contain"

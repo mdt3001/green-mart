@@ -108,7 +108,7 @@ const AddressModal = ({ setShowAddressModal }) => {
           type="text"
           placeholder="Số điện thoại"
         />
-        <button className="bg-slate-800 text-white text-sm font-medium py-2.5 rounded-md hover:bg-slate-900 active:scale-95 transition-all">
+        <button className="bg-green-600 text-white text-sm font-medium py-2.5 rounded-md hover:bg-green-700 active:scale-95 transition-all">
           Lưu địa chỉ
         </button>
       </div>

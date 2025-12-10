@@ -125,7 +125,7 @@ export default function StoreManageProducts() {
               <th className="px-4 py-3 text-right">Giá gốc</th>
               <th className="px-4 py-3 text-right">Giá bán</th>
               <th className="px-4 py-3 text-center">Trạng thái</th>
-              <th className="px-4 py-3 text-center">Hành động</th>
+              {/* <th className="px-4 py-3 text-center">Hành động</th> */}
             </tr>
           </thead>
           <tbody className="text-slate-700 divide-y divide-slate-100 bg-white">
@@ -214,7 +214,7 @@ export default function StoreManageProducts() {
                       </label>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  {/* <td className="px-4 py-3 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <button className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded transition">
                         <Edit size={18} />
@@ -226,7 +226,7 @@ export default function StoreManageProducts() {
                         <Trash2 size={18} />
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (

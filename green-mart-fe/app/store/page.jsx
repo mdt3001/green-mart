@@ -1,7 +1,7 @@
 "use client";
 import Loading from "@/components/Loading";
 import {
-  CircleDollarSignIcon,
+  HandCoins ,
   ShoppingBasketIcon,
   TagsIcon,
 } from "lucide-react";
@@ -136,7 +136,7 @@ export default function Dashboard() {
     {
       title: "Tổng Doanh Thu",
       value: formatCurrency(dashboardData.total_revenue),
-      icon: CircleDollarSignIcon,
+      icon: HandCoins ,
       color: "bg-green-500",
       bgColor: "bg-green-50",
       textColor: "text-green-500",

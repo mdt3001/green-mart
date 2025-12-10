@@ -171,9 +171,9 @@ const Footer = () => {
     {
       title: "Liên hệ",
       links: [
-        { text: "+89 123456789", path: "/", icon: PhoneIcon },
-        { text: "greenmart@example.com", path: "/", icon: MailIcon },
-        { text: "Quận 1, thành phố Hồ Chí Minh", path: "/", icon: MapPinIcon },
+        { text: "1900-xxxx", path: "/", icon: PhoneIcon },
+        { text: "support@greenmart.com", path: "/", icon: MailIcon },
+        { text: "227 Nguyễn Văn Cừ, phường 4, TP.HCM", path: "/", icon: MapPinIcon },
       ],
     },
   ];
