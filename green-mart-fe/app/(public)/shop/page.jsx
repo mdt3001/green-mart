@@ -177,12 +177,17 @@ function ShopContent() {
     <div className="min-h-[70vh] mx-6 max-w-7xl sm:mx-auto mb-40">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-gray-600 text-sm mt-8">
-        <div className="flex items-center cursor-pointer hover:text-black" onClick={() => router.push("/")}>
+        <div
+          className="flex items-center cursor-pointer hover:text-black"
+          onClick={() => router.push("/")}
+        >
           <House size={16} />
         </div>
         <span>/</span>
         <span
-          className={`cursor-pointer ${!breadcrumbCategory ? 'font-bold text-black' : 'hover:text-black'}`}
+          className={`cursor-pointer ${
+            !breadcrumbCategory ? "font-bold text-black" : "hover:text-black"
+          }`}
           onClick={() => router.push("/shop")}
         >
           Sản phẩm
@@ -199,22 +204,37 @@ function ShopContent() {
         {/* Left Sidebar */}
         <div className="min-w-60">
           <div className="flex flex-col gap-2">
-            <p onClick={toggleShowFilters} className="text-xl flex items-center cursor-pointer gap-2 font-bold text-gray-700">
+            <p
+              onClick={toggleShowFilters}
+              className="text-xl flex items-center cursor-pointer gap-2 font-bold text-gray-700"
+            >
               BỘ LỌC
               <span className="sm:hidden">
-                <ChevronRight size={20} className={showFilters ? "rotate-90" : ""} />
+                <ChevronRight
+                  size={20}
+                  className={showFilters ? "rotate-90" : ""}
+                />
               </span>
             </p>
             {hasActiveFilters && (
-              <button onClick={clearAllFilters} className="hidden sm:flex items-center gap-1 text-sm text-red-500 hover:text-red-700 transition-colors w-fit">
+              <button
+                onClick={clearAllFilters}
+                className="hidden sm:flex items-center gap-1 text-sm text-red-500 hover:text-red-700 transition-colors w-fit"
+              >
                 <RotateCcw size={14} /> Xóa tất cả
               </button>
             )}
           </div>
 
           {/* --- CATEGORY SECTION (ĐÃ SỬA ĐỔI) --- */}
-          <div className={`border-b border-t border-gray-300 pl-5 py-3 mt-4 ${showFilters ? "" : "hidden"} sm:block`}>
-            <p className="mb-3 text-sm font-medium uppercase text-gray-700">DANH MỤC</p>
+          <div
+            className={`border-b border-t border-gray-300 pl-5 py-3 mt-4 ${
+              showFilters ? "" : "hidden"
+            } sm:block`}
+          >
+            <p className="mb-3 text-sm font-medium uppercase text-gray-700">
+              DANH MỤC
+            </p>
             <div className="flex flex-col gap-2 text-sm text-gray-600">
               {displayCategories.map((cat) => {
                 // LOGIC QUAN TRỌNG Ở ĐÂY:
@@ -233,12 +253,19 @@ function ShopContent() {
                 // Nếu ĐANG CÓ parentCategoryId (đang ở trong 1 category) -> Render Checkbox
                 else {
                   return (
-                    <label key={cat.id} className="flex gap-2 items-center cursor-pointer hover:text-black">
+                    <label
+                      key={cat.id}
+                      className="flex gap-2 items-center cursor-pointer hover:text-black"
+                    >
                       <input
                         className="w-3.5 h-3.5 accent-black"
                         type="checkbox"
                         checked={selectedCategoryId === cat.id}
-                        onChange={() => setSelectedCategoryId((prev) => (prev === cat.id ? null : cat.id))}
+                        onChange={() =>
+                          setSelectedCategoryId((prev) =>
+                            prev === cat.id ? null : cat.id
+                          )
+                        }
                       />
                       {cat.name}
                     </label>
@@ -253,26 +280,61 @@ function ShopContent() {
           </div>
 
           {/* Price Range */}
-          <div className={`border-b border-t border-gray-300 pl-5 py-3 mt-6 ${showFilters ? "" : "hidden"} sm:block`}>
-            <p className="mb-3 text-sm font-medium uppercase text-gray-700">Khoảng giá</p>
+          <div
+            className={`border-b border-t border-gray-300 pl-5 py-3 mt-6 ${
+              showFilters ? "" : "hidden"
+            } sm:block`}
+          >
+            <p className="mb-3 text-sm font-medium uppercase text-gray-700">
+              Khoảng giá
+            </p>
             <div className="flex gap-2 items-center">
-              <input type="number" placeholder="Từ" className="w-1/2 sm:w-[100px] border border-gray-300 rounded-l-md p-2 text-sm focus:outline-none focus:border-black"
-                value={price.min} onChange={(e) => setPrice((p) => ({ ...p, min: e.target.value }))} />
-              <input type="number" placeholder="Đến" className="w-1/2 sm:w-[100px] border border-gray-300 rounded-r-md p-2 text-sm focus:outline-none focus:border-black"
-                value={price.max} onChange={(e) => setPrice((p) => ({ ...p, max: e.target.value }))} />
+              <input
+                type="number"
+                placeholder="Từ"
+                className="w-1/2 sm:w-[100px] border border-gray-300 rounded-l-md p-2 text-sm focus:outline-none focus:border-black"
+                value={price.min}
+                onChange={(e) =>
+                  setPrice((p) => ({ ...p, min: e.target.value }))
+                }
+              />
+              <input
+                type="number"
+                placeholder="Đến"
+                className="w-1/2 sm:w-[100px] border border-gray-300 rounded-r-md p-2 text-sm focus:outline-none focus:border-black"
+                value={price.max}
+                onChange={(e) =>
+                  setPrice((p) => ({ ...p, max: e.target.value }))
+                }
+              />
             </div>
-            <button onClick={applyPrice} className="mt-4 rounded-md bg-black w-full sm:w-[210px] px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors">
+            <button
+              onClick={applyPrice}
+              className="mt-4 rounded-md bg-green-600 w-full sm:w-[210px] px-4 py-2 text-sm text-white hover:bg-green-700 transition-colors"
+            >
               Áp dụng
             </button>
           </div>
 
           {/* Rating */}
-          <div className={`border-b border-t border-gray-300 pl-5 py-3 mt-6 ${showFilters ? "" : "hidden"} sm:block`}>
-            <p className="mb-3 text-sm font-medium uppercase text-gray-700">Đánh giá</p>
+          <div
+            className={`border-b border-t border-gray-300 pl-5 py-3 mt-6 ${
+              showFilters ? "" : "hidden"
+            } sm:block`}
+          >
+            <p className="mb-3 text-sm font-medium uppercase text-gray-700">
+              Đánh giá
+            </p>
             <div className="flex flex-col gap-2 text-sm font-light text-gray-8">
               {[5, 4, 3, 2, 1].map((r) => (
                 <p key={r} className="flex gap-2 items-center">
-                  <input className="w-3.5 h-3.5 accent-black" type="checkbox" value={r} onChange={() => toggleRating(r)} checked={ratings.has(r)} />
+                  <input
+                    className="w-3.5 h-3.5 accent-black"
+                    type="checkbox"
+                    value={r}
+                    onChange={() => toggleRating(r)}
+                    checked={ratings.has(r)}
+                  />
                   {renderStars(r)} {r === 5 ? "5.0" : `từ ${r}.0`}
                 </p>
               ))}
@@ -286,7 +348,11 @@ function ShopContent() {
             <p className="font-semibold text-gray-700">
               {parentCategory ? parentCategory.name : "TẤT CẢ SẢN PHẨM"}
             </p>
-            <select className="border border-gray-300 rounded text-sm px-2 py-1 outline-none" value={sort} onChange={handleSortChange}>
+            <select
+              className="border border-gray-300 rounded text-sm px-2 py-1 outline-none"
+              value={sort}
+              onChange={handleSortChange}
+            >
               <option value="relevant">Sắp xếp: Liên quan</option>
               <option value="low">Giá: Thấp đến Cao</option>
               <option value="high">Giá: Cao đến Thấp</option>
@@ -314,9 +380,40 @@ function ShopContent() {
           {/* Pagination UI */}
           {pagination && pagination.last_page > 1 && (
             <div className="flex items-center justify-center gap-2 mt-8">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className={`px-3 py-1 border rounded ${page <= 1 ? "text-gray-400 border-gray-200 cursor-not-allowed" : "hover:bg-gray-100"}`}>Trước</button>
-              <span className="text-sm text-gray-600">Trang {pagination.current_page || page} / {pagination.last_page}</span>
-              <button onClick={() => setPage((p) => Math.min(pagination.last_page || p + 1, (pagination.last_page || p + 1)))} disabled={(pagination.current_page || page) >= pagination.last_page} className={`px-3 py-1 border rounded ${(pagination.current_page || page) >= pagination.last_page ? "text-gray-400 border-gray-200 cursor-not-allowed" : "hover:bg-gray-100"}`}>Sau</button>
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className={`px-3 py-1 border rounded ${
+                  page <= 1
+                    ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Trước
+              </button>
+              <span className="text-sm text-gray-600">
+                Trang {pagination.current_page || page} / {pagination.last_page}
+              </span>
+              <button
+                onClick={() =>
+                  setPage((p) =>
+                    Math.min(
+                      pagination.last_page || p + 1,
+                      pagination.last_page || p + 1
+                    )
+                  )
+                }
+                disabled={
+                  (pagination.current_page || page) >= pagination.last_page
+                }
+                className={`px-3 py-1 border rounded ${
+                  (pagination.current_page || page) >= pagination.last_page
+                    ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Sau
+              </button>
             </div>
           )}
         </div>

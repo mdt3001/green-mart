@@ -82,7 +82,7 @@ export default function LoginPage() {
               label="Email"
               control={form.control}
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="Nhập địa chỉ email của bạn"
             />
 
             <RHFInput

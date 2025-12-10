@@ -83,7 +83,7 @@ export default function CustomerRegisterPage() {
               label="Email"
               type="email"
               control={form.control}
-              placeholder="example@gmail.com"
+              placeholder="nva@gmail.com"
             />
 
             <RHFInput

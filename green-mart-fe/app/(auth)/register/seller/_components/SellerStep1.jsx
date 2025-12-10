@@ -41,7 +41,7 @@ export function SellerStep1({ form, onNext }) {
         label="Email *"
         control={form.control}
         type="email"
-        placeholder="example@example.com"
+        placeholder="nva@gmail.com"
       />
 
       <RHFInput

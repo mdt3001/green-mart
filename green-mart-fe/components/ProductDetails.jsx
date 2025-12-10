@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 
 const ProductDetails = ({ product }) => {
   const productId = product.id;
-  const currency = "đ"; // VND currency
+  const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || "$";
 
   const cart = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
@@ -48,121 +48,103 @@ const ProductDetails = ({ product }) => {
       : 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-      {/* Image Gallery */}
-      <div className="flex flex-col-reverse sm:flex-row gap-4">
-        {/* Thumbnails */}
-        <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-visible">
+    <div className="flex max-lg:flex-col gap-12">
+      <div className="flex max-sm:flex-col-reverse gap-3">
+        <div className="flex sm:flex-col gap-3">
           {product.images?.map((image, index) => (
-            <button
+            <div
               key={index}
               onClick={() => setMainImage(product.images[index])}
-              className={`bg-gray-50 flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-lg border-2 transition-all flex-shrink-0 ${
-                mainImage === image
-                  ? 'border-green-600 shadow-md'
-                  : 'border-transparent hover:border-gray-300'
-              }`}
+              className="bg-slate-100 flex items-center justify-center size-26 rounded-lg group cursor-pointer overflow-hidden"
             >
               <Image
                 src={image}
-                className="object-cover rounded-md"
+                className="group-hover:scale-103 group-active:scale-95 transition object-cover"
                 alt=""
                 width={100}
                 height={100}
               />
-            </button>
+            </div>
           ))}
         </div>
-        
-        {/* Main Image */}
-        <div className="relative flex justify-center items-center aspect-square bg-gray-50 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-          <Image 
-            src={mainImage} 
-            alt={product.name} 
-            fill 
-            sizes="(max-width: 768px) 100vw, 50vw" 
-            className="object-cover hover:scale-105 transition-transform duration-300" 
+        <div className="relative flex justify-center items-center h-100 sm:size-113 bg-slate-100 rounded-lg overflow-hidden">
+          <Image
+            src={mainImage}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
           />
         </div>
       </div>
-
-      {/* Product Info */}
-      <div className="flex flex-col">
-        {/* Title & Rating */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            {product.name}
-          </h1>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center">
-              {Array(5)
-                .fill("")
-                .map((_, index) => (
-                  <StarIcon
-                    key={index}
-                    size={16}
-                    className="text-transparent"
-                    fill={averageRating >= index + 1 ? "#00C950" : "#D1D5DB"}
-                  />
-                ))}
+      <div className="flex-1">
+        <h1 className="text-3xl font-semibold text-slate-800">
+          {product.name}
+        </h1>
+        <div className="flex items-center mt-2">
+          {Array(5)
+            .fill("")
+            .map((_, index) => (
+              <StarIcon
+                key={index}
+                size={14}
+                className="text-transparent mt-0.5"
+                fill={averageRating >= index + 1 ? "#00C950" : "#D1D5DB"}
+              />
+            ))}
+          <p className="text-sm ml-3 text-slate-500">
+            {ratingsArray.length} Đánh giá
+          </p>
+        </div>
+        <div className="flex items-start my-6 gap-3 text-2xl font-semibold text-slate-800">
+          <p>
+            {" "}
+            {product.price} {currency}
+          </p>
+          <p className="text-xl text-slate-500 line-through">
+            {product.mrp}
+            {currency}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-slate-500">
+          <TagIcon size={14} />
+          <p>
+            Tiết kiệm{" "}
+            {(((product.mrp - product.price) / product.mrp) * 100).toFixed(0)}%
+            ngay hôm nay
+          </p>
+        </div>
+        <div className="flex items-end gap-5 mt-10">
+          {cart[productId] && (
+            <div className="flex flex-col gap-3">
+              <p className="text-lg text-slate-800 font-semibold">Số lượng</p>
+              <Counter productId={productId} />
             </div>
-            <span className="text-sm text-gray-600">
-              {averageRating.toFixed(1)} ({ratingsArray.length} đánh giá)
-            </span>
-          </div>
+          )}
+          <button
+            onClick={() =>
+              !cart[productId] ? addToCartHandler() : router.push("/cart")
+            }
+            className="bg-green-600  text-white px-10 py-3 text-sm font-medium rounded hover:bg-green-700 active:scale-95 transition"
+          >
+            {!cart[productId] ? "Thêm vào giỏ hàng" : "Xem giỏ hàng"}
+          </button>
         </div>
-
-        {/* Price */}
-        <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-100">
-          <div className="flex items-baseline gap-3 mb-2">
-            <span className="text-3xl sm:text-4xl font-bold text-green-600">
-              {product.price.toLocaleString('vi-VN')}{currency}
-            </span>
-            <span className="text-lg text-gray-500 line-through">
-              {product.mrp.toLocaleString('vi-VN')}{currency}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-green-700">
-            <TagIcon size={16} />
-            <p className="text-sm font-medium">
-              Tiết kiệm {(((product.mrp - product.price) / product.mrp) * 100).toFixed(0)}% ngay hôm nay
-            </p>
-          </div>
-        </div>
-
-        {/* Add to Cart Section */}
-        <div className="mb-6 p-4 bg-white border border-gray-200 rounded-lg">
-          <div className="flex items-center gap-4">
-            {cart[productId] && (
-              <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium text-gray-700">Số lượng</p>
-                <Counter productId={productId} />
-              </div>
-            )}
-            <button
-              onClick={() =>
-                !cart[productId] ? addToCartHandler() : router.push("/cart")
-              }
-              className="flex-1 bg-green-600 text-white px-8 py-3.5 text-base font-semibold rounded-lg hover:bg-green-700 active:scale-[0.98] transition-all shadow-md hover:shadow-lg"
-            >
-              {!cart[productId] ? "Thêm vào giỏ hàng" : "Xem giỏ hàng"}
-            </button>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-          <p className="flex items-center gap-3 text-gray-700">
-            <EarthIcon className="text-green-600" size={20} /> 
-            <span>Miễn phí vận chuyển</span>
+        <hr className="border-gray-300 my-5" />
+        <div className="flex flex-col gap-4 text-slate-500">
+          <p className="flex gap-3">
+            {" "}
+            <EarthIcon className="text-slate-400" /> Miễn phí vận chuyển{" "}
           </p>
-          <p className="flex items-center gap-3 text-gray-700">
-            <CreditCardIcon className="text-green-600" size={20} /> 
-            <span>100% Thanh toán an toàn</span>
+          <p className="flex gap-3">
+            {" "}
+            <CreditCardIcon className="text-slate-400" /> 100% Thanh toán an
+            toàn{" "}
           </p>
-          <p className="flex items-center gap-3 text-gray-700">
-            <UserIcon className="text-green-600" size={20} /> 
-            <span>Được tin cậy cao bởi khách hàng</span>
+          <p className="flex gap-3">
+            {" "}
+            <UserIcon className="text-slate-400" /> Được tin cậy cao bởi khách
+            hàng{" "}
           </p>
         </div>
       </div>
