@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\Customer\OrderController as CustomerOrderController
 use App\Http\Controllers\Api\Customer\ReviewController;
 use App\Http\Controllers\Api\Customer\CartController;
 use App\Http\Controllers\Api\Customer\CouponController as CustomerCouponController;
+use App\Http\Controllers\Api\Customer\PaymentController;
 
 // Public Controllers
 use App\Http\Controllers\Api\Public\ProductController as PublicProductController;
@@ -114,6 +115,16 @@ Route::prefix('auth')->group(function () {
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
 
     Route::post('admin/login', [AdminAuthController::class, 'login']);
+});
+
+Route::prefix('customer/payment')->group(function () {
+   // Return URLs
+    Route::get('/momo/return', [PaymentController::class, 'momo_return']);
+    Route::get('/vnpay/return', [PaymentController::class, 'vnpay_return']);
+    
+    // IPN Callbacks
+    Route::post('/momo/callback', [PaymentController::class, 'momo_callback']);
+    Route::post('/vnpay/callback', [PaymentController::class, 'vnpay_callback']);
 });
 
 //admin
@@ -209,4 +220,8 @@ Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
     Route::post('coupons/save', [CustomerCouponController::class, 'saveCoupon']);
     Route::get('coupons/saved', [CustomerCouponController::class, 'getSavedCoupons']);
     Route::delete('coupons/saved/{code}', [CustomerCouponController::class, 'removeSavedCoupon']);
-});
+
+    // Payment routes
+    Route::post('/payment/momo', [PaymentController::class, 'momo_payment']);
+    Route::post('/payment/vnpay', [PaymentController::class, 'vnpay_payment']);
+ });

@@ -129,5 +129,9 @@ export const API_PATHS = {
     SAVE_COUPON: "/api/customer/coupons/save",
     SAVED_COUPONS: "/api/customer/coupons/saved",
     REMOVE_SAVED_COUPON: (code) => `/api/customer/coupons/saved/${code}`,
+
+    // Payment
+    MOMO_PAYMENT: "/api/customer/payment/momo",
+    VNPAY_PAYMENT: "/api/customer/payment/vnpay",
   },
 };
