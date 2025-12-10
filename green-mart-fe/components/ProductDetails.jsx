@@ -59,11 +59,14 @@ const ProductDetails = ({ product }) => {
 
   const ratingsArray = Array.isArray(product.ratings) ? product.ratings : [];
   const averageRating = (() => {
-    if (typeof product?.ratings_avg_rating === 'number') {
+    if (typeof product?.ratings_avg_rating === "number") {
       return product.ratings_avg_rating;
     }
     if (ratingsArray.length > 0) {
-      const sum = ratingsArray.reduce((acc, item) => acc + (item.rating || 0), 0);
+      const sum = ratingsArray.reduce(
+        (acc, item) => acc + (item.rating || 0),
+        0
+      );
       return sum / ratingsArray.length;
     }
     return 0;
@@ -77,7 +80,7 @@ const ProductDetails = ({ product }) => {
             <div
               key={index}
               onClick={() => setMainImage(product.images[index])}
-              className="bg-slate-100 flex items-center justify-center size-26 rounded-lg group cursor-pointer overflow-hidden"
+              className="border  flex items-center justify-center size-26 rounded-lg group cursor-pointer overflow-hidden hover:border-green-600"
             >
               <Image
                 src={image}
@@ -89,7 +92,7 @@ const ProductDetails = ({ product }) => {
             </div>
           ))}
         </div>
-        <div className="relative flex justify-center items-center h-100 sm:size-113 bg-slate-100 rounded-lg overflow-hidden">
+        <div className="relative flex justify-center items-center h-100 sm:size-113 border rounded-lg overflow-hidden">
           <Image
             src={mainImage}
             alt=""
