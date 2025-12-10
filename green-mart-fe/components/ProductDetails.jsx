@@ -15,7 +15,8 @@ import Counter from "./Counter";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
-
+import { ShoppingCart, Heart, Share2 } from "lucide-react";
+import Rating from "./Rating";
 
 const ProductDetails = ({ product }) => {
   const productId = product.id;
@@ -23,29 +24,50 @@ const ProductDetails = ({ product }) => {
 
   const cart = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [mainImage, setMainImage] = useState(product.images?.[0]);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
-  const addToCartHandler = () => {
-    if (!isAuthenticated) {
-      toast("Bạn cần đăng nhập mới có thể thêm sản phẩm vào giỏ hàng!")
+  const handleAddToCart = () => {
+    if (!user) {
+      toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
       setTimeout(() => {
         router.push("/login/customer");
-      }, 3000);
+      }, 2000);
       return;
     }
-    dispatch(addCartItem({ productId, quantity: 1 }));
+
+    dispatch(addCartItem({ productId: product.id, quantity }));
+    toast.success(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`);
+  };
+
+  const handleBuyNow = () => {
+    if (!user) {
+      toast.error("Bạn cần đăng nhập để mua hàng!");
+      setTimeout(() => {
+        router.push("/login/customer");
+      }, 2000);
+      return;
+    }
+
+    dispatch(addCartItem({ productId: product.id, quantity }));
+    router.push("/cart");
   };
 
   const ratingsArray = Array.isArray(product.ratings) ? product.ratings : [];
-  const averageRating =
-    product?.ratings_avg_rating ??
-    (ratingsArray.length > 0
-      ? ratingsArray.reduce((acc, item) => acc + (item.rating || 0), 0) /
-      ratingsArray.length
-      : 0);
+  const averageRating = (() => {
+    if (typeof product?.ratings_avg_rating === 'number') {
+      return product.ratings_avg_rating;
+    }
+    if (ratingsArray.length > 0) {
+      const sum = ratingsArray.reduce((acc, item) => acc + (item.rating || 0), 0);
+      return sum / ratingsArray.length;
+    }
+    return 0;
+  })();
 
   return (
     <div className="flex max-lg:flex-col gap-12">

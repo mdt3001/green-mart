@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -41,10 +42,15 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('Order Creation Request', [
+            'user_id' => $request->user()->id,
+            'payload' => $request->all()
+        ]);
+
         $validator = Validator::make($request->all(), [
             'store_id' => 'required|uuid|exists:stores,id',
             'address_id' => 'required|uuid|exists:addresses,id',
-            'payment_method' => 'required|in:COD,STRIPE',
+            'payment_method' => 'required|in:COD,MOMO,VNPAY',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|uuid|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -173,6 +179,11 @@ class OrderController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Order Creation Error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra',
