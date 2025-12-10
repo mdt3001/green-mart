@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
     product?.ratings_avg_rating ??
     (ratingArray.length > 0
       ? ratingArray.reduce((acc, item) => acc + item.rating, 0) /
-      ratingArray.length
+        ratingArray.length
       : 0);
   const ratingCount = product?.ratings_count ?? ratingArray.length;
 
@@ -31,34 +31,31 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link href={`/product/${product.id}`} className="group max-xl:mx-auto">
-      <div className="relative bg-[#F5F5F5] h-40 sm:w-60 sm:h-68 rounded-lg flex items-center justify-center overflow-hidden">
-        <Image
-          width={500}
-          height={500}
-          className="w-full h-full group-hover:scale-115 transition duration-300 object-cover"
-          src={productImage}
-          alt={product.name || "Product"}
-        />
-        {sale > 0 && (
-          <span className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
-            -{sale}%
-          </span>
-        )}
-        {product.in_stock === 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
-            Hết hàng
-          </span>
-        )}
-        {/* <div className="absolute top-2 right-2 flex gap-2 flex-col opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-white rounded-full p-2 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors">
-            <Heart className="w-4 h-4" />
-          </div>
-          <div className="bg-white rounded-full p-2 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors">
-            <Eye className="w-4 h-4" />
-          </div>
-        </div> */}
-      </div>
+    <Link
+      href={`/product/${product.id}`}
+      className="group max-xl:mx-auto border p-2 rounded-lg bg-white hover:shadow-md hover:border-green-600 transition-shadow flex flex-col items-start"
+    >
+     <div className="relative  h-40 sm:w-60 sm:h-68 rounded-lg overflow-hidden">
+  <Image
+    fill
+    className="group-hover:scale-115 transition duration-300 object-cover"
+    src={productImage}
+    alt={product.name || "Product"}
+  />
+  
+  {sale > 0 && (
+    <span className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+      -{sale}%
+    </span>
+  )}
+
+  {product.in_stock === 0 && (
+    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+      Hết hàng
+    </span>
+  )}
+</div>
+
       <div className="text-sm text-slate-800 pt-2 max-w-60">
         <div className="flex-1 min-w-0">
           <p className="truncate font-medium">{product.name}</p>
@@ -79,9 +76,7 @@ const ProductCard = ({ product }) => {
                 />
               ))}
             {ratingCount > 0 && (
-              <span className="text-xs text-gray-500">
-                ({ratingCount})
-              </span>
+              <span className="text-xs text-gray-500">({ratingCount})</span>
             )}
           </div>
           <div className="flex items-center gap-2 mt-1">
