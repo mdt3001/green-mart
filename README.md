@@ -47,6 +47,8 @@
 Seminar nhóm: Unknown
 
 ## ĐỒ ÁN MÔN HỌC
-
+-    **Đề tài:** Website bán nông sản xanh
+-    **Repository:** [PHÁT TRIỂN ỨNG DỤNG WEB - IS207](https://github.com/mdt3001/green-mart)
+-    **Trang giới thiệu nhóm:** [4T](https://www.notion.so/PH-T-TRI-N-NG-D-NG-WEB-NH-M-4T-2c69fdc59fca801fabd6f05596f6cf75?source=copy_link)
 <a name="doan"></a>
 Đồ án Nhóm: Unknown
