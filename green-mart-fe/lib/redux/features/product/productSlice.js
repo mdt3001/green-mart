@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { API_PATHS } from "@/utils/apiPaths";
 import axiosInstance from "@/lib/axios/axiosInstance";
 
-// Lấy danh sách sản phẩm cho trang shop - mọi filter (search, category, price, sort...) xử lý ở backend
 export const fetchProducts = createAsyncThunk(
   "product/fetchProducts",
   async (params = {}, { rejectWithValue }) => {
@@ -11,7 +10,6 @@ export const fetchProducts = createAsyncThunk(
         params,
       });
 
-      // API trả về { success: true, data: { current_page, data: [...], ... } }
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Lỗi khi tải sản phẩm");

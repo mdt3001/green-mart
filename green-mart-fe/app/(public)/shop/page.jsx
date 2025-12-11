@@ -15,7 +15,6 @@ function ShopContent() {
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
   const categoryParam = searchParams.get("category");
-  // Lấy ID category cha từ URL
   const parentCategoryId = categoryParam ? Number(categoryParam) : null;
 
   const router = useRouter();
@@ -27,7 +26,7 @@ function ShopContent() {
 
   // Filter state
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const [ratings, setRatings] = useState(new Set());
+  const [ratings, setRatings] = useState(new Set()); // ✅ ĐỔI VỀ Set cho checkbox
   const [price, setPrice] = useState({ min: "", max: "" });
   const [appliedPrice, setAppliedPrice] = useState({ min: 0, max: Infinity });
   const [sort, setSort] = useState("relevant");
@@ -52,12 +51,10 @@ function ShopContent() {
       ? categories.find((c) => c.id === parentCategoryId)
       : null;
   const childCategories = parentCategory?.children || [];
-
-  // Nếu có parent -> dùng childCategories. Nếu không -> dùng categories (root)
   const displayCategories =
     parentCategory && childCategories.length > 0 ? childCategories : categories;
 
-  // Xử lý logic filters
+  // ✅ Logic checkbox rating
   const toggleRating = (value) => {
     setRatings((prev) => {
       const next = new Set(prev);
@@ -76,7 +73,7 @@ function ShopContent() {
 
   const handleSortChange = (e) => setSort(e.target.value);
 
-  // Check trạng thái filter để hiển thị nút xóa
+  // ✅ Cập nhật logic check filter
   const hasActiveFilters =
     !!search ||
     appliedPrice.min > 0 ||
@@ -90,40 +87,59 @@ function ShopContent() {
     appliedPrice.min > 0 ||
     (appliedPrice.max !== Infinity && appliedPrice.max > 0) ||
     !!selectedCategoryId ||
+    ratings.size > 0 ||
     sort !== "relevant";
 
   const clearAllFilters = () => {
     setSelectedCategoryId(null);
     setPrice({ min: "", max: "" });
     setAppliedPrice({ min: 0, max: Infinity });
-    setRatings(new Set());
+    setRatings(new Set()); // ✅ Reset ratings
     setSort("relevant");
     setPage(1);
   };
 
+  // Reset page khi filter thay đổi
   useEffect(() => {
     setPage(1);
-  }, [search, parentCategoryId, selectedCategoryId, appliedPrice.min, appliedPrice.max, sort]);
+  }, [
+    search,
+    parentCategoryId,
+    selectedCategoryId,
+    appliedPrice.min,
+    appliedPrice.max,
+    ratings.size,
+    sort,
+  ]);
 
-  // Fetch data
+  // ✅ Fetch data với ratings filter (array)
   useEffect(() => {
-    // 1. Không có category cha -> Fetch All Products
     if (!parentCategoryId) {
+      // Fetch all products
       const params = { page };
       if (search) params.search = search;
       if (selectedCategoryId) params.category_id = selectedCategoryId;
       if (appliedPrice.min > 0) params.min_price = appliedPrice.min;
-      if (appliedPrice.max !== Infinity && appliedPrice.max > 0) params.max_price = appliedPrice.max;
+      if (appliedPrice.max !== Infinity && appliedPrice.max > 0)
+        params.max_price = appliedPrice.max;
+      if (ratings.size > 0) params.ratings = Array.from(ratings); // ✅ Gửi array ratings
 
-      if (sort === "low") { params.sort_by = "price"; params.sort_order = "asc"; }
-      else if (sort === "high") { params.sort_by = "price"; params.sort_order = "desc"; }
-      else { params.sort_by = "created_at"; params.sort_order = "desc"; }
+      if (sort === "low") {
+        params.sort_by = "price";
+        params.sort_order = "asc";
+      } else if (sort === "high") {
+        params.sort_by = "price";
+        params.sort_order = "desc";
+      } else {
+        params.sort_by = "created_at";
+        params.sort_order = "desc";
+      }
 
       dispatch(fetchProducts(params));
       return;
     }
 
-    // 2. Có category cha
+    // Có category cha
     if (!isFilteredBackend) {
       dispatch(fetchProductsByCategory({ categoryId: parentCategoryId, page }));
     } else {
@@ -133,42 +149,53 @@ function ShopContent() {
       else params.parent_category_id = parentCategoryId;
 
       if (appliedPrice.min > 0) params.min_price = appliedPrice.min;
-      if (appliedPrice.max !== Infinity && appliedPrice.max > 0) params.max_price = appliedPrice.max;
+      if (appliedPrice.max !== Infinity && appliedPrice.max > 0)
+        params.max_price = appliedPrice.max;
+      if (ratings.size > 0) params.ratings = Array.from(ratings); // ✅ Gửi array ratings
 
-      if (sort === "low") { params.sort_by = "price"; params.sort_order = "asc"; }
-      else if (sort === "high") { params.sort_by = "price"; params.sort_order = "desc"; }
-      else { params.sort_by = "created_at"; params.sort_order = "desc"; }
+      if (sort === "low") {
+        params.sort_by = "price";
+        params.sort_order = "asc";
+      } else if (sort === "high") {
+        params.sort_by = "price";
+        params.sort_order = "desc";
+      } else {
+        params.sort_by = "created_at";
+        params.sort_order = "desc";
+      }
 
       dispatch(fetchProducts(params));
     }
-  }, [dispatch, parentCategoryId, search, selectedCategoryId, appliedPrice.min, appliedPrice.max, sort, isFilteredBackend, page]);
-
-  // Filter Rating (Frontend)
-  const getAverageRating = (p) => {
-    if (p?.ratings_avg_rating != null) return Number(p.ratings_avg_rating) || 0;
-    const arr = Array.isArray(p?.ratings) ? p.ratings : [];
-    if (arr.length === 0) return 0;
-    const sum = arr.reduce((acc, cur) => acc + (Number(cur?.rating) || 0), 0);
-    return sum / arr.length;
-  };
+  }, [
+    dispatch,
+    parentCategoryId,
+    search,
+    selectedCategoryId,
+    appliedPrice.min,
+    appliedPrice.max,
+    ratings.size,
+    sort,
+    isFilteredBackend,
+    page,
+  ]);
 
   const renderStars = (rating) => {
-    return Array(5).fill("").map((_, index) => (
-      <StarIcon key={index} size={14} className="text-transparent mt-0.5" fill={rating >= index + 1 ? "var(--color-warning)" : "#D1D5DB"} />
-    ));
+    return Array(5)
+      .fill("")
+      .map((_, index) => (
+        <StarIcon
+          key={index}
+          size={14}
+          className="text-transparent mt-0.5"
+          fill={rating >= index + 1 ? "var(--color-warning)" : "#D1D5DB"}
+        />
+      ));
   };
 
-  const sortedProducts = products.filter((p) => {
-    if (ratings.size === 0) return true;
-    const avg = getAverageRating(p);
-    return Array.from(ratings).some((r) => avg >= r);
-  });
+  const breadcrumbCategory =
+    currentCategory?.name || parentCategory?.name || "";
 
-  const breadcrumbCategory = currentCategory?.name || parentCategory?.name || "";
-
-  // Hàm chuyển hướng khi click vào Root Category
   const handleRootCategoryClick = (id) => {
-    // Reset các filter khác để trải nghiệm tốt hơn
     clearAllFilters();
     router.push(`/shop?category=${id}`);
   };
@@ -226,7 +253,7 @@ function ShopContent() {
             )}
           </div>
 
-          {/* --- CATEGORY SECTION (ĐÃ SỬA ĐỔI) --- */}
+          {/* Category Section */}
           <div
             className={`border-b border-t border-gray-300 pl-5 py-3 mt-4 ${
               showFilters ? "" : "hidden"
@@ -237,8 +264,6 @@ function ShopContent() {
             </p>
             <div className="flex flex-col gap-2 text-sm text-gray-600">
               {displayCategories.map((cat) => {
-                // LOGIC QUAN TRỌNG Ở ĐÂY:
-                // Nếu KHÔNG có parentCategoryId (đang ở trang Shop chính) -> Render Link
                 if (!parentCategoryId) {
                   return (
                     <p
@@ -249,9 +274,7 @@ function ShopContent() {
                       {cat.name}
                     </p>
                   );
-                }
-                // Nếu ĐANG CÓ parentCategoryId (đang ở trong 1 category) -> Render Checkbox
-                else {
+                } else {
                   return (
                     <label
                       key={cat.id}
@@ -316,7 +339,7 @@ function ShopContent() {
             </button>
           </div>
 
-          {/* Rating */}
+          {/* ✅ Rating - DÙNG CHECKBOX */}
           <div
             className={`border-b border-t border-gray-300 pl-5 py-3 mt-6 ${
               showFilters ? "" : "hidden"
@@ -325,18 +348,23 @@ function ShopContent() {
             <p className="mb-3 text-sm font-medium uppercase text-gray-700">
               Đánh giá
             </p>
-            <div className="flex flex-col gap-2 text-sm font-light text-gray-8">
+            <div className="flex flex-col gap-2 text-sm font-light text-gray-800">
               {[5, 4, 3, 2, 1].map((r) => (
-                <p key={r} className="flex gap-2 items-center">
+                <label
+                  key={r}
+                  className="flex gap-2 items-center cursor-pointer hover:text-black"
+                >
                   <input
                     className="w-3.5 h-3.5 accent-black"
                     type="checkbox"
                     value={r}
-                    onChange={() => toggleRating(r)}
                     checked={ratings.has(r)}
+                    onChange={() => toggleRating(r)}
                   />
-                  {renderStars(r)} {r === 5 ? "5.0" : `từ ${r}.0`}
-                </p>
+                  <span className="flex items-center gap-1">
+                    {renderStars(r)} {r === 5 ? "5.0" : `từ ${r}.0`}
+                  </span>
+                </label>
               ))}
             </div>
           </div>
@@ -365,8 +393,8 @@ function ShopContent() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 gap-y-6">
-              {sortedProducts.length > 0 ? (
-                sortedProducts.map((product) => (
+              {products.length > 0 ? (
+                products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))
               ) : (
@@ -396,12 +424,7 @@ function ShopContent() {
               </span>
               <button
                 onClick={() =>
-                  setPage((p) =>
-                    Math.min(
-                      pagination.last_page || p + 1,
-                      pagination.last_page || p + 1
-                    )
-                  )
+                  setPage((p) => Math.min(pagination.last_page, p + 1))
                 }
                 disabled={
                   (pagination.current_page || page) >= pagination.last_page
