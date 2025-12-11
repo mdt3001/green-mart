@@ -1,5 +1,5 @@
 "use client";
-import { StarIcon, ShoppingCart, Heart, Eye } from "lucide-react";
+import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -33,30 +33,30 @@ const ProductCard = ({ product }) => {
   return (
     <Link
       href={`/product/${product.id}`}
-      className="group max-xl:mx-auto border p-2 rounded-lg bg-white hover:shadow-md hover:border-green-600 transition-shadow flex flex-col items-start"
+      className="group w-full h-full border p-2 rounded-lg bg-white hover:shadow-md hover:border-green-600 transition-shadow flex flex-col items-start"
     >
-     <div className="relative  h-40 sm:w-58 sm:h-66 rounded-lg overflow-hidden">
-  <Image
-    fill
-    className="group-hover:scale-115 transition duration-300 object-cover"
-    src={productImage}
-    alt={product.name || "Product"}
-  />
-  
-  {sale > 0 && (
-    <span className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
-      -{sale}%
-    </span>
-  )}
+      <div className="relative w-full aspect-[3.5/4] rounded-lg overflow-hidden">
+        <Image
+          fill
+          className="group-hover:scale-115 transition duration-300 object-cover"
+          src={productImage}
+          alt={product.name || "Product"}
+        />
 
-  {product.in_stock === 0 && (
-    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
-      Hết hàng
-    </span>
-  )}
-</div>
+        {sale > 0 && (
+          <span className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+            -{sale}%
+          </span>
+        )}
 
-      <div className="text-sm text-slate-800 pt-2 max-w-60">
+        {product.in_stock === 0 && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-lg shadow">
+            Hết hàng
+          </span>
+        )}
+      </div>
+
+      <div className="text-sm text-slate-800 pt-2 w-full">
         <div className="flex-1 min-w-0">
           <p className="truncate font-medium">{product.name}</p>
           {product.store && (
@@ -92,9 +92,6 @@ const ProductCard = ({ product }) => {
             )}
           </div>
         </div>
-        {/* <div className="bg-gray-1 rounded-full p-2 w-10 h-10 flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors my-2 flex-shrink-0">
-          <ShoppingCart className="w-5 h-5" />
-        </div> */}
       </div>
     </Link>
   );

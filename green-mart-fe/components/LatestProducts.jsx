@@ -14,22 +14,24 @@ const LatestProducts = () => {
   useEffect(() => {
     const fetchLatestProducts = async () => {
       try {
-        const response = await axiosInstance.get(API_PATHS.PUBLIC.LATEST_PRODUCTS, {
-          params: { limit: displayQuantity },
-        });
+        const response = await axiosInstance.get(
+          API_PATHS.PUBLIC.LATEST_PRODUCTS,
+          {
+            params: { limit: displayQuantity },
+          }
+        );
 
         if (response.data.success) {
           setProducts(response.data.data);
         }
       } catch (err) {
-        console.error("Error fetching latest products:", err);
+        console.error(err);
         setError("Không thể tải sản phẩm mới nhất");
       } finally {
         setLoading(false);
       }
     };
 
-    // Delay fetch to avoid blocking initial render
     const timer = setTimeout(fetchLatestProducts, 100);
     return () => clearTimeout(timer);
   }, []);
@@ -42,11 +44,11 @@ const LatestProducts = () => {
           description="Đang tải..."
           href="/shop"
         />
-        <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2 justify-between">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[...Array(displayQuantity)].map((_, index) => (
             <div
               key={index}
-              className="bg-gray-200 animate-pulse rounded-lg w-60 h-68"
+              className="bg-gray-200 animate-pulse rounded-lg w-full h-80"
             ></div>
           ))}
         </div>
@@ -69,7 +71,7 @@ const LatestProducts = () => {
         description={`Hiển thị ${products.length} sản phẩm mới nhất`}
         href="/shop"
       />
-      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2">
+      <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

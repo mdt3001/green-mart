@@ -32,7 +32,6 @@ const BestSelling = () => {
       }
     };
 
-    // Delay fetch to avoid blocking initial render
     const timer = setTimeout(fetchBestSelling, 200);
     return () => clearTimeout(timer);
   }, []);
@@ -45,11 +44,11 @@ const BestSelling = () => {
           description="Đang tải..."
           href="/shop"
         />
-        <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-5">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[...Array(displayQuantity)].map((_, index) => (
             <div
               key={index}
-              className="bg-gray-200 animate-pulse rounded-lg w-60 h-68"
+              className="bg-gray-200 animate-pulse rounded-lg w-full h-80"
             ></div>
           ))}
         </div>
@@ -76,7 +75,7 @@ const BestSelling = () => {
         description={`Hiển thị ${products.length} sản phẩm đang bán chạy`}
         href="/shop"
       />
-      <div className="mt-8 grid grid-cols-2 sm:flex flex-wrap gap-2">
+      <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
