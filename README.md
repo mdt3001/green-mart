@@ -14,6 +14,8 @@
 - [ Thành viên nhóm](#thanhvien)
 - [ Seminar](#seminar)
 - [ Đồ án môn học](#doan)
+- [ Hướng dẫn cài đặt](#caidat)
+
 
 ## GIỚI THIỆU MÔN HỌC
 
@@ -41,11 +43,6 @@
 | 4 | 22521488 | Lê Đức Khánh Toàn |[Croslee](https://github.com/Croslee) |22521488@gm.uit.edu.vn |
 | 5 | 22521419 | Võ Duy Thịnh |[Thinhtucute](https://github.com/Thinhtucute) |22521419@gm.uit.edu.vn |
 
-## SEMINAR
-
-<a name="seminar"></a>
-Seminar nhóm: Unknown
-
 ## ĐỒ ÁN MÔN HỌC
 <a name="doan"></a>
 Đồ án Nhóm:
@@ -53,4 +50,50 @@ Seminar nhóm: Unknown
 -    **Repository:** [PHÁT TRIỂN ỨNG DỤNG WEB - IS207](https://github.com/mdt3001/green-mart)
 -    **Trang giới thiệu nhóm:** [4T](https://www.notion.so/PH-T-TRI-N-NG-D-NG-WEB-NH-M-4T-2c69fdc59fca801fabd6f05596f6cf75?source=copy_link)
 -    **Demo dự án:** [Green Mart](https://green-mart-fe.vercel.app/)
+
+## HƯỚNG DẪN CÀI ĐẶT
+<a name="caidat"></a>
+### Backend (Laravel)
+1. Di chuyển vào thư mục backend:
+   ```bash
+   cd green-mart-be
+   ```
+2. Cài đặt dependencies:
+   ```bash
+   composer install
+   ```
+3. Copy các biến môi trường:
+   ```bash
+   cp .env.example .env
+   ```
+4. Tạo key ứng dụng:
+   ```bash
+   php artisan key:generate
+   ```
+5. Chạy migration:
+   ```bash
+   php artisan migrate
+   ```
+6. Chạy server:
+   ```bash
+   php artisan serve
+   ```
+### Frontend (Next.js)
+1. Di chuyển vào thư mục frontend:
+   ```bash
+   cd green-mart-fe
+   ```
+2. Cài đặt dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy các biến môi trường:
+   ```bash
+   cp .env.example .env
+   ```
+4. Chạy server:
+   ```bash
+   npm run dev
+   ```
+
 
