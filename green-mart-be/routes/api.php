@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\Auth\Seller\SellerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerAuthController;
 use App\Http\Controllers\Api\Auth\Customer\CustomerRegisterController;
 use App\Http\Controllers\Api\Auth\Customer\SocialLoginController;
-use App\Http\Controllers\Api\Auth\Admin\AdminAuthController;
 
 use App\Http\Controllers\Api\Seller\AnalyticsController;
 use App\Http\Controllers\Api\Seller\ProductController;
@@ -30,7 +29,6 @@ use App\Http\Controllers\Api\Customer\OrderController as CustomerOrderController
 use App\Http\Controllers\Api\Customer\ReviewController;
 use App\Http\Controllers\Api\Customer\CartController;
 use App\Http\Controllers\Api\Customer\CouponController as CustomerCouponController;
-use App\Http\Controllers\Api\Customer\PaymentController;
 
 // Public Controllers
 use App\Http\Controllers\Api\Public\ProductController as PublicProductController;
@@ -38,10 +36,8 @@ use App\Http\Controllers\Api\Public\CategoryController;
 use App\Http\Controllers\Api\Public\StoreController as PublicStoreController;
 use App\Http\Controllers\Api\Public\SearchController;
 use App\Http\Controllers\Api\Public\FlashSaleController;
-use App\Http\Controllers\Api\Public\CouponController as PublicCouponController;
 
 use App\Http\Controllers\Api\Auth\PasswordController;
-use App\Http\Controllers\Api\Chat\ChatController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -73,26 +69,6 @@ Route::prefix('public')->group(function () {
     Route::get('flash-sales/products', [FlashSaleController::class, 'allProducts']);
     Route::get('flash-sales/{id}', [FlashSaleController::class, 'show']);
     Route::get('flash-sales/{id}/products', [FlashSaleController::class, 'products']);
-
-    // Coupons
-    Route::get('coupons', [PublicCouponController::class, 'index']);
-});
-
-// Chatbot routes (public for guests, enhanced for authenticated users)
-Route::prefix('chat')->group(function () {
-    Route::post('message', [ChatController::class, 'sendMessage']);
-    Route::get('test', function() {
-        $service = app(\App\Services\ChatService::class);
-        $result = $service->processMessage(
-            request('message', 'Xin chào'), 
-            null, 
-            'test-session-' . uniqid()
-        );
-        return response()->json(['success' => true, 'data' => $result]);
-    }); // Test route for browser
-    Route::get('history', [ChatController::class, 'getHistory']);
-    Route::get('suggestions', [ChatController::class, 'getQuickSuggestions']);
-    Route::delete('history', [ChatController::class, 'clearHistory']);
 });
 
 //auth    
@@ -114,17 +90,7 @@ Route::prefix('auth')->group(function () {
     Route::post('password/forgot', [PasswordController::class, 'forgotPassword']);
     Route::post('password/reset', [PasswordController::class, 'resetPassword']);
 
-    Route::post('admin/login', [AdminAuthController::class, 'login']);
-});
-
-Route::prefix('customer/payment')->group(function () {
-   // Return URLs
-    Route::get('/momo/return', [PaymentController::class, 'momo_return']);
-    Route::get('/vnpay/return', [PaymentController::class, 'vnpay_return']);
-    
-    // IPN Callbacks
-    Route::post('/momo/callback', [PaymentController::class, 'momo_callback']);
-    Route::post('/vnpay/callback', [PaymentController::class, 'vnpay_callback']);
+    Route::post('admin/login', [CustomerAuthController::class, 'login']);
 });
 
 //admin
@@ -215,13 +181,5 @@ Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
 
     // Customer Coupon Routes
     Route::get('stores/{storeId}/coupons', [CustomerCouponController::class, 'getStoreActiveCoupons']);
-    Route::get('stores/{storeId}/available-coupons', [CustomerCouponController::class, 'getAvailableCoupons']);
     Route::post('coupons/validate', [CustomerCouponController::class, 'validateCoupon']);
-    Route::post('coupons/save', [CustomerCouponController::class, 'saveCoupon']);
-    Route::get('coupons/saved', [CustomerCouponController::class, 'getSavedCoupons']);
-    Route::delete('coupons/saved/{code}', [CustomerCouponController::class, 'removeSavedCoupon']);
-
-    // Payment routes
-    Route::post('/payment/momo', [PaymentController::class, 'momo_payment']);
-    Route::post('/payment/vnpay', [PaymentController::class, 'vnpay_payment']);
- });
+});

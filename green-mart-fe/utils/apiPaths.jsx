@@ -42,8 +42,6 @@ export const API_PATHS = {
     FLASH_SALES_PRODUCTS: "/api/public/flash-sales/products",
     FLASH_SALE_DETAIL: (id) => `/api/public/flash-sales/${id}`,
     FLASH_SALE_PRODUCTS: (id) => `/api/public/flash-sales/${id}/products`,
-
-    COUPONS: "/api/public/coupons",
   },
 
   // Admin
@@ -124,14 +122,6 @@ export const API_PATHS = {
 
     // Customer Coupon Routes
     STORE_COUPONS: (storeId) => `/api/customer/stores/${storeId}/coupons`,
-    AVAILABLE_COUPONS: (storeId) => `/api/customer/stores/${storeId}/available-coupons`,
     VALIDATE_COUPON: "/api/customer/coupons/validate",
-    SAVE_COUPON: "/api/customer/coupons/save",
-    SAVED_COUPONS: "/api/customer/coupons/saved",
-    REMOVE_SAVED_COUPON: (code) => `/api/customer/coupons/saved/${code}`,
-
-    // Payment
-    MOMO_PAYMENT: "/api/customer/payment/momo",
-    VNPAY_PAYMENT: "/api/customer/payment/vnpay",
   },
 };

@@ -125,7 +125,7 @@ export default function StoreManageProducts() {
               <th className="px-4 py-3 text-right">Giá gốc</th>
               <th className="px-4 py-3 text-right">Giá bán</th>
               <th className="px-4 py-3 text-center">Trạng thái</th>
-              {/* <th className="px-4 py-3 text-center">Hành động</th> */}
+              <th className="px-4 py-3 text-center">Hành động</th>
             </tr>
           </thead>
           <tbody className="text-slate-700 divide-y divide-slate-100 bg-white">
@@ -163,28 +163,6 @@ export default function StoreManageProducts() {
                         >
                           {product.description}
                         </span>
-                        {/* Rating */}
-                        {product.ratings_count > 0 && (
-                          <div className="flex items-center gap-1 mt-1">
-                            {Array(5)
-                              .fill("")
-                              .map((_, index) => (
-                                <svg
-                                  key={index}
-                                  width="12"
-                                  height="12"
-                                  className="text-transparent"
-                                  fill={product.ratings_avg_rating >= index + 1 ? "#00C950" : "#D1D5DB"}
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                </svg>
-                              ))}
-                            <span className="text-xs text-slate-500">
-                              ({product.ratings_count})
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </td>
@@ -214,7 +192,7 @@ export default function StoreManageProducts() {
                       </label>
                     </div>
                   </td>
-                  {/* <td className="px-4 py-3 text-center">
+                  <td className="px-4 py-3 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <button className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded transition">
                         <Edit size={18} />
@@ -226,7 +204,7 @@ export default function StoreManageProducts() {
                         <Trash2 size={18} />
                       </button>
                     </div>
-                  </td> */}
+                  </td>
                 </tr>
               ))
             ) : (

@@ -54,8 +54,6 @@ class CategoryController extends Controller
         $products = Product::whereIn('category_id', $categoryIds)
             ->where('in_stock', true)
             ->with('store:id,name,logo') // Eager load thông tin cửa hàng
-            ->withCount('ratings')
-            ->withAvg('ratings', 'rating')
             ->paginate($request->integer('per_page', 20));
 
         return response()->json([

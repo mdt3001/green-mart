@@ -6,7 +6,6 @@ import OurSpecs from "@/components/OurSpec";
 import LatestProducts from "@/components/LatestProducts";
 import TopCategories from "@/components/TopCategories";
 import FlashSale from "@/components/FlashSale";
-import PublicCoupons from "@/components/PublicCoupons";
 
 export default function Home() {
     return (
@@ -16,7 +15,6 @@ export default function Home() {
             {/* <FlashSale /> */}
             <LatestProducts />
             <BestSelling />
-            <PublicCoupons />
             <OurSpecs />
             <Newsletter />
         </>

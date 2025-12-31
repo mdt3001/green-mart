@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             UserSeeder::class,
-            SellerCustomerSeeder::class, // Seeder cho 5 sellers và 5 customers
             AddressSeeder::class,
             OrderSeeder::class,
             OrderItemSeeder::class,
